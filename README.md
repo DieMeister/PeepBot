@@ -4,3 +4,4 @@ This is going to be a fun little discord bot create together with the community 
 - replace `BOTTOKEN` with your BotToken at the end of `main.py`
 ## Dependencies
 - discord.py
+- colorama
