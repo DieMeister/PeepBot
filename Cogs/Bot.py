@@ -12,17 +12,17 @@ class Bot(commands.Cog):
     async def sync(self, ctx) -> None:  # TODO check if user is allowed to execute command
         await self.bot.tree.sync()
         logic.logging("info", "bot", "Commands synced", {})
-        await ctx.send("Commands synced")
+        await ctx.reply("Commands synced")
 
     @commands.command()
     async def reload_cog(self, ctx, cog: str) -> None:  # TODO check if user is allowed to execute command
         try:
             await self.bot.reload_extension(f"Cogs.{cog}")
             logic.logging("info", "bot", "Cog reloaded", {})
-            await ctx.send("Cog reloaded successfully")
-        except (ExtensionFailed, ExtensionNotLoaded, ExtensionNotFound, NoEntryPointError):
+            await ctx.reply("Cog reloaded successfully")
+        except (ExtensionFailed, ExtensionNotLoaded, ExtensionNotFound, NoEntryPointError):  # TODO differentiate between errors
             logic.logging("warning", "bot", "Cog failed to reload", {})
-            await ctx.send("Cog could not be reloaded")  # TODO differentiate between errors
+            await ctx.reply("Cog could not be reloaded")
 
 
 async def setup(bot) -> None:
