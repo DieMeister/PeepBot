@@ -38,7 +38,7 @@ def logging(log_type: str, log_module: str, event_description: str, log_data: di
     Argument          Description                    Additional Information
     ----------------- ------------------------------ -----------------------------------------------------------------------
     log_type          the importance of the event    must be one of the following: "info", "warning", "fatal", "debug"
-    log_module        the module this event is from  must be one of the following: "bot", "logic"
+    log_module        the module this event is from  must be one of the following: "bot", "twchcmds"
     event_description short description of the event can be any string
     log_data          additional information         if no additional information is provided it must be an empty dictionary
     ================= ============================== =======================================================================
@@ -60,7 +60,7 @@ def logging(log_type: str, log_module: str, event_description: str, log_data: di
     }
     modules = [
         "bot",
-        "logic"
+        "twchcmds"
     ]
 
     # checks if provided arguments are valid and adds them to the json file
@@ -87,4 +87,4 @@ def logging(log_type: str, log_module: str, event_description: str, log_data: di
     save_data(file, f"Logs/{date}.json")
 
     # prints a less detailed version of the log entry to the console
-    print(f"{color}[{console_timestamp}] [{log_type.upper():8}] [{log_module:8}] {event_description}{Fore.LIGHTWHITE_EX}")
+    print(f"{color}[{console_timestamp}] [{log_type.upper():8}] [{log_module:8}] {event_description}{Fore.RESET}")
