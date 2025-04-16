@@ -34,6 +34,15 @@ class TwitchCommands(commands.Cog):
             "user": ctx.author.id
         })
 
+    @commands.command()
+    async def prints(self, ctx) -> None:  # TODO check who is allowed to use this command
+        await ctx.reply("[PRINT SHOP](https://www.inprnt.com/gallery/sinaheh/) IS NOW OPEN")
+        logic.logging("info", "twchcmds", "prints social link sent", {
+            "guild": ctx.guild.id,
+            "channel": ctx.channel.id,
+            "user": ctx.author.id
+        })
+
 
 async def setup(bot) -> None:
     await bot.add_cog(TwitchCommands(bot))
