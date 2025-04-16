@@ -3,7 +3,7 @@ from discord.ext import commands
 import logic
 
 
-class TwitchCommands(commands.Cog):
+class TwitchCommands(commands.Cog):  # TODO make the messages embeds?
     def __init__(self, bot) -> None:
         self.bot = bot
 
@@ -38,6 +38,15 @@ class TwitchCommands(commands.Cog):
     async def prints(self, ctx) -> None:  # TODO check who is allowed to use this command
         await ctx.reply("[PRINT SHOP](https://www.inprnt.com/gallery/sinaheh/) IS NOW OPEN")
         logic.logging("info", "twchcmds", "prints social link sent", {
+            "guild": ctx.guild.id,
+            "channel": ctx.channel.id,
+            "user": ctx.author.id
+        })
+
+    @commands.command()
+    async def socials(self, ctx) -> None:  # TODO check who is allowed to use this command
+        await ctx.reply("FOLLOW SINA'S SOCIALS! [twitter](https://www.twitter.com/sinaheh), [main insta](https://www.instagram.com/sinahehlive/), [art insta](https://www.instagram.com/sinahehart/), [tiktok](https://www.tiktok.com/@sinaheh), [tumblr](https://www.tumblr.com/sinaheh), [bluesky](https://bsky.app/profile/sinaheh.bsky.social), [youtube](https://www.youtube.com/@sinaheh)")
+        logic.logging("info", "twchcmds", "all social links sent", {
             "guild": ctx.guild.id,
             "channel": ctx.channel.id,
             "user": ctx.author.id
