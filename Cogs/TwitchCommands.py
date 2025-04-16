@@ -52,6 +52,15 @@ class TwitchCommands(commands.Cog):  # TODO make the messages embeds?
             "user": ctx.author.id
         })
 
+    @commands.command()
+    async def spotify(self, ctx) -> None:  # TODO check who is allowed to use this command
+        await ctx.reply("[here](https://open.spotify.com/user/sinaxdd/playlists)'s all sina's playlists")
+        logic.logging("info", "twchcmds", "spotify social link sent", {
+            "guild": ctx.guild.id,
+            "channel": ctx.channel.id,
+            "user": ctx.author.id
+        })
+
 
 async def setup(bot) -> None:
     await bot.add_cog(TwitchCommands(bot))
