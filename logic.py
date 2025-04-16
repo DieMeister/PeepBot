@@ -3,42 +3,88 @@ from datetime import datetime as dt
 
 from colorama import Fore
 
-from errors import LoggingTypeError, LoggingModuleError
+import json
+
+from errors import InappropriateValueError
 
 
-def log(log_type: str, module: str, message: str) -> None:
-    timestamp = dt.now(datetime.UTC).strftime("%Y-%m-%dT%H:%M:%S")
+def load_data(file_path: str) -> dict | list | None:
+    """Load a json file and return it; return None if the file does not exist."""
+    try:
+        file = open(file_path)
+    except FileNotFoundError:
+        output = None
+    else:
+        raw_data = file.read()
+        file.close()
+        output = json.loads(raw_data)
+
+    return output
+
+
+def save_data(variable: dict | list, file_path: str) -> None:
+    """Save a list or dictionary to a json file."""
+    raw_data = json.dumps(variable, indent=4)
+    with open(file_path, "w") as file:
+        file.write(raw_data)
+
+
+def logging(log_type: str, log_module: str, event_description: str, log_data: dict) -> None:
+    """Log an event to the console and a json file.
+
+    Positional arguments:
+
+    ================= ============================== =======================================================================
+    Argument          Description                    Additional Information
+    ----------------- ------------------------------ -----------------------------------------------------------------------
+    log_type          the importance of the event    must be one of the following: "info", "warning", "fatal", "debug"
+    log_module        the module this event is from  must be one of the following: "bot", "logic"
+    event_description short description of the event can be any string
+    log_data          additional information         if no additional information is provided it must be an empty dictionary
+    ================= ============================== =======================================================================
+
+    Exceptions:
+    InappropriateValueError -- when an argument value is not valid (see above)
+    """
+    # gets the current time and creates strings for its use cases
+    timestamp = dt.now(datetime.UTC)
+    console_timestamp = timestamp.strftime("%Y-%m-%d %H:%M:%S")
+    file_timestamp = timestamp.strftime("%Y-%m-%dT%H:%M:%S")
+    date = timestamp.strftime("%Y-%m-%d")
 
     types = {
-        "info": {
-            "color": Fore.LIGHTWHITE_EX,
-            "value": "INFO"
-        },
-        "warning": {
-            "color": Fore.YELLOW,
-            "value": "WARNING"
-        },
-        "fatal": {
-            "color": Fore.RED,
-            "value": "FATAL"
-        },
-        "debug": {
-            "color": Fore.BLUE,
-            "value": "DEBUG"
-        }
+        "info": Fore.LIGHTWHITE_EX,
+        "warning": Fore.YELLOW,
+        "fatal": Fore.RED,
+        "debug": Fore.BLUE
     }
     modules = [
-        "main",
         "bot",
         "logic"
     ]
 
-    if module not in modules:
-        raise LoggingModuleError("Provided LogModule doesn't exist")
-    elif log_type not in types:
-        raise LoggingTypeError("Provided LogType doesn't exist")
+    # checks if provided arguments are valid and adds them to the json file
+    if log_type not in types:
+        raise InappropriateValueError("Provided LoggingType does not exist")
     else:
-        color = types[log_type]["color"]
-        value = types[log_type]["value"]
+        color = types[log_type]
+        log_data["type"] = log_type
 
-        print(f"{color}[{timestamp}] [{value:8}] [{module:8}] {message}{Fore.LIGHTWHITE_EX}")
+    if log_module not in modules:
+        raise InappropriateValueError("Provided LoggingModule does not exist")
+    else:
+        log_data["module"] = log_module
+
+    # adds additional information
+    log_data["timestamp"] = file_timestamp
+    log_data["event_description"] = event_description
+
+    # saves the log entry to a json file
+    file = load_data(f"Logs/{date}.json")
+    if file is None:
+        file = []
+    file.append(log_data)
+    save_data(file, f"Logs/{date}.json")
+
+    # prints a less detailed version of the log entry to the console
+    print(f"{color}[{console_timestamp}] [{log_type.upper():8}] [{log_module:8}] {event_description}{Fore.LIGHTWHITE_EX}")

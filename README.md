@@ -5,3 +5,5 @@ This is going to be a fun little discord bot create together with the community 
 ## Dependencies
 - discord.py
 - colorama
+# Example formats
+- [log saves](./Logs/example.json)

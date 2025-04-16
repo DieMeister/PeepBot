@@ -11,7 +11,7 @@ class PeepBot(commands.Bot):
 		for file in os.listdir("./Cogs"):
 			if file.endswith(".py"):
 				await self.load_extension(f"Cogs.{file[:-3]}")
-		logic.log("info", "main", "cogs loaded")
+		logic.logging("info", "bot", "cogs loaded", {})
 
 
 intents = discord.Intents.all()

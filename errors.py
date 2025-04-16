@@ -1,10 +1,4 @@
-class LoggingTypeError(Exception):
-    """ Inappropriate logging type """
-    __module__ = "builtins"
-    pass
-
-
-class LoggingModuleError(Exception):
-    """ Inappropriate logging module """
+class InappropriateValueError(Exception):
+    """Inappropriate value content (value type is correct)."""
     __module__ = "builtins"
     pass

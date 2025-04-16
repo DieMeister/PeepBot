@@ -1,0 +1,14 @@
+[
+    {
+        "type": "info",
+        "module": "bot",
+        "timestamp": "2025-04-20T00:00:00",
+        "event_description": "example event"
+    },
+    {
+        "type": "fatal",
+        "module": "bot",
+        "timestamp": "2030-01-30T23:59:59",
+        "event_description": "something went terribly wrong"
+    }
+]
