@@ -70,6 +70,15 @@ class TwitchCommands(commands.Cog):  # TODO make the messages embeds?
             "user": ctx.author.id
         })
 
+    @commands.command()
+    async def twitter(self, ctx) -> None:  #TODO check who is allowed to use this command
+        await ctx.reply("follow sina on twitter! [main](https://twitter.com/sinaheh), [alt](https://twitter.com/sinaltheh)")
+        logic.logging("info", "twchcmds", "Twitter social link sent", {
+            "guild": ctx.guild.id,
+            "channel": ctx.channel.id,
+            "user": ctx.author.id
+        })
+
 
 async def setup(bot) -> None:
     await bot.add_cog(TwitchCommands(bot))
