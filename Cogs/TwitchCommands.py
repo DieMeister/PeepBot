@@ -79,6 +79,15 @@ class TwitchCommands(commands.Cog):  # TODO make the messages embeds?
             "user": ctx.author.id
         })
 
+    @commands.command()
+    async def wishlist(self, ctx) -> None:
+        await ctx.reply("consider buying sina a [gift](https://thronegifts.com/u/sinaheh):")
+        logic.logging("info", "twchcmds", "wishlist social link sent", {
+            "guild": ctx.guild.id,
+            "channel": ctx.channel.id,
+            "user": ctx.author.id
+        })
+
 
 async def setup(bot) -> None:
     await bot.add_cog(TwitchCommands(bot))
