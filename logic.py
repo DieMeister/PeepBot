@@ -2,7 +2,6 @@ import datetime
 from datetime import datetime as dt
 
 from colorama import Fore
-
 import json
 
 from errors import InappropriateValueError
@@ -11,13 +10,11 @@ from errors import InappropriateValueError
 def load_data(file_path: str) -> dict | list | None:
     """Load a json file and return it; return None if the file does not exist."""
     try:
-        file = open(file_path)
+        with open(file_path) as f:
+            data = f.read()
+        output = json.loads(data)
     except FileNotFoundError:
         output = None
-    else:
-        raw_data = file.read()
-        file.close()
-        output = json.loads(raw_data)
 
     return output
 
