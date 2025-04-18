@@ -13,6 +13,10 @@ class PeepBot(commands.Bot):
 				await self.load_extension(f"Cogs.{file[:-3]}")
 		logic.logging("info", "bot", "cogs loaded", {})
 
+		logic.data = logic.load_data("data.json")
+		logic.embeds = logic.load_data("embeds.json")
+		logic.logging("info", "bot", "database loaded", {})
+
 
 intents = discord.Intents.all()
 bot = PeepBot(command_prefix="!", intents=intents)

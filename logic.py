@@ -1,18 +1,35 @@
 import datetime
 from datetime import datetime as dt
 
+from typing import TYPE_CHECKING
 from colorama import Fore
 import json
 
 from errors import InappropriateValueError
+
+if TYPE_CHECKING:
+    import discord
+
+
+data: dict
+embeds: dict
+
+
+def has_role(id_list: list[int], member_list: list["discord.Role"]) -> bool:
+    """Check if a member has a role from a provided list."""
+    for i in id_list:
+        for j in member_list:
+            if i == j.id:
+                return True
+    return False
 
 
 def load_data(file_path: str) -> dict | list | None:
     """Load a json file and return it; return None if the file does not exist."""
     try:
         with open(file_path) as f:
-            data = f.read()
-        output = json.loads(data)
+            raw_data = f.read()
+        output = json.loads(raw_data)
     except FileNotFoundError:
         output = None
 

@@ -1,0 +1,14 @@
+{
+    "twitch_commands": {
+        "list_entitled_roles": {
+            "footer": {
+                "text": "TwitchCommands"
+            },
+            "fields": [],
+            "color": 12171007,
+            "type": "rich",
+            "description": "Lists all roles that are allowed to execute commands know from Twitch",
+            "title": "Twitch Command Roles"
+        }
+    }
+}
