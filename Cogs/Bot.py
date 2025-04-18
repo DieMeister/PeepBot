@@ -1,4 +1,4 @@
-import discord.ext.commands
+
 from discord.ext import commands
 from discord.ext.commands import ExtensionFailed, ExtensionNotLoaded, ExtensionNotFound, NoEntryPointError, ExtensionAlreadyLoaded
 
@@ -15,6 +15,13 @@ class Bot(commands.Cog):
 
     @commands.command()
     async def sync(self, ctx: "Context") -> None:
+        """Sync all application commands with discord.
+
+        Arguments
+        ---------
+        ctx:
+            the command's context provided by discord
+        """
         if ctx.author.id in logic.data["developer"]:
             await self.bot.tree.sync()
             logic.logging("info", "bot", "Commands synced", {})
@@ -22,6 +29,26 @@ class Bot(commands.Cog):
 
     @commands.command()
     async def reload_cog(self, ctx: "Context", cog: str) -> None:
+        """Reload a currently loaded extension.
+
+        Parameters
+        ----------
+        ctx:
+            the context provided by discord
+        cog:
+            the extension that is reloaded
+
+        Raises
+        ------
+        ExtensionNotFound
+            the provided extension does not exist
+        ExtensionNotLoaded
+            the provided extension was not loaded in the first place
+        NoEntryPointError
+            raised when the extension has no setup function
+        ExtensionFailed
+            raised when the extension failed to reload
+        """
         if ctx.author.id in logic.data["developer"]:
             try:
                 await self.bot.reload_extension(f"Cogs.{cog}")
@@ -32,13 +59,33 @@ class Bot(commands.Cog):
             except ExtensionNotFound:
                 await ctx.reply("Cog does not exist")
             except ExtensionNotLoaded:
-                await ctx.reply("Cog was not loaded, try load_cog instead")
+                await ctx.reply("Cog was not loaded before, try load_cog instead")
             except (ExtensionFailed, NoEntryPointError) as exception:
                 await ctx.reply("Cog could not be reloaded")
                 raise exception
 
     @commands.command()
     async def load_cog(self, ctx: "Context", cog: str):
+        """Load a currently unloaded extension.
+
+        Parameters
+        ----------
+        ctx:
+            the command's context provided by discord
+        cog:
+            the extension that is being loaded
+
+        Raises
+        ------
+        ExtensionNotFound
+            the extension does not exist
+        ExtensionAlreadyLoaded
+            the extension is already loaded
+        NoEntryPointError
+            raised when the extension has no setup function
+        ExtensionFailed
+            raised when the extension failed to load
+        """
         if ctx.author.id in logic.data["developer"]:
             try:
                 await self.bot.load_extension(f"Cogs.{cog}")
@@ -56,6 +103,22 @@ class Bot(commands.Cog):
 
     @commands.command()
     async def unload_cog(self, ctx: "Context", cog: str):
+        """Unload a currently loaded extension.
+
+        Parameters
+        ----------
+        ctx:
+            the command's context provided by discord
+        cog:
+            the cog that is being unloaded
+
+        Raises
+        ------
+        ExtensionNotFound
+            the extension does not exist
+        ExtensionNotLoaded
+            the extension was not loaded in the first place
+        """
         if ctx.author.id in logic.data["developer"]:
             try:
                 await self.bot.unload_extension(f"Cogs.{cog}")
@@ -67,6 +130,11 @@ class Bot(commands.Cog):
                 await ctx.reply("Cog does not exist")
             except ExtensionNotLoaded:
                 await ctx.reply("Cog was already not loaded")
+
+    @commands.command()
+    async def help(self, ctx: "Context"):
+        raise NotImplementedError  # TODO make help command
+
 
 
 async def setup(bot) -> None:
