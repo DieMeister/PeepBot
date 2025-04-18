@@ -3,6 +3,7 @@ This is going to be a fun little discord bot create together with the community 
 
 # Before self-hosting
 - replace `BOTTOKEN` with your BotToken at the end of `main.py`
+- replace data.json["developers"] with a list you're developer's discord user IDs
 
 ## Dependencies
 - discord.py
