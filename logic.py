@@ -15,10 +15,10 @@ data: dict
 embeds: dict
 
 
-def has_role(id_list: list[int], member_list: list["discord.Role"]) -> bool:
-    """Check if a member has a role from a provided list."""
-    for i in id_list:
-        for j in member_list:
+def has_property(provided_properties: list[int], member_properties: list["discord.Role"]) -> bool:
+    """Check if a user has a property from a provided list."""
+    for i in provided_properties:
+        for j in member_properties:
             if i == j.id:
                 return True
     return False
