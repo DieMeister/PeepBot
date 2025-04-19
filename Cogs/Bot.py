@@ -24,7 +24,13 @@ class Bot(commands.Cog):
         """
         if ctx.author.id in logic.data["developer"]:
             await self.bot.tree.sync()
-            logic.logging("info", "bot", "Commands synced", {})
+            logic.logging("info", "bot", "Commands synced", {
+                "command":  {
+                    "guild": ctx.guild.id,
+                    "channel": ctx.channel.id,
+                    "user": ctx.author.id
+                }
+            })
             await ctx.reply("Commands synced")
 
     @commands.command()
@@ -53,7 +59,12 @@ class Bot(commands.Cog):
             try:
                 await self.bot.reload_extension(f"Cogs.{cog}")
                 logic.logging("info", "bot", "Cog reloaded", {
-                    "cog": cog
+                    "cog": cog,
+                    "command": {
+                        "guild": ctx.guild.id,
+                        "channel": ctx.channel.id,
+                        "user": ctx.author.id
+                    }
                 })
                 await ctx.reply("Cog reloaded successfully")
             except ExtensionNotFound:
@@ -90,7 +101,12 @@ class Bot(commands.Cog):
             try:
                 await self.bot.load_extension(f"Cogs.{cog}")
                 logic.logging("info", "bot", "Cog loaded", {
-                    "cog": cog
+                    "cog": cog,
+                    "command": {
+                        "guild": ctx.guild.id,
+                        "channel": ctx.channel.id,
+                        "user": ctx.author.id
+                    }
                 })
                 await ctx.reply("Cog loaded")
             except ExtensionNotFound:
@@ -123,7 +139,12 @@ class Bot(commands.Cog):
             try:
                 await self.bot.unload_extension(f"Cogs.{cog}")
                 logic.logging("info", "bot", "Cog unloaded", {
-                    "cog": cog
+                    "cog": cog,
+                    "command": {
+                        "guild": ctx.guild.id,
+                        "channel": ctx.channel.id,
+                        "user": ctx.author.id
+                    }
                 })
                 await ctx.reply("Cog unloaded")
             except ExtensionNotFound:

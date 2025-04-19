@@ -46,19 +46,23 @@ def save_data(variable: dict | list, file_path: str) -> None:
 def logging(log_type: str, log_module: str, event_description: str, log_data: dict) -> None:
     """Log an event to the console and a json file.
 
-    Positional arguments:
+    Parameters
+    ---------
+    log_type
+        the importance of the event - must be one of the following:
+        "info", "warning", "fatal", "debug"
+    log_module
+        the module that called the function - must be one of the following:
+        "bot", "twchcmds"
+    event_description
+        short description of the event
+    log_data
+        additional information - should contain "command"; this can be a dictionary, or false if it is not a command
 
-    ================= ============================== =======================================================================
-    Argument          Description                    Additional Information
-    ----------------- ------------------------------ -----------------------------------------------------------------------
-    log_type          the importance of the event    must be one of the following: "info", "warning", "fatal", "debug"
-    log_module        the module this event is from  must be one of the following: "bot", "twchcmds"
-    event_description short description of the event can be any string
-    log_data          additional information         if no additional information is provided it must be an empty dictionary
-    ================= ============================== =======================================================================
-
-    Exceptions:
-    InappropriateValueError -- when an argument value is not valid (see above)
+    Raises
+    ------
+    InappropriateValueError
+        when an argument value is not valid (see above)
     """
     # gets the current time and creates strings for its use cases
     timestamp = dt.now(datetime.UTC)
