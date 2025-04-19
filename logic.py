@@ -48,12 +48,10 @@ def logging(log_type: str, log_module: str, event_description: str, log_data: di
 
     Parameters
     ---------
-    log_type
-        the importance of the event - must be one of the following:
-        "info", "warning", "fatal", "debug"
-    log_module
-        the module that called the function - must be one of the following:
-        "bot", "twchcmds"
+    log_type : {'info', 'warning', 'fatal', 'debug'}
+        the importance of the event
+    log_module : {'bot', 'twchcmds'}
+        the module that called the function
     event_description
         short description of the event
     log_data

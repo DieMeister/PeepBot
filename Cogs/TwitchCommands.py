@@ -11,6 +11,10 @@ if TYPE_CHECKING:
 
 
 class TwitchCommands(commands.Cog):  # TODO make the messages embeds?
+    """Extension containing TwitchCommand functionality.
+
+    This extension includes commands known from sinaheh's twitch chat as well as functionality to make them work.
+    """
     def __init__(self, bot) -> None:
         self.bot = bot
 
@@ -20,6 +24,17 @@ class TwitchCommands(commands.Cog):  # TODO make the messages embeds?
     )
     @app_commands.default_permissions(manage_guild=True)
     async def add_twitch_commands_role(self, interaction: discord.Interaction, role: discord.Role) -> None:
+        """Add a role to the roles that are allowed to execute TwitchCommands.
+
+        This function is part of a Discord ApplicationCommand and should not be referenced by another function.
+
+        Parameters
+        ----------
+        interaction: discord.Interaction
+            the Discord interaction connected to the executed command
+        role: discord.Role
+            the role that is being added
+        """
         if role.id in logic.data["execute_twitch_commands"]:
             role_id = None
             await interaction.response.send_message("Role can already execute Twitch commands")
@@ -43,6 +58,17 @@ class TwitchCommands(commands.Cog):  # TODO make the messages embeds?
     )
     @app_commands.default_permissions(manage_guild=True)
     async def remove_twitch_commands_role(self, interaction: discord.Interaction, role: discord.Role) -> None:
+        """Remove a role from the roles that are allowed to execute TwitchCommands.
+
+        This function is part of a Discord ApplicationCommand and should not be referenced by another function.
+
+        Parameters
+        ----------
+        interaction: discord.Interaction
+            the Discord interaction connected to the executed command
+        role: discord.Role
+            the role that is being removed
+        """
         if role.id in logic.data["execute_twitch_commands"]:
             logic.data["execute_twitch_commands"].remove(role.id)
             role_id = role.id
@@ -63,6 +89,12 @@ class TwitchCommands(commands.Cog):  # TODO make the messages embeds?
     @app_commands.command(name="list_twitch_command_roles", description="lists every role that can execute commands know from twitch")
     @app_commands.default_permissions(manage_guild=True)
     async def list_twitch_command_roles(self, interaction: discord.Interaction) -> None:
+        """List all roles that are allowed to execute TwitchCommands in a Discord embed.
+
+        Parameters
+        ----------
+        interaction : discord.Interaction
+        """
         if not logic.data["execute_twitch_commands"]:
             await interaction.response.send_message("No role added yet")
         else:
