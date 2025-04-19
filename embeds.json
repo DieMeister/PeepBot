@@ -1,4 +1,27 @@
 {
+    "bot": {
+        "help": {
+            "footer": {
+                "text": "Bot"
+            },
+            "fields": [
+                {
+                    "inline": false,
+                    "name": "**__Useful Links__**",
+                    "value": "[Documentation](https://github.com/DieMeister/PeepBot/blob/master/README.md)\n[GitHub Repository](https://github.com/DieMeister/PeepBot)"
+                },
+                {
+                    "inline": false,
+                    "name": "**__Categories__**",
+                    "value": "Bot\nTwitchCommands"
+                }
+            ],
+            "color": 12171007,
+            "type": "rich",
+            "description": "This bot works out of the box, no setup command needed.",
+            "title": "Help"
+        }
+    },
     "twitch_commands": {
         "list_entitled_roles": {
             "footer": {

@@ -1,4 +1,4 @@
-
+import discord
 from discord.ext import commands
 from discord.ext.commands import ExtensionFailed, ExtensionNotLoaded, ExtensionNotFound, NoEntryPointError, ExtensionAlreadyLoaded
 
@@ -154,8 +154,16 @@ class Bot(commands.Cog):
 
     @commands.command()
     async def help(self, ctx: "Context"):
-        raise NotImplementedError  # TODO make help command
-
+        embed = discord.Embed.from_dict(logic.embeds["bot"]["help"])
+        embed.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar.url)
+        await ctx.reply(embed=embed)
+        logic.logging("info", "bot", "HelpCommand sent", {
+            "command": {
+                "guild": ctx.guild.id,
+                "channel": ctx.channel.id,
+                "user": ctx.author.id
+            }
+        })
 
 
 async def setup(bot) -> None:
