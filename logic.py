@@ -16,12 +16,22 @@ embeds: dict
 
 
 def has_property(provided_properties: list[int], member_properties: list["discord.Role"]) -> bool:
-    """Check if a user has a property from a provided list."""
+    """Check if a member has a property from a provided list."""
     for i in provided_properties:
         for j in member_properties:
             if i == j.id:
                 return True
     return False
+
+
+def get_item(lst: list[dict], key: str, value: str | int) -> dict | None:
+    """Get a specific dictionary from a list of dictionaries."""
+    for i in lst:
+        if key not in i:
+            continue
+        if i[key] == value:
+            return i
+    return None
 
 
 def load_data(file_path: str) -> dict | list | None:

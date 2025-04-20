@@ -1,6 +1,3 @@
-# What is this?
-This is going to be a fun little discord bot create together with the community of the Sinaheh discord server
-
 # What it does:
 An explanation for every command and event.  
 The prefix for all PrefixCommands is `!`.  
