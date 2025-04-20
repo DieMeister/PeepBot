@@ -48,14 +48,16 @@ def logging(log_type: str, log_module: str, event_description: str, log_data: di
 
     Parameters
     ---------
-    log_type : {'info', 'warning', 'fatal', 'debug'}
+    log_type : {'info', 'warn', 'error', 'fatal', 'debug'}
         the importance of the event
     log_module : {'bot', 'twchcmds'}
         the module that called the function
     event_description
         short description of the event
-    log_data
-        additional information - should contain "command"; this can be a dictionary, or false if it is not a command
+    log_data : dict
+        additional information - should contain "command"; this can be a dictionary, or false if it is not a command.
+
+        if it is a command, "command" should contain "user", "channel", "guild" and "type"
 
     Raises
     ------
@@ -70,7 +72,8 @@ def logging(log_type: str, log_module: str, event_description: str, log_data: di
 
     types = {
         "info": Fore.LIGHTWHITE_EX,
-        "warning": Fore.YELLOW,
+        "warn": Fore.MAGENTA,
+        "error": Fore.YELLOW,
         "fatal": Fore.RED,
         "debug": Fore.BLUE
     }
@@ -103,4 +106,4 @@ def logging(log_type: str, log_module: str, event_description: str, log_data: di
     save_data(file, f"Logs/{date}.json")
 
     # prints a less detailed version of the log entry to the console
-    print(f"{color}[{console_timestamp}] [{log_type.upper():8}] [{log_module:8}] {event_description}{Fore.RESET}")
+    print(f"{color}[{console_timestamp}] [{log_type.upper():5}] [{log_module:8}] {event_description}{Fore.RESET}")

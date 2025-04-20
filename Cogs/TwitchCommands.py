@@ -48,7 +48,8 @@ class TwitchCommands(commands.Cog):  # TODO make the messages embeds?
             "command": {
                 "guild": interaction.guild.id,
                 "channel": interaction.channel.id,
-                "user": interaction.user.id
+                "user": interaction.user.id,
+                "type": "ManagerCommand"
             }
         })
 
@@ -82,7 +83,8 @@ class TwitchCommands(commands.Cog):  # TODO make the messages embeds?
             "command": {
                 "guild": interaction.guild.id,
                 "channel": interaction.channel.id,
-                "user": interaction.user.id
+                "user": interaction.user.id,
+                "type": "ManagerCommand"
             }
         })
 
@@ -110,7 +112,8 @@ class TwitchCommands(commands.Cog):  # TODO make the messages embeds?
             "command": {
                 "guild": interaction.guild.id,
                 "channel": interaction.channel.id,
-                "user": interaction.user.id
+                "user": interaction.user.id,
+                "type": "ManagerCommand"
             }
         })
 
@@ -123,7 +126,8 @@ class TwitchCommands(commands.Cog):  # TODO make the messages embeds?
                 "command": {
                     "guild": ctx.guild.id,
                     "channel": ctx.channel.id,
-                    "user": ctx.author.id
+                    "user": ctx.author.id,
+                    "type": "UserCommand"
                 }
             })
 
@@ -135,7 +139,8 @@ class TwitchCommands(commands.Cog):  # TODO make the messages embeds?
                 "command": {
                     "guild": ctx.guild.id,
                     "channel": ctx.channel.id,
-                    "user": ctx.author.id
+                    "user": ctx.author.id,
+                    "type": "UserCommand"
                 }
             })
 
@@ -147,7 +152,8 @@ class TwitchCommands(commands.Cog):  # TODO make the messages embeds?
                 "command": {
                     "guild": ctx.guild.id,
                     "channel": ctx.channel.id,
-                    "user": ctx.author.id
+                    "user": ctx.author.id,
+                    "type": "UserCommand"
                 }
             })
 
@@ -159,7 +165,8 @@ class TwitchCommands(commands.Cog):  # TODO make the messages embeds?
                 "command": {
                     "guild": ctx.guild.id,
                     "channel": ctx.channel.id,
-                    "user": ctx.author.id
+                    "user": ctx.author.id,
+                    "type": "UserCommand"
                 }
             })
 
@@ -171,7 +178,8 @@ class TwitchCommands(commands.Cog):  # TODO make the messages embeds?
                 "command": {
                     "guild": ctx.guild.id,
                     "channel": ctx.channel.id,
-                    "user": ctx.author.id
+                    "user": ctx.author.id,
+                    "type": "UserCommand"
                 }
             })
 
@@ -183,7 +191,8 @@ class TwitchCommands(commands.Cog):  # TODO make the messages embeds?
                 "command": {
                     "guild": ctx.guild.id,
                     "channel": ctx.channel.id,
-                    "user": ctx.author.id
+                    "user": ctx.author.id,
+                    "type": "UserCommand"
                 }
             })
 
@@ -195,7 +204,8 @@ class TwitchCommands(commands.Cog):  # TODO make the messages embeds?
                 "command": {
                     "guild": ctx.guild.id,
                     "channel": ctx.channel.id,
-                    "user": ctx.author.id
+                    "user": ctx.author.id,
+                    "type": "UserCommand"
                 }
             })
 
@@ -207,7 +217,8 @@ class TwitchCommands(commands.Cog):  # TODO make the messages embeds?
                 "command": {
                     "guild": ctx.guild.id,
                     "channel": ctx.channel.id,
-                    "user": ctx.author.id
+                    "user": ctx.author.id,
+                    "type": "UserCommand"
                 }
             })
 
@@ -219,7 +230,8 @@ class TwitchCommands(commands.Cog):  # TODO make the messages embeds?
                 "command": {
                     "guild": ctx.guild.id,
                     "channel": ctx.channel.id,
-                    "user": ctx.author.id
+                    "user": ctx.author.id,
+                    "type": "UserCommand"
                 }
             })
 
@@ -231,7 +243,8 @@ class TwitchCommands(commands.Cog):  # TODO make the messages embeds?
                 "command": {
                     "guild": ctx.guild.id,
                     "channel": ctx.channel.id,
-                    "user": ctx.author.id
+                    "user": ctx.author.id,
+                    "type": "UserCommand"
                 }
             })
 
@@ -245,7 +258,8 @@ class TwitchCommands(commands.Cog):  # TODO make the messages embeds?
                 "command": {
                     "guild": ctx.guild.id,
                     "channel": ctx.channel.id,
-                    "user": ctx.author.id
+                    "user": ctx.author.id,
+                    "type": "UserCommand"
                 }
             })
 
@@ -257,7 +271,8 @@ class TwitchCommands(commands.Cog):  # TODO make the messages embeds?
                 "command": {
                     "guild": ctx.guild.id,
                     "channel": ctx.channel.id,
-                    "user": ctx.author.id
+                    "user": ctx.author.id,
+                    "type": "UserCommand"
                 }
             })
 
@@ -269,7 +284,8 @@ class TwitchCommands(commands.Cog):  # TODO make the messages embeds?
                 "command": {
                     "guild": ctx.guild.id,
                     "channel": ctx.channel.id,
-                    "user": ctx.author.id
+                    "user": ctx.author.id,
+                    "type": "UserCommand"
                 }
             })
 
@@ -281,7 +297,8 @@ class TwitchCommands(commands.Cog):  # TODO make the messages embeds?
                 "command": {
                     "guild": ctx.guild.id,
                     "channel": ctx.channel.id,
-                    "user": ctx.author.id
+                    "user": ctx.author.id,
+                    "type": "UserCommand"
                 }
             })
 
@@ -293,7 +310,8 @@ class TwitchCommands(commands.Cog):  # TODO make the messages embeds?
                 "command": {
                     "guild": ctx.guild.id,
                     "channel": ctx.channel.id,
-                    "user": ctx.author.id
+                    "user": ctx.author.id,
+                    "type": "UserCommand"
                 }
             })
 
@@ -307,7 +325,8 @@ class TwitchCommands(commands.Cog):  # TODO make the messages embeds?
                 "command": {
                     "guild": ctx.guild.id,
                     "channel": ctx.channel.id,
-                    "user": ctx.author.id
+                    "user": ctx.author.id,
+                    "type": "UserCommand"
                 }
             })
 

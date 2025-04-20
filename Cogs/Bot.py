@@ -9,6 +9,7 @@ import logic
 if TYPE_CHECKING:
     from discord.ext.commands import Context
 
+
 class Bot(commands.Cog):
     def __init__(self, bot) -> None:
         self.bot = bot
@@ -28,7 +29,8 @@ class Bot(commands.Cog):
                 "command":  {
                     "guild": ctx.guild.id,
                     "channel": ctx.channel.id,
-                    "user": ctx.author.id
+                    "user": ctx.author.id,
+                    "type": "DeveloperCommand"
                 }
             })
             await ctx.reply("Commands synced")
@@ -63,7 +65,8 @@ class Bot(commands.Cog):
                     "command": {
                         "guild": ctx.guild.id,
                         "channel": ctx.channel.id,
-                        "user": ctx.author.id
+                        "user": ctx.author.id,
+                        "type": "DeveloperCommand"
                     }
                 })
                 await ctx.reply("Cog reloaded successfully")
@@ -105,7 +108,8 @@ class Bot(commands.Cog):
                     "command": {
                         "guild": ctx.guild.id,
                         "channel": ctx.channel.id,
-                        "user": ctx.author.id
+                        "user": ctx.author.id,
+                        "type": "DeveloperCommand"
                     }
                 })
                 await ctx.reply("Cog loaded")
@@ -143,7 +147,8 @@ class Bot(commands.Cog):
                     "command": {
                         "guild": ctx.guild.id,
                         "channel": ctx.channel.id,
-                        "user": ctx.author.id
+                        "user": ctx.author.id,
+                        "type": "DeveloperCommand"
                     }
                 })
                 await ctx.reply("Cog unloaded")
@@ -154,6 +159,7 @@ class Bot(commands.Cog):
 
     @commands.command()
     async def help(self, ctx: "Context"):
+        """Send a help embed."""
         embed = discord.Embed.from_dict(logic.embeds["bot"]["help"])
         embed.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar.url)
         await ctx.reply(embed=embed)
@@ -161,7 +167,8 @@ class Bot(commands.Cog):
             "command": {
                 "guild": ctx.guild.id,
                 "channel": ctx.channel.id,
-                "user": ctx.author.id
+                "user": ctx.author.id,
+                "type": "UserCommand"
             }
         })
 
