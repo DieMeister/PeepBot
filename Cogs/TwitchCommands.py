@@ -99,11 +99,11 @@ class TwitchCommands(commands.Cog):  # TODO make the messages embeds?
         ----------
         interaction : discord.Interaction
         """
-        if not logic.data["execute_twitch_commands"]:
+        guild_data = logic.get_item(logic.data["guilds"], "guild_id", interaction.guild.id)
+        if not guild_data["twitch_commands"]["execute_commands_roles"]:
             await interaction.response.send_message("No role added yet")
         else:
             message_value = ""
-            guild_data = logic.get_item(logic.data["guilds"], "guild_id", interaction.guild.id)
             for i in guild_data["twitch_commands"]["execute_commands_roles"]:
                 message_value = message_value + f"<@&{i}>\n"
             embed = discord.Embed.from_dict(logic.embeds["twitch_commands"]["list_entitled_roles"])
