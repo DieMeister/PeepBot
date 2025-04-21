@@ -172,6 +172,18 @@ class Bot(commands.Cog):
             }
         })
 
+    # TODO cleanup command that removes deleted roles and adds missing infrastructure if somehow forgotten
+
+    @commands.Cog.listener()
+    async def on_guild_join(self, guild: discord.Guild):
+        guild_data = logic.load_data("Data/guild.json")
+        guild_data["guild_id"] = guild.id
+        logic.data["guilds"].append(guild_data)
+        logic.logging("info", "bot", "Bot joined Guild", {
+            "guild_id": guild.id,
+            "guild_name": guild.name
+        })
+
 
 async def setup(bot) -> None:
     await bot.add_cog(Bot(bot))

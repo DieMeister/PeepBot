@@ -61,7 +61,7 @@ def logging(log_type: str, log_module: str, event_description: str, log_data: di
     ---------
     log_type : {'info', 'warn', 'error', 'fatal', 'debug'}
         the importance of the event
-    log_module : {'bot', 'twchcmds'}
+    log_module : {'bot', 'twchcmds', 'boarding'}
         the module that called the function
     event_description
         short description of the event
@@ -90,7 +90,8 @@ def logging(log_type: str, log_module: str, event_description: str, log_data: di
     }
     modules = [
         "bot",
-        "twchcmds"
+        "twchcmds",
+        "boarding"
     ]
 
     # checks if provided arguments are valid and adds them to the json file
