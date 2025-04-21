@@ -11,6 +11,7 @@ if TYPE_CHECKING:
     import discord
 
 
+database_path = "Data/data.json"
 data: dict
 embeds: dict
 

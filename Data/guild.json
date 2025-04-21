@@ -1,6 +1,8 @@
 {
     "guild_id": null,
-    "onboarding": {},
+    "onboarding": {
+        "welcome_message": null
+    },
     "twitch_commands": {
         "execute_commands_roles": []
     }

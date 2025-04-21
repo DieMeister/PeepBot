@@ -42,7 +42,7 @@ class TwitchCommands(commands.Cog):  # TODO make the messages embeds?
             guild_data = logic.get_item(logic.data["guilds"], "guild_id", interaction.guild.id)
             guild_data["twitch_commands"]["execute_commands_roles"].append(role.id)
             role_id = role.id
-            logic.save_data(logic.data, "data.json")
+            logic.save_data(logic.data, logic.database_path)
             await interaction.response.send_message("Role added to list")
         logic.logging("info", "twchcmds", "twitch command execution role added", {
             "added_role": role_id,
@@ -75,7 +75,7 @@ class TwitchCommands(commands.Cog):  # TODO make the messages embeds?
             guild_data = logic.get_item(logic.data["guilds"], "guild_id", interaction.guild.id)
             guild_data["twitch_commands"]["execute_commands_roles"].remove(role.id)
             role_id = role.id
-            logic.save_data(logic.data, "data.json")
+            logic.save_data(logic.data, logic.database_path)
             await interaction.response.send_message("Role removed from list")
         else:
             role_id = None

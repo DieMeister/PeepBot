@@ -16,8 +16,8 @@ class PeepBot(commands.Bot):
 			"command": False
 		})
 
-		logic.data = logic.load_data("data.json")
-		logic.embeds = logic.load_data("embeds.json")
+		logic.data = logic.load_data(logic.database_path)
+		logic.embeds = logic.load_data("Data/embeds.json")
 		logic.logging("info", "bot", "database loaded", {
 			"command": False
 		})
@@ -27,3 +27,6 @@ intents = discord.Intents.all()
 bot = PeepBot(command_prefix="!", intents=intents, help_command=None)
 
 bot.run(tokens.butter_test)  # FIXME create BotToken
+
+
+# TODO move data files in separate folder
