@@ -17,7 +17,7 @@ class PeepBot(commands.Bot):
         })
 
 
-intents = discord.Intents.all()  # FIXME replace with only needed intents
+intents = discord.Intents.all()  # FIXME replace with only the intents needed
 bot = PeepBot(command_prefix="!", intents=intents, help_command=None)
 
 bot.run(tokens.peep_bot)
