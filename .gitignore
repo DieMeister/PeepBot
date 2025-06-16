@@ -1,4 +1,9 @@
 .idea/
 __*
 
+*.png
+
+Logs/
+
 tokens.py
+intents.txt

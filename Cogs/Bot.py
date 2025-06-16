@@ -1,7 +1,11 @@
-from typing import TYPE_CHECKING
-
+import discord
 from discord.ext import commands
 from discord.ext.commands import ExtensionFailed, ExtensionNotLoaded, ExtensionNotFound, NoEntryPointError, ExtensionAlreadyLoaded
+
+import datetime
+from datetime import datetime as dt
+
+from typing import TYPE_CHECKING
 
 import logic
 
@@ -16,7 +20,7 @@ class Bot(commands.Cog):
     # Sync all application commands with Discord
     @commands.command()
     async def sync(self, ctx: "Context") -> None:
-        if ctx.author.id in logic.data["developer"]:
+        if logic.is_developer(ctx.author.id):
             await self.bot.tree.sync()
             logic.logging("info", "bot", "Commands synced", {
                 "command": {
@@ -31,7 +35,7 @@ class Bot(commands.Cog):
     # Reload a currently loaded extension
     @commands.command()
     async def reload_cog(self, ctx: "Context", cog: str) -> None:
-        if ctx.author.id in logic.data["developer"]:
+        if logic.is_developer(ctx.author.id):
             try:
                 await self.bot.reload_extension(f"Cogs.{cog}")
                 logic.logging("info", "bot", "Cog reloaded", {
@@ -76,7 +80,7 @@ class Bot(commands.Cog):
     # Load a currently unloaded extension
     @commands.command()
     async def load_cog(self, ctx: "Context", cog: str):
-        if ctx.author.id in logic.data["developer"]:
+        if logic.is_developer(ctx.author.id):
             try:
                 await self.bot.load_extension(f"Cogs.{cog}")
                 logic.logging("info", "bot", "Cog loaded", {
@@ -121,7 +125,7 @@ class Bot(commands.Cog):
     # Unload a currently loaded extension
     @commands.command()
     async def unload_cog(self, ctx: "Context", cog: str):
-        if ctx.author.id in logic.data["developer"]:
+        if logic.is_developer(ctx.author.id):
             try:
                 await self.bot.unload_extension(f"Cogs.{cog}")
                 logic.logging("info", "bot", "Cog unloaded", {
@@ -139,11 +143,12 @@ class Bot(commands.Cog):
             except ExtensionNotLoaded:
                 await ctx.reply("Cog was already not loaded")
 
-    # TODO !shutdown command
+    # Shut down the bot, this cannot be undone from within Discord
     @commands.command()
     async def shutdown(self, ctx: "Context"):
-        if ctx.author.id in logic.data["developer"]:
-            self.bot.close()
+        if logic.is_developer(ctx.author.id):
+            await ctx.reply("Cog is shutting down")
+            await self.bot.close()
             logic.logging("info", "bot", "Bot closed", {
                 "command": {
                     "guild": ctx.guild.id,
@@ -153,7 +158,34 @@ class Bot(commands.Cog):
                 }
             })
 
-    # TODO !help command
+    # Send an embed explaining the DeveloperCommands
+    @commands.command()
+    async def help(self, ctx: "Context"):
+        if logic.is_developer(ctx.author.id):
+            embed = discord.Embed(color=logic.data["bot"]["embed_color"],
+                                  title="Developer Help",
+                                  description="Explains every DeveloperCommand",
+                                  timestamp=dt.now(datetime.UTC))
+            embed.set_footer(text="Bot")
+            embed.add_field(name="reload_cog <Cog>", value="Reloads a provided Cog. Existing Cogs are:\n- Bot", inline=True)
+            embed.add_field(name="unload_cog <Cog>", value="Unloads a before loaded Cog (the same as `reload_cog` can access).\n**WARNING:** once Bot is unloaded it can not be loaded again, use `reload_cog` instead.")
+            embed.add_field(name="load_cog <Cog>", value="Loads a before unloaded Cog (the same as `reload_cog` can access).")
+            embed.add_field(name="sync", value="Syncs every application command with discord. Needs to be done whenever a command is changed in the source code.", inline=True)
+            embed.add_field(name="shutdown", value="shuts down the bot causing it to stop running. This should only be the last escalation step since it is not possible to restart it from within Discord.", inline=True)
+            embed.add_field(name="help", value="shows this message.")
+
+            await ctx.reply(embed=embed)
+            logic.logging("info", "bot", "DeveloperHelpEmbed sent", {
+                "command": {
+                    "guild": ctx.guild.id,
+                    "channel": ctx.channel.id,
+                    "user": ctx.author.id,
+                    "type": "DeveloperCommand"
+                }
+            })
+        else:
+            await ctx.reply("This bot supports application (/) commands, please use `/help`")
+
     # TODO /help command
 
 

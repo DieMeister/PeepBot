@@ -11,7 +11,15 @@ if TYPE_CHECKING:
 
 
 database_path = "./data.json"
+log_saves_directory_path = "./Logs"
 data: dict
+
+
+def is_developer(user_id: int):
+    """Check if a member is a developer of the Bot."""
+    if user_id in data["bot"]["developer"]:
+        return True
+    return False
 
 
 def has_property(provided_properties: list[int], member_properties: list["discord.Role"]) -> bool:
@@ -108,12 +116,11 @@ def logging(log_type: str, log_module: str, event_description: str, log_data: di
     log_data["event_description"] = event_description
 
     # saves the log entry to a json file
-    log_directory = "Logs"
-    file = load_data(f"{log_directory}/{date}.json")
+    file = load_data(f"{log_saves_directory_path}/{date}.json")
     if file is None:
         file = []
     file.append(log_data)
-    save_data(file, f"{log_directory}/{date}.json")
+    save_data(file, f"{log_saves_directory_path}/{date}.json")
 
     # prints a less detailed version of the log entry to the console
     print(f"{color}[{console_timestamp}] [{log_type.upper():5}] [{log_module:8}] {event_description}{Fore.RESET}")
