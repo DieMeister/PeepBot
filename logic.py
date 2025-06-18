@@ -97,7 +97,7 @@ def logging(log_type: str, log_module: str, event_description: str, log_data: di
         "fatal": Fore.RED,
         "debug": Fore.BLUE
     }
-    modules = ["bot"]
+    modules = ["bot", "peep"]
 
     # checks if provided arguments are valid and adds them to the json file
     if log_type not in types:

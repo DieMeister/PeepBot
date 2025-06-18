@@ -26,6 +26,8 @@ class PeepBot(commands.Bot):
 intents = discord.Intents.none()
 intents.guild_messages = True
 intents.message_content = True
+intents.guilds = True
+intents.members = True
 
 bot = PeepBot(command_prefix="!", intents=intents, help_command=None)
 bot.run(tokens.peep_bot)

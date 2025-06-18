@@ -11,18 +11,63 @@ import logic
 
 if TYPE_CHECKING:
     from discord.ext.commands import Context
+    from discord import Guild, Member
 
 
 class Bot(commands.Cog):
     def __init__(self, bot) -> None:
         self.bot = bot
 
+    @commands.Cog.listener()
+    async def on_guild_join(self, guild: "Guild"):
+        entry = {
+            "guild_id": guild.id,
+            "last_peep": "2025-01-01T00:00:00",
+            "peep_success_massage": "You got a peep :)",
+            "peep_scratch_massage": "You got scratched :(",
+            "peep_no_peep_message": "No peep, L",
+            "allowed_channel_ids": [],
+            "members": []
+        }
+        for member in guild.members:
+            entry["members"].append({
+                "user_id": member.id,
+                "peep_count": 0,
+                "execute_psps_timestamp": "2025-01-01T00:00:00"
+            })
+        logic.data["guilds"].append(entry)
+        logic.logging("info", "psps", "Bot joined Guild", {
+            "guild_id": guild.id,
+            "guild_name": guild.name,
+            "command": False
+        })
+        logic.save_data(logic.data, logic.database_path)
+
+
+    @commands.Cog.listener()
+    async def on_member_join(self, member: "Member"):
+        guild = logic.get_item(logic.data["guilds"], "guild_id", member.guild.id)
+        guild["members"].append({
+            "user_id": member.id,
+            "peep_count": 0,
+            "execute_psps_timestamp": "2025-01-01T00:00:00"
+        })
+        logic.logging("info", "psps", "Member joined Guild", {
+            "guild_id": member.guild.id,
+            "user_id": member.id,
+            "user_name": member.name,
+            "command": False
+        })
+        logic.save_data(logic.data, logic.database_path)
+
+
     # Sync all application commands with Discord
     @commands.command()
     async def sync(self, ctx: "Context") -> None:
         if logic.is_developer(ctx.author.id):
-            await self.bot.tree.sync()
+            synced = await self.bot.tree.sync()
             logic.logging("info", "bot", "Commands synced", {
+                "amount": len(synced),
                 "command": {
                     "guild": ctx.guild.id,
                     "channel": ctx.channel.id,
