@@ -20,6 +20,9 @@ class Bot(commands.Cog):
 
     @commands.Cog.listener()
     async def on_guild_join(self, guild: "Guild"):
+        if logic.get_item(logic.data["guilds"], "guild_id", guild.id) is None:
+            return
+
         entry = {
             "guild_id": guild.id,
             "last_peep": "2025-01-01T00:00:00",
@@ -47,6 +50,9 @@ class Bot(commands.Cog):
     @commands.Cog.listener()
     async def on_member_join(self, member: "Member"):
         guild = logic.get_item(logic.data["guilds"], "guild_id", member.guild.id)
+        if logic.get_item(guild["members"], "user_id", member.id) is None:
+            return
+
         guild["members"].append({
             "user_id": member.id,
             "peep_count": 0,
