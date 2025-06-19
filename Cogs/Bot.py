@@ -36,7 +36,7 @@ class Bot(commands.Cog):
                 "execute_psps_timestamp": "2025-01-01T00:00:00"
             })
         logic.data["guilds"].append(entry)
-        logic.logging("info", "psps", "Bot joined Guild", {
+        logic.logging("info", "bot", "Bot joined Guild", {
             "guild_id": guild.id,
             "guild_name": guild.name,
             "command": False
@@ -52,7 +52,7 @@ class Bot(commands.Cog):
             "peep_count": 0,
             "execute_psps_timestamp": "2025-01-01T00:00:00"
         })
-        logic.logging("info", "psps", "Member joined Guild", {
+        logic.logging("info", "bot", "Member joined Guild", {
             "guild_id": member.guild.id,
             "user_id": member.id,
             "user_name": member.name,
