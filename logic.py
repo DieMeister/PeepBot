@@ -12,6 +12,7 @@ if TYPE_CHECKING:
 
 database_path = "./data.json"
 log_saves_directory_path = "./Logs"
+datetime_format = "%Y-%m-%dT%H:%M:%S"
 data: dict
 
 
@@ -39,6 +40,14 @@ def get_item(lst: list[dict], key: str, value: str | int) -> dict | None:
         if i[key] == value:
             return i
     return None
+
+
+def get_datetime_object(datetime_string: str) -> dt:
+    return dt.strptime(datetime_string, datetime_format).replace(tzinfo=datetime.UTC)
+
+
+def get_datetime_string(datetime_object: dt) -> str:
+    return datetime_object.strftime(datetime_format)
 
 
 def load_data(file_path: str) -> dict | list | None:

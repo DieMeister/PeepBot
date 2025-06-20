@@ -20,7 +20,8 @@ class Bot(commands.Cog):
 
     @commands.Cog.listener()
     async def on_guild_join(self, guild: "Guild"):
-        if logic.get_item(logic.data["guilds"], "guild_id", guild.id) is None:
+        if logic.get_item(logic.data["guilds"], "guild_id", guild.id) is not None:
+            print("huh")
             return
 
         entry = {
@@ -50,7 +51,7 @@ class Bot(commands.Cog):
     @commands.Cog.listener()
     async def on_member_join(self, member: "Member"):
         guild = logic.get_item(logic.data["guilds"], "guild_id", member.guild.id)
-        if logic.get_item(guild["members"], "user_id", member.id) is None:
+        if logic.get_item(guild["members"], "user_id", member.id) is not None:
             return
 
         guild["members"].append({
