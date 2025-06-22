@@ -31,10 +31,11 @@ class Peep(commands.Cog):
         if ctx.channel.id not in guild["allowed_channel_ids"]:
             logic.logging("info", "peep", "Used !psps outside command channel", {
                 "command": {
-                "guild": ctx.guild.id,
-                "channel": ctx.channel.id,
-                "user": ctx.author.id,
-                "type": "UserCommand"
+                    "guild": ctx.guild.id,
+                    "channel": ctx.channel.id,
+                    "user": ctx.author.id,
+                    "type": "UserCommand",
+                    "parameters": None
                 }
             })
             return
@@ -50,7 +51,8 @@ class Peep(commands.Cog):
                     "guild": ctx.guild.id,
                     "channel": ctx.channel.id,
                     "user": ctx.author.id,
-                    "type": "UserCommand"
+                    "type": "UserCommand",
+                    "parameters": None
                 }
             })
             return
@@ -61,7 +63,8 @@ class Peep(commands.Cog):
                         "guild": ctx.guild.id,
                         "channel": ctx.channel.id,
                         "user": ctx.author.id,
-                        "type": "UserCommand"
+                        "type": "UserCommand",
+                        "parameters": None
                     }
                 })
                 return
@@ -72,7 +75,8 @@ class Peep(commands.Cog):
                         "guild": ctx.guild.id,
                         "channel": ctx.channel.id,
                         "user": ctx.author.id,
-                        "type": "UserCommand"
+                        "type": "UserCommand",
+                        "parameters": None
                     }
                 })
                 return
@@ -82,7 +86,8 @@ class Peep(commands.Cog):
                     "guild": ctx.guild.id,
                     "channel": ctx.channel.id,
                     "user": ctx.author.id,
-                    "type": "UserCommand"
+                    "type": "UserCommand",
+                    "parameters": None
                 }
             })
             return
@@ -102,7 +107,8 @@ class Peep(commands.Cog):
                     "guild": ctx.guild.id,
                     "channel": ctx.channel.id,
                     "user": ctx.author.id,
-                    "type": "UserCommand"
+                    "type": "UserCommand",
+                    "parameters": None
                 }
             })
         elif number < 16:
@@ -114,7 +120,8 @@ class Peep(commands.Cog):
                     "guild": ctx.guild.id,
                     "channel": ctx.channel.id,
                     "user": ctx.author.id,
-                    "type": "UserCommand"
+                    "type": "UserCommand",
+                    "parameters": None
                 }
             })
         else:
@@ -126,7 +133,8 @@ class Peep(commands.Cog):
                     "guild": ctx.guild.id,
                     "channel": ctx.channel.id,
                     "user": ctx.author.id,
-                    "type": "UserCommand"
+                    "type": "UserCommand",
+                    "parameters": None
                 }
             })
         logic.save_data(logic.data, logic.database_path)
@@ -151,13 +159,15 @@ class Peep(commands.Cog):
         await interaction.response.send_message(f"New Message set to '{message}'")
         logic.save_data(logic.data, logic.database_path)
         logic.logging("info", "peep", "PeepMessage changed", {
-            "message_type": message_type.value,
-            "new_message": message,
             "command": {
                 "guild": interaction.guild.id,
                 "channel": interaction.channel.id,
                 "user": interaction.user.id,
-                "type": "ManagerCommand"
+                "type": "ManagerCommand",
+                "parameters": {
+                    "message_type": message_type.value,
+                    "message": message
+                }
             }
         })
 
@@ -173,13 +183,17 @@ class Peep(commands.Cog):
             logic.save_data(logic.data, logic.database_path)
             await interaction.response.send_message(f"Channel <#{channel.id}> added as allowed command channel")
             logic.logging("info", "peep", "Channel added to allowed channel list", {
-                "channel_id": interaction.channel.id,
-                "channel_name": interaction.channel.name,
                 "command": {
                     "guild": interaction.guild.id,
                     "channel": interaction.channel.id,
                     "user": interaction.user.id,
-                    "type": "ManagerCommand"
+                    "type": "ManagerCommand",
+                    "parameters": {
+                        "channel": [
+                            interaction.channel.id,
+                            interaction.channel.name
+                        ]
+                    }
                 }
             })
 
@@ -195,19 +209,32 @@ class Peep(commands.Cog):
             logic.save_data(logic.data, logic.database_path)
             await interaction.response.send_message(f"Channel <#{channel.id}> removed as allowed command channel")
             logic.logging("info", "peep", "Channel removed from allowed channel list", {
-                "channel_id": interaction.channel.id,
-                "channel_name": interaction.channel.name,
                 "command": {
                     "guild": interaction.guild.id,
                     "channel": interaction.channel.id,
                     "user": interaction.user.id,
-                    "type": "ManagerCommand"
+                    "type": "ManagerCommand",
+                    "parameters": {
+                        "channel": [
+                            interaction.channel.id,
+                            interaction.channel.name
+                        ]
+                    }
                 }
             })
 
     @commands.command()
     async def thx(self, ctx: "Context"):
         await ctx.reply("Thank you Jas and Mono for suffering with me for the whole time")
+        logic.logging("info", "peep", "Member executed !thx", {
+            "command": {
+                "guild": ctx.guild.id,
+                "channel": ctx.channel.id,
+                "user": ctx.author.id,
+                "type": "ManagerCommand",
+                "parameters": None
+            }
+        })
 
 
 async def setup(bot) -> None:
