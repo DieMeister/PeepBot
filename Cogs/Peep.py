@@ -99,7 +99,10 @@ class Peep(commands.Cog):
         number = randint(1, 50)
         if number == 1:
             member["peep_count"] += 1
-            await ctx.reply(f"{guild['peep_success_massage']} You have {member['peep_count']} peeps now")
+            if member["peep_count"] == 1 and ctx.author.id == 486320426704830465:
+                await ctx.reply("LETSGO ADDIE, YOU GOT YOUR FIRST PEEP.")
+            else:
+                await ctx.reply(f"{guild['peep_success_massage']} You have {member['peep_count']} peeps now")
             logic.logging("info", "peep", "Member got a peep", {
                 "peep_count": member["peep_count"],
                 "randint": number,
