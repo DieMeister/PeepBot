@@ -312,7 +312,7 @@ class Bot(commands.Cog):
                 title="Usage Help",
                 timestamp=dt(2025, 6, 22, 21, 20, tzinfo=datetime.UTC)
             )
-            embed.add_field(name="psps", value="To get peeps type `!psps` in an allowed chat, if you don't know which chats are allowed ask your server manager, admin, or owner. If you are the person responsible to set up the bot please execute /help <setup>")
+            embed.add_field(name="psps", value="To get peeps type `!psps` in an allowed chat, if you don't know which chats are allowed ask your server manager, admin, or owner. If you are the person responsible to set up the bot please execute /help <setup>\nYou have to wait 10 minutes before you can execute the command again.\nYou have to wait 1 minute after someone else executed the command before you can execute it.")
             embed.set_footer(text="Bot")
             logic.logging("info", "bot", "Member executed /help", {
                 "command": {
