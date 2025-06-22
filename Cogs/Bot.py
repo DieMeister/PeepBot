@@ -289,7 +289,7 @@ class Bot(commands.Cog):
                 color=logic.data["bot"]["embed_color"],
                 title="Setup Help",
                 description="Everything you need to do to make the bot working",
-                timestamp=dt(2025, 6, 22, 20, 21, tzinfo=datetime.UTC)
+                timestamp=dt(2025, 6, 22, 21, 20, tzinfo=datetime.UTC)
             )
             embed.add_field(name="/add_channel <channel>", value="adds a channel as allowed channel. The !psps command works only in allowed channels, everywhere else it will not send a response.")
             embed.add_field(name="/remove_channel <channel>", value="removes a channel as allowed channel. This leads to !psps commands not getting a response anymore.")
@@ -311,7 +311,7 @@ class Bot(commands.Cog):
                 color=logic.data["bot"]["embed_color"],
                 title="Usage Help",
                 description="Everything you need to do to make the bot working",
-                timestamp=dt(2025, 6, 22, 20, 21, tzinfo=datetime.UTC)
+                timestamp=dt(2025, 6, 22, 21, 20, tzinfo=datetime.UTC)
             )
             embed.add_field(name="psps", value="To get peeps type `!psps` in an allowed chat, if you don't know which chats are allowed ask your server manager, admin, or owner. If you are the person responsible to set up the bot please execute /help <setup>")
             embed.set_footer(text="Bot")
@@ -331,7 +331,7 @@ class Bot(commands.Cog):
                 color=logic.data["bot"]["embed_color"],
                 title="Error",
                 description="Something went wrong, please try again or contact `@diemeister`",
-                timestamp=dt(2025, 6, 22, 20, 21, tzinfo=datetime.UTC)
+                timestamp=dt(2025, 6, 22, 21, 20, tzinfo=datetime.UTC)
             )
             logic.logging("warn", "bot", "Member executed /help", {
                 "error": "`problem.value` different from possible values",
@@ -345,7 +345,7 @@ class Bot(commands.Cog):
                     }
                 }
             })
-        interaction.response.send_message(embed=embed)
+        await interaction.response.send_message(embed=embed)
 
 
 
