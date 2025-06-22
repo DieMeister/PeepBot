@@ -1,9 +1,9 @@
 import discord
-from discord.ext import commands
+from discord.ext import commands, tasks
 from discord.ext.commands import ExtensionFailed, ExtensionNotLoaded, ExtensionNotFound, NoEntryPointError, ExtensionAlreadyLoaded
 
 import datetime
-from datetime import datetime as dt
+from datetime import datetime as dt, time, date
 
 from typing import TYPE_CHECKING
 
@@ -17,11 +17,26 @@ if TYPE_CHECKING:
 class Bot(commands.Cog):
     def __init__(self, bot) -> None:
         self.bot = bot
+        logic.logging("info", "bot", "Cog initialised", {
+            "cog_name": "Bot",
+            "command": False
+        })
+        self.database_save.start()
+        logic.logging("info", "bot", "DatabaseSavingLoop started", {
+            "command": False
+        })
+
+    @tasks.loop(time=time(1, tzinfo=datetime.UTC))
+    async def database_save(self):
+        logic.save_data(logic.data, f"{logic.database_saves_directory_path}/{date.today().strftime(logic.date_format)}.json")
+        logic.logging("info", "bot", "Database saved", {
+            "command": False
+        })
 
     @commands.Cog.listener()
     async def on_guild_join(self, guild: "Guild"):
         if logic.get_item(logic.data["guilds"], "guild_id", guild.id) is not None:
-            print("huh")
+            # FIXME add missing members
             return
 
         entry = {

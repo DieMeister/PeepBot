@@ -10,9 +10,12 @@ if TYPE_CHECKING:
     import discord
 
 
+# TODO put into json file
 database_path = "./data.json"
+database_saves_directory_path = "./DatabaseSaves"
 log_saves_directory_path = "./Logs"
 datetime_format = "%Y-%m-%dT%H:%M:%S"
+date_format = "%Y-%m-%d"
 data: dict
 
 
@@ -96,8 +99,8 @@ def logging(log_type: str, log_module: str, event_description: str, log_data: di
     # gets the current time and creates strings for its use cases
     timestamp = dt.now(datetime.UTC)
     console_timestamp = timestamp.strftime("%Y-%m-%d %H:%M:%S")
-    file_timestamp = timestamp.strftime("%Y-%m-%dT%H:%M:%S")
-    date = timestamp.strftime("%Y-%m-%d")
+    file_timestamp = timestamp.strftime(datetime_format)
+    date = timestamp.strftime(date_format)
 
     types = {
         "info": Fore.LIGHTWHITE_EX,

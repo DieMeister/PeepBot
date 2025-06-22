@@ -18,6 +18,10 @@ if TYPE_CHECKING:
 class Peep(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        logic.logging("info", "peep", "Cog initialised", {
+            "cog_name": "Peep",
+            "command": False
+        })
 
     @commands.command()
     async def psps(self, ctx: "Context"):
