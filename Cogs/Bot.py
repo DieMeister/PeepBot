@@ -310,7 +310,6 @@ class Bot(commands.Cog):
             embed = discord.Embed(
                 color=logic.data["bot"]["embed_color"],
                 title="Usage Help",
-                description="Everything you need to do to make the bot working",
                 timestamp=dt(2025, 6, 22, 21, 20, tzinfo=datetime.UTC)
             )
             embed.add_field(name="psps", value="To get peeps type `!psps` in an allowed chat, if you don't know which chats are allowed ask your server manager, admin, or owner. If you are the person responsible to set up the bot please execute /help <setup>")
