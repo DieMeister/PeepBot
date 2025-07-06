@@ -96,13 +96,10 @@ class Peep(commands.Cog):
         member["execute_psps_timestamp"] = logic.get_datetime_string(timestamp)
         guild["last_peep"] = logic.get_datetime_string(timestamp)
 
-        number = randint(1, 50)
+        number = randint(1, 7)
         if number == 1:
             member["peep_count"] += 1
-            if member["peep_count"] == 1 and ctx.author.id == 486320426704830465:
-                await ctx.reply("LETSGO ADDIE, YOU GOT YOUR FIRST PEEP.")
-            else:
-                await ctx.reply(f"{guild['peep_success_massage']} You have {member['peep_count']} peeps now")
+            await ctx.reply(f"{guild['peep_success_massage']} You have {member['peep_count']} peeps now")
             logic.logging("info", "peep", "Member got a peep", {
                 "peep_count": member["peep_count"],
                 "randint": number,
@@ -114,7 +111,7 @@ class Peep(commands.Cog):
                     "parameters": None
                 }
             })
-        elif number < 16:
+        elif number == 2 or number == 3:
             await ctx.reply(guild["peep_scratch_massage"])
             logic.logging("info", "peep", "Member got scratched", {
                 "peep_count": member["peep_count"],

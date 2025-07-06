@@ -4,7 +4,7 @@ from discord.ext import commands, tasks
 from discord.ext.commands import ExtensionFailed, ExtensionNotLoaded, ExtensionNotFound, NoEntryPointError, ExtensionAlreadyLoaded
 
 import datetime
-from datetime import datetime as dt, time, date, tzinfo
+from datetime import datetime as dt, time, date
 
 from typing import TYPE_CHECKING
 
@@ -272,7 +272,6 @@ class Bot(commands.Cog):
         else:
             await ctx.reply("This bot supports application (/) commands, please use `/help`")
 
-    # TODO /help command
     @app_commands.command(name="help", description="provides help for usage and setup of the bot")
     @app_commands.describe(
         problem="The problem you need help with"
@@ -346,6 +345,8 @@ class Bot(commands.Cog):
             })
         await interaction.response.send_message(embed=embed)
 
+        # TODO Leaderboard
+        # TODO Show amount of peeps
 
 
 async def setup(bot) -> None:
