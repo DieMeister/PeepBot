@@ -20,7 +20,7 @@ This is a DiscordBot created with the help of the members of [sinaheh's communit
     - add the bot token to `tokens.py`, this should look like this (`<your BotToken>` should obviously be your actual bot token):
 
 ```python
-peep_bot = "<your BotToken>"
+BOTTOKEN = "<your BotToken>"
 ```
 **UNDER NO CIRCUMSTANCES EVER SHARE THIS WITH ANYONE; IF YOU DID, CHANGE IT IMMEDIATELY**
 
