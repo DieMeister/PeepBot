@@ -3,7 +3,7 @@ from discord.ext import commands
 
 import os
 
-import tokens
+from tokens import BOTTOKEN
 import logic
 
 
@@ -30,4 +30,4 @@ intents.guilds = True
 intents.members = True
 
 bot = PeepBot(command_prefix="!", intents=intents, help_command=None)
-bot.run(tokens.peep_bot)
+bot.run(BOTTOKEN)
