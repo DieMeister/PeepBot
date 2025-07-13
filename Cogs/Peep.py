@@ -1,11 +1,13 @@
-from discord.ext import commands
-
 import datetime
 from datetime import datetime as dt, timedelta
 
 from typing import TYPE_CHECKING
 from random import randint
 
+from discord.ext import commands
+import sqlite3
+
+from lib.date_time import get_datetime_object, get_datetime_string
 import logic
 
 if TYPE_CHECKING:
@@ -22,11 +24,15 @@ class Peep(commands.Cog):
 
     @commands.command()
     async def psps(self, ctx: "Context"):
-        guild = logic.get_item(logic.data["guilds"], "guild_id", ctx.guild.id)
-        member = logic.get_item(guild["members"], "user_id", ctx.author.id)
+        connection = sqlite3.connect(logic.config["file_paths"]["database"])
 
-        if ctx.channel.id not in guild["allowed_channel_ids"]:
-            logic.logging("info", "peep", "Used !psps outside command channel", {
+        allowed_channel = connection.execute("""
+        SELECT *
+        FROM allowed_channels
+        WHERE channel_id = ?
+        """, (ctx.channel.id,)).fetchone()
+        if not allowed_channel:
+            logic.logging("info", "peep", "Used !psps outside allowed channel", {
                 "command": {
                     "guild": ctx.guild.id,
                     "channel": ctx.channel.id,
@@ -37,10 +43,21 @@ class Peep(commands.Cog):
             })
             return
 
-        last_member_count = logic.get_datetime_object(member["execute_psps_timestamp"])
-        last_guild_count = logic.get_datetime_object(guild["last_peep"])
+        member = connection.execute("""
+        SELECT last_peep, caught_peeps
+        FROM members
+        WHERE user_id = ?
+        AND guild_id = ?
+        """, (ctx.author.id, ctx.guild.id)).fetchone()
+        guild = connection.execute("""
+        SELECT last_peep, success_message, scratch_message, no_peep_message
+        FROM guilds
+        WHERE guild_id = ?
+        """, (ctx.guild.id,)).fetchone()
 
         timestamp = dt.now(datetime.UTC)
+        last_member_count = get_datetime_object(member[0])
+        last_guild_count = get_datetime_object(guild[0])
 
         if last_guild_count + timedelta(minutes=1) > timestamp:
             logic.logging("info", "peep", "Used !psps within 1 minute of another person", {
@@ -53,7 +70,7 @@ class Peep(commands.Cog):
                 }
             })
             return
-        if ctx.author.id in [729671721975545978, 476491500461621261, 929746020865282059]:
+        if ctx.author.id in logic.config["people"]["vip"]:
             if last_member_count + timedelta(minutes=5) > timestamp:
                 logic.logging("info", "peep", "Used !psps within within 5 minutes of last use", {
                     "command": {
@@ -65,7 +82,7 @@ class Peep(commands.Cog):
                     }
                 })
                 return
-        elif ctx.author.id in [662733222903414826, 1084257450846343209]:
+        elif ctx.author.id in logic.config["people"]["vup"]:
             if last_member_count + timedelta(minutes=30) > timestamp:
                 logic.logging("info", "peep", "Used !psps within within 30 minutes of last use", {
                     "command": {
@@ -89,16 +106,31 @@ class Peep(commands.Cog):
             })
             return
 
-
-        member["execute_psps_timestamp"] = logic.get_datetime_string(timestamp)
-        guild["last_peep"] = logic.get_datetime_string(timestamp)
+        connection.execute("""
+        UPDATE members
+        SET last_peep = ?
+        WHERE user_id = ?
+        AND guild_id = ?
+        """, (get_datetime_string(timestamp), ctx.author.id, ctx.guild.id))
+        connection.execute("""
+        UPDATE guilds
+        SET last_peep = ?
+        WHERE guild_id = ?
+        """, (get_datetime_string(timestamp), ctx.guild.id))
 
         number = randint(1, 7)
         if number == 1:
-            member["peep_count"] += 1
-            await ctx.reply(f"{guild['peep_success_massage']} You have {member['peep_count']} peeps now")
+            new_count = member[1] + 1
+            connection.execute("""
+            UPDATE members
+            SET caught_peeps = ?
+            WHERE user_id = ?
+            AND guild_id = ?
+            """, (new_count, ctx.author.id, ctx.guild.id))
+
+            await ctx.reply(f"{guild[1]} You have {new_count} peeps now")
             logic.logging("info", "peep", "Member got a peep", {
-                "peep_count": member["peep_count"],
+                "peep_count": new_count,
                 "randint": number,
                 "command": {
                     "guild": ctx.guild.id,
@@ -109,9 +141,9 @@ class Peep(commands.Cog):
                 }
             })
         elif number == 2 or number == 3:
-            await ctx.reply(guild["peep_scratch_massage"])
+            await ctx.reply(guild[2])
             logic.logging("info", "peep", "Member got scratched", {
-                "peep_count": member["peep_count"],
+                "peep_count": member[1],
                 "randint": number,
                 "command": {
                     "guild": ctx.guild.id,
@@ -122,9 +154,9 @@ class Peep(commands.Cog):
                 }
             })
         else:
-            await ctx.reply(guild["peep_no_peep_message"])
+            await ctx.reply(guild[3])
             logic.logging("info", "peep", "Member got no peep", {
-                "peep_count": member["peep_count"],
+                "peep_count": member[1],
                 "randint": number,
                 "command": {
                     "guild": ctx.guild.id,
@@ -134,7 +166,8 @@ class Peep(commands.Cog):
                     "parameters": None
                 }
             })
-        logic.save_data(logic.data, logic.database_path)
+        connection.commit()
+        connection.close()
 
 
 async def setup(bot) -> None:

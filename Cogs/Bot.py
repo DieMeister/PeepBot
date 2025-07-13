@@ -6,9 +6,11 @@ from discord.ext.commands import ExtensionFailed, ExtensionNotLoaded, ExtensionN
 import datetime
 from datetime import datetime as dt, time, date
 
-from typing import TYPE_CHECKING
-
 import logic
+from lib.date_time import get_datetime_string
+
+from typing import TYPE_CHECKING
+import sqlite3
 
 if TYPE_CHECKING:
     from discord.ext.commands import Context
@@ -27,61 +29,95 @@ class Bot(commands.Cog):
             "command": False
         })
 
+    # FIXME figure out how to copy the database
     @tasks.loop(time=time(1, tzinfo=datetime.UTC))
     async def database_save(self):
-        logic.save_data(logic.data, f"{logic.database_saves_directory_path}/{date.today().strftime(logic.date_format)}.json")
+        database = sqlite3.connect(logic.config["file_paths"]["database"])
+        backup = sqlite3.connect(f"{logic.config['file_paths']['database_saves']}{date.today().strftime(logic.config['datetime_formats']['date'])}.json")
+        database.backup(backup)
+
+        backup.commit()
+        backup.close()
+        database.close()
+
         logic.logging("info", "bot", "Database saved", {
             "command": False
         })
 
     @commands.Cog.listener()
     async def on_guild_join(self, guild: "Guild"):
-        if logic.get_item(logic.data["guilds"], "guild_id", guild.id) is not None:
+        connection = sqlite3.connect(logic.config["file_paths"]["database"])
+
+        # checks if guild is already in database
+        known_guild = connection.execute("""
+        SELECT *
+        FROM guilds
+        WHERE guild_id = ?
+        """, (guild.id,)).fetchone()
+        if known_guild:
             # FIXME add missing members
             return
 
-        entry = {
-            "guild_id": guild.id,
-            "last_peep": "2025-01-01T00:00:00",
-            "peep_success_massage": "You got a peep :)",
-            "peep_scratch_massage": "You got scratched :(",
-            "peep_no_peep_message": "No peep, L",
-            "allowed_channel_ids": [],
-            "members": []
-        }
+        connection.execute("""
+        INSERT INTO guilds (guild_id, last_peep)
+        VALUES (?, ?)
+        """, (guild.id, get_datetime_string(dt.now(datetime.UTC))))
+        connection.commit()
+
+        members = []
         for member in guild.members:
-            entry["members"].append({
-                "user_id": member.id,
-                "peep_count": 0,
-                "execute_psps_timestamp": "2025-01-01T00:00:00"
-            })
-        logic.data["guilds"].append(entry)
+            members.append(
+                (
+                    member.id,
+                    guild.id,
+                    get_datetime_string(dt.now(datetime.UTC))
+                )
+            )
+        connection.executemany("""
+        INSERT INTO members (
+            user_id,
+            guild_id,
+            last_peep
+        )
+        VALUES (?, ?, ?)
+        """, members)
+        connection.commit()
+
         logic.logging("info", "bot", "Bot joined Guild", {
             "guild_id": guild.id,
             "guild_name": guild.name,
             "command": False
         })
-        logic.save_data(logic.data, logic.database_path)
+
+        connection.close()
 
 
     @commands.Cog.listener()
     async def on_member_join(self, member: "Member"):
-        guild = logic.get_item(logic.data["guilds"], "guild_id", member.guild.id)
-        if logic.get_item(guild["members"], "user_id", member.id) is not None:
+        connection = sqlite3.connect(logic.config["file_paths"]["database"])
+
+        known_member = connection.execute("""
+        SELECT *
+        FROM guilds
+        WHERE user_id = ?
+        AND guild_id = ?
+        """, (member.id, member.guild.id)).fetchone()
+        if known_member:
             return
 
-        guild["members"].append({
-            "user_id": member.id,
-            "peep_count": 0,
-            "execute_psps_timestamp": "2025-01-01T00:00:00"
-        })
+        connection.execute("""
+        INSERT INTO members (user_id, guild_id, last_peep)
+        VALUES (?, ?, ?)
+        """, (member.id, member.guild.id, get_datetime_string(dt.now(datetime.UTC))))
+        connection.commit()
+
         logic.logging("info", "bot", "Member joined Guild", {
             "guild_id": member.guild.id,
             "user_id": member.id,
             "user_name": member.name,
             "command": False
         })
-        logic.save_data(logic.data, logic.database_path)
+        connection.close()
 
 
     # Sync all application commands with Discord
@@ -230,7 +266,7 @@ class Bot(commands.Cog):
     @commands.command()
     async def shutdown(self, ctx: "Context"):
         if logic.is_developer(ctx.author.id):
-            await ctx.reply("Cog is shutting down")
+            await ctx.reply("Bot is shutting down")
             await self.bot.close()
             logic.logging("info", "bot", "Bot closed", {
                 "command": {
@@ -246,7 +282,7 @@ class Bot(commands.Cog):
     @commands.command()
     async def devhelp(self, ctx: "Context"):
         if logic.is_developer(ctx.author.id):
-            embed = discord.Embed(color=logic.data["bot"]["embed_color"],
+            embed = discord.Embed(color=logic.config["embed_color"],
                                   title="Developer Help",
                                   description="Explains every DeveloperCommand",
                                   timestamp=dt(2025, 6, 16, 11, 7, tzinfo=datetime.UTC))
@@ -285,7 +321,7 @@ class Bot(commands.Cog):
     async def help(self, interaction: "Interaction", problem: app_commands.Choice[str]):
         if problem.value == "setup":
             embed = discord.Embed(
-                color=logic.data["bot"]["embed_color"],
+                color=logic.config["embed_color"],
                 title="Setup Help",
                 description="Everything you need to do to make the bot working",
                 timestamp=dt(2025, 6, 22, 21, 20, tzinfo=datetime.UTC)
@@ -307,7 +343,7 @@ class Bot(commands.Cog):
             })
         elif problem.value == "usage":
             embed = discord.Embed(
-                color=logic.data["bot"]["embed_color"],
+                color=logic.config["embed_color"],
                 title="Usage Help",
                 timestamp=dt(2025, 6, 22, 21, 20, tzinfo=datetime.UTC)
             )
@@ -326,7 +362,7 @@ class Bot(commands.Cog):
             })
         else:
             embed = discord.Embed(
-                color=logic.data["bot"]["embed_color"],
+                color=logic.config["embed_color"],
                 title="Error",
                 description="Something went wrong, please try again or contact `@diemeister`",
                 timestamp=dt(2025, 6, 22, 21, 20, tzinfo=datetime.UTC)

@@ -1,5 +1,4 @@
 from discord.ext import commands
-
 from typing import TYPE_CHECKING
 
 import logic
@@ -11,15 +10,15 @@ if TYPE_CHECKING:
 class EasterEgg(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        logic.logging("eastregg", "peep", "Cog initialised", {
-            "cog_name": "Peep",
+        logic.logging("info", "eastregg", "Cog initialised", {
+            "cog_name": "EasterEgg",
             "command": False
         })
 
     @commands.command()
     async def thx(self, ctx: "Context"):
         await ctx.reply("Thank you Jas and Mono for suffering with me for the whole time")
-        logic.logging("eastregg", "peep", "Member executed !thx", {
+        logic.logging("info", "eastregg", "Member executed !thx", {
             "command": {
                 "guild": ctx.guild.id,
                 "channel": ctx.channel.id,

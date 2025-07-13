@@ -26,7 +26,7 @@ BOTTOKEN = "<your BotToken>"
 
 - create a virtual environment (venv)
   - install all packages the bot relies on
-  - change the developer IDs in [data.json](./data.json) with the IDs of you and whoever is a developer of your bot
+  - change the developer IDs in [data.json](./config.json) with the IDs of you and whoever is a developer of your bot
 
 # Logging
 This bot uses a custom logging function ([logic.py](./logic.py).logging) that both prints a short log to the terminal and saves a more detailed log in a json file.  

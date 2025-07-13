@@ -1,76 +1,17 @@
-import json
-from colorama import Fore
-from typing import TYPE_CHECKING
-import os
-
 import datetime
 from datetime import datetime as dt
 
-if TYPE_CHECKING:
-    import discord
+from colorama import Fore
+from lib import json_data
 
 
-# TODO put into json file
-database_path = "./data.json"
-database_saves_directory_path = "./DatabaseSaves"
-log_saves_directory_path = "./Logs"
-datetime_format = "%Y-%m-%dT%H:%M:%S"
-date_format = "%Y-%m-%d"
-data: dict
-
+config: dict
 
 def is_developer(user_id: int):
     """Check if a member is a developer of the Bot."""
-    if user_id in data["bot"]["developer"]:
+    if user_id in config["people"]["developer"]:
         return True
     return False
-
-
-def has_property(provided_properties: list[int], member_properties: list["discord.Role"]) -> bool:
-    """Check if a member has a property from a provided list."""
-    for i in provided_properties:
-        for j in member_properties:
-            if i == j.id:
-                return True
-    return False
-
-
-def get_item(lst: list[dict], key: str, value: str | int) -> dict | None:
-    """Get a specific dictionary from a list of dictionaries."""
-    for i in lst:
-        if key not in i:
-            continue
-        if i[key] == value:
-            return i
-    return None
-
-
-def get_datetime_object(datetime_string: str) -> dt:
-    return dt.strptime(datetime_string, datetime_format).replace(tzinfo=datetime.UTC)
-
-
-def get_datetime_string(datetime_object: dt) -> str:
-    return datetime_object.strftime(datetime_format)
-
-
-def load_data(file_path: str) -> dict | list | None:
-    """Load a json file and return it; return None if the file does not exist."""
-    try:
-        with open(file_path) as f:
-            raw_data = f.read()
-        output = json.loads(raw_data)
-    except FileNotFoundError:
-        output = None
-
-    return output
-
-
-def save_data(variable: dict | list, file_path: str) -> None:
-    """Save a list or dictionary to a json file."""
-    os.makedirs(os.path.dirname(file_path), exist_ok=True)
-    raw_data = json.dumps(variable, indent=2)
-    with open(file_path, "w") as file:
-        file.write(raw_data)
 
 
 def logging(log_type: str, log_module: str, event_description: str, log_data: dict) -> None:
@@ -99,8 +40,8 @@ def logging(log_type: str, log_module: str, event_description: str, log_data: di
     # gets the current time and creates strings for its use cases
     timestamp = dt.now(datetime.UTC)
     console_timestamp = timestamp.strftime("%Y-%m-%d %H:%M:%S")
-    file_timestamp = timestamp.strftime(datetime_format)
-    date = timestamp.strftime(date_format)
+    file_timestamp = timestamp.strftime(config["datetime_formats"]["datetime"])
+    date = timestamp.strftime(config["datetime_formats"]["date"])
 
     types = {
         "info": Fore.LIGHTWHITE_EX,
@@ -128,11 +69,11 @@ def logging(log_type: str, log_module: str, event_description: str, log_data: di
     log_data["event_description"] = event_description
 
     # saves the log entry to a json file
-    file = load_data(f"{log_saves_directory_path}/{date}.json")
+    file = json_data.load_data(f"{config['file_paths']['log_saves']}{date}.json")
     if file is None:
         file = []
     file.append(log_data)
-    save_data(file, f"{log_saves_directory_path}/{date}.json")
+    json_data.save_data(file, f"{config['file_paths']['log_saves']}{date}.json")
 
     # prints a less detailed version of the log entry to the console
     print(f"{color}[{console_timestamp}] [{log_type.upper():5}] [{log_module:8}] {event_description}{Fore.RESET}")
