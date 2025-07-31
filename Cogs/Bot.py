@@ -6,12 +6,11 @@ from discord.ext.commands import ExtensionFailed, ExtensionNotLoaded, ExtensionN
 import datetime
 from datetime import datetime as dt, time, date
 
-import logic
-from lib.date_time import get_datetime_string
-from lib import logging
-
 from typing import TYPE_CHECKING
 import sqlite3
+
+import lib
+from lib import logging, get_datetime_string
 
 if TYPE_CHECKING:
     from discord.ext.commands import Context
@@ -28,8 +27,8 @@ class Bot(commands.Cog):
 
     @tasks.loop(time=time(1, tzinfo=datetime.UTC))
     async def database_save(self):
-        database = sqlite3.connect(logic.config["file_paths"]["database"])
-        backup = sqlite3.connect(f"{logic.config['file_paths']['database_saves']}{date.today().strftime(logic.config['datetime_formats']['date'])}.json")
+        database = sqlite3.connect(lib.get.database_path())
+        backup = sqlite3.connect(f"{lib.get.database_backup_path()}{date.today().strftime(lib.get.date_format())}.json")
         database.backup(backup)
 
         backup.commit()
@@ -40,7 +39,7 @@ class Bot(commands.Cog):
 
     @commands.Cog.listener()
     async def on_guild_join(self, guild: "Guild"):
-        connection = sqlite3.connect(logic.config["file_paths"]["database"])
+        connection = sqlite3.connect(lib.get.database_path())
 
         # checks if guild is already in database
         known_guild = connection.execute("""
@@ -82,7 +81,7 @@ class Bot(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_join(self, member: "Member"):
-        connection = sqlite3.connect(logic.config["file_paths"]["database"])
+        connection = sqlite3.connect(lib.get.database_path())
 
         known_member = connection.execute("""
         SELECT *
@@ -105,7 +104,7 @@ class Bot(commands.Cog):
     # Sync all application commands with Discord
     @commands.command()
     async def sync(self, ctx: "Context") -> None:
-        if logic.is_developer(ctx.author.id):
+        if lib.is_developer(ctx.author.id):
             synced = await self.bot.tree.sync()
             logging.sync_commands("command", len(synced), ctx)
             await ctx.reply("Commands synced")
@@ -113,20 +112,9 @@ class Bot(commands.Cog):
     # Reload a currently loaded extension
     @commands.command()
     async def reload_cog(self, ctx: "Context", cog: str) -> None:
-        if logic.is_developer(ctx.author.id):
+        if lib.is_developer(ctx.author.id):
             try:
                 await self.bot.reload_extension(f"Cogs.{cog}")
-                logic.logging("info", "bot", "Cog reloaded", {
-                    "command": {
-                        "guild": ctx.guild.id,
-                        "channel": ctx.channel.id,
-                        "user": ctx.author.id,
-                        "type": "DeveloperCommand",
-                        "parameters": {
-                            "extension": cog
-                        }
-                    }
-                })
                 logging.extension_success("bot", "Cog reloaded successfully", "command", cog, ctx)
                 await ctx.reply("Cog reloaded successfully")
             except ExtensionNotFound:
@@ -144,7 +132,7 @@ class Bot(commands.Cog):
     # Load a currently unloaded extension
     @commands.command()
     async def load_cog(self, ctx: "Context", cog: str):
-        if logic.is_developer(ctx.author.id):
+        if lib.is_developer(ctx.author.id):
             try:
                 await self.bot.load_extension(f"Cogs.{cog}")
                 logging.extension_success("bot", "Cog loaded successfully", "command", cog, ctx)
@@ -165,7 +153,7 @@ class Bot(commands.Cog):
     # Unload a currently loaded extension
     @commands.command()
     async def unload_cog(self, ctx: "Context", cog: str):
-        if logic.is_developer(ctx.author.id):
+        if lib.is_developer(ctx.author.id):
             try:
                 await self.bot.unload_extension(f"Cogs.{cog}")
                 logging.extension_success("bot", "Extension loaded successfully", "command", cog, ctx)
@@ -180,7 +168,7 @@ class Bot(commands.Cog):
     # Shut down the bot, this cannot be undone from within Discord
     @commands.command()
     async def shutdown(self, ctx: "Context"):
-        if logic.is_developer(ctx.author.id):
+        if lib.is_developer(ctx.author.id):
             await ctx.reply("Bot is shutting down")
             await self.bot.close()
             logging.command("bot", "Bot shut down", ctx, "developer", "warn")
@@ -188,8 +176,8 @@ class Bot(commands.Cog):
     # Send an embed explaining the DeveloperCommands
     @commands.command()
     async def devhelp(self, ctx: "Context"):
-        if logic.is_developer(ctx.author.id):
-            embed = discord.Embed(color=logic.config["embed_color"],
+        if lib.is_developer(ctx.author.id):
+            embed = discord.Embed(color=lib.get.embed_color(),
                                   title="Developer Help",
                                   description="Explains every DeveloperCommand",
                                   timestamp=dt(2025, 6, 16, 11, 7, tzinfo=datetime.UTC))
@@ -220,7 +208,7 @@ class Bot(commands.Cog):
     async def help(self, interaction: "Interaction", problem: app_commands.Choice[str]):
         if problem.value == "setup":
             embed = discord.Embed(
-                color=logic.config["embed_color"],
+                color=lib.get.embed_color(),
                 title="Setup Help",
                 description="Everything you need to do to make the bot working",
                 timestamp=dt(2025, 6, 22, 21, 20, tzinfo=datetime.UTC)
@@ -233,7 +221,7 @@ class Bot(commands.Cog):
             logging.help_embed("setup", interaction, "member")
         elif problem.value == "usage":
             embed = discord.Embed(
-                color=logic.config["embed_color"],
+                color=lib.get.embed_color(),
                 title="Usage Help",
                 timestamp=dt(2025, 6, 22, 21, 20, tzinfo=datetime.UTC)
             )

@@ -1,14 +1,13 @@
 import discord
 from discord.ext import commands
 
-from lib import logging
-from lib.json_data import load_data
+import lib
+from lib import logging, load_data
 
 import os
 import sqlite3
 
 from tokens import BOTTOKEN
-import logic
 
 
 class PeepBot(commands.Bot):
@@ -18,8 +17,8 @@ class PeepBot(commands.Bot):
                 await self.load_extension(f"Cogs.{file[:-3]}")
                 logging.extension_success("bot", "Extension loaded", "setup", file)
 
-        if not os.path.isfile(logic.config["file_paths"]["database"]):
-            connection = sqlite3.connect(logic.config["file_paths"]["database"])
+        if not os.path.isfile(lib.get.database_path()):
+            connection = sqlite3.connect(lib.get.database_path())
             with open("sql/tables.sql") as f:
                 script = f.read()
             connection.executescript(script)
@@ -28,8 +27,8 @@ class PeepBot(commands.Bot):
 
             logging.default_logger("bot", "Bot Database created", "setup", "warn")
 
-        if not os.path.isfile(logic.config["file_paths"]["logs"]):
-            connection = sqlite3.connect(logic.config["file_paths"]["logs"])
+        if not os.path.isfile(lib.get.log_path()):
+            connection = sqlite3.connect(lib.get.log_path())
             with open("sql/logging.sql") as f:
                 script = f.read()
             connection.executescript(script)
@@ -42,7 +41,7 @@ class PeepBot(commands.Bot):
         logging.sync_commands("setup", len(synced))
 
 
-logic.config = load_data("./config.json")
+lib.config = load_data("./config.json")
 logging.default_logger("bot", "Configuration file loaded", "setup")
 
 intents = discord.Intents.none()

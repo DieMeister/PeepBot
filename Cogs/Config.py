@@ -3,11 +3,11 @@ import logging
 from discord.ext import commands
 from discord import app_commands
 
+import lib
+from lib import logging
+
 from typing import TYPE_CHECKING
 import sqlite3
-
-import logic
-from lib import logging
 
 if TYPE_CHECKING:
     from discord import Interaction, TextChannel
@@ -32,7 +32,7 @@ class Config(commands.Cog):
     )
     @app_commands.default_permissions(manage_guild=True)
     async def change_peep_message(self, interaction: "Interaction", message_type: app_commands.Choice[str], message: str):
-        connection = sqlite3.connect(logic.config["file_paths"]["database"])
+        connection = sqlite3.connect(lib.get.database_path())
 
         old_message = connection.execute("""
         SELECT ?
@@ -55,7 +55,7 @@ class Config(commands.Cog):
     @app_commands.describe(channel="The channel that is added to the allowed list")
     @app_commands.default_permissions(manage_guild=True)
     async def add_channel(self, interaction: "Interaction", channel: "TextChannel"):
-        connection = sqlite3.connect(logic.config["file_paths"]["database"])
+        connection = sqlite3.connect(lib.get.database_path())
 
         known_channel = connection.execute("""
         SELECT *
@@ -80,7 +80,7 @@ class Config(commands.Cog):
     @app_commands.describe(channel="The channel that is being removed form the list of allowed channels")
     @app_commands.default_permissions(manage_guild=True)
     async def remove_channel(self, interaction: "Interaction", channel: "TextChannel"):
-        connection = sqlite3.connect(logic.config["file_paths"]["database"])
+        connection = sqlite3.connect(lib.get.database_path())
 
         if not connection.execute(f"SELECT * FROM allowed_channels WHERE channel_id = {channel.id}"):
             await interaction.response.send_message("Channel already not in list")

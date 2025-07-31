@@ -7,10 +7,8 @@ from random import randint
 from discord.ext import commands
 import sqlite3
 
-from lib.date_time import get_datetime_object, get_datetime_string
-from lib import logging
-
-import logic
+import lib
+from lib import logging, get_datetime_object, get_datetime_string
 
 if TYPE_CHECKING:
     from discord.ext.commands import Context
@@ -23,7 +21,7 @@ class Peep(commands.Cog):
 
     @commands.command()
     async def psps(self, ctx: "Context"):
-        connection = sqlite3.connect(logic.config["file_paths"]["database"])
+        connection = sqlite3.connect(lib.get.database_path())
 
         allowed_channel = connection.execute("""
         SELECT *
@@ -53,11 +51,11 @@ class Peep(commands.Cog):
         if last_guild_count + timedelta(minutes=1) > timestamp:
             logging.psps_denied(ctx, "Within 1 minute of another member")
             return
-        if ctx.author.id in logic.config["people"]["vip"]:
+        if ctx.author.id in lib.get.vip():
             if last_member_count + timedelta(minutes=5) > timestamp:
                 logging.psps_denied(ctx, "vip used twice within 5 minutes")
                 return
-        elif ctx.author.id in logic.config["people"]["vup"]:
+        elif ctx.author.id in lib.get.vup():
             if last_member_count + timedelta(minutes=30) > timestamp:
                 logging.psps_denied(ctx, "vup used twice within 30 minutes")
                 return

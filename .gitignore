@@ -1,5 +1,5 @@
 .idea/
-__*
+*pycache*
 
 *.png
 *.db

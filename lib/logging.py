@@ -5,7 +5,7 @@ from colorama import Fore
 import sqlite3
 from typing import TYPE_CHECKING, Optional, Union
 
-import logic
+import lib
 
 if TYPE_CHECKING:
     import discord
@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 
 def default_logger(log_module: str, description: str, execution_method: str, log_type: str="info") -> int:
     timestamp = datetime.now(dt.UTC)
-    database_time = timestamp.strftime(logic.config["datetime_formats"]["datetime"])
+    database_time = timestamp.strftime(lib.get.datetime_format())
     console_time = timestamp.strftime("%Y-%m-%d %H:%M:%S")
 
     colors = {
@@ -44,7 +44,7 @@ def default_logger(log_module: str, description: str, execution_method: str, log
     if execution_method not in execution_methods:
         raise ValueError("Provided ExecutionMethod does not exist")
 
-    connection = sqlite3.connect(logic.config["file_paths"]["logs"])
+    connection = sqlite3.connect(lib.get.log_path())
     log_id = connection.execute("""
     INSERT INTO logs (timestamp, type, module, description, execution_method)
     VALUES (?, ?, ?, ?, ?)
@@ -80,7 +80,7 @@ def command(log_module: str, description: str, context: Union["Context", "Intera
     else:
         raise ValueError("command context not of type Context or Interaction")
 
-    connection = sqlite3.connect(logic.config["file_paths"]["logs"])
+    connection = sqlite3.connect(lib.get.log_path())
     connection.execute("""
     INSERT INTO commands (log_id, guild_id, channel_id, user_id, type)
     VALUES (?, ?, ?, ?, ?)
@@ -107,7 +107,7 @@ def command_possible(log_module: str, description: str, execution_method: str, l
 def extension_success(log_module: str, description: str, execution_method: str, extension_name: str, ctx: Optional["Context"]=None) -> int:
     log_id = command_possible(log_module, description, execution_method, "info", ctx, "developer")
 
-    connection = sqlite3.connect(logic.config["file_paths"]["logs"])
+    connection = sqlite3.connect(lib.get.log_path())
     connection.execute("""
     INSERT INTO extension_success (log_id, extension_name)
     VALUES (?, ?)
@@ -121,7 +121,7 @@ def extension_success(log_module: str, description: str, execution_method: str, 
 def extension_error(description: str, execution_method: str, extension_name: str, failure_reason: str, ctx: Optional["Context"]=None, log_type: str="error", log_module: str="bot") -> int:
     log_id = command_possible(log_module, description, execution_method, log_type, ctx, "developer")
 
-    connection = sqlite3.connect(logic.config["file_paths"]["logs"])
+    connection = sqlite3.connect(lib.get.log_path())
     connection.execute("""
     INSERT INTO extension_error (log_id, extension_name, reason)
     VALUES (?, ?, ?)
@@ -134,7 +134,7 @@ def extension_error(description: str, execution_method: str, extension_name: str
 
 def sync_commands(execution_method: str, amount: int, ctx: Optional["Context"]=None) -> int:
     log_id = command_possible("bot", "Commands synced", execution_method, "info", ctx, "developer")
-    connection = sqlite3.connect(logic.config["file_paths"]["logs"])
+    connection = sqlite3.connect(lib.get.log_path())
     connection.execute("""
     INSERT INTO commands_synced (log_id, amount)
     VALUES (?, ?)
@@ -148,7 +148,7 @@ def sync_commands(execution_method: str, amount: int, ctx: Optional["Context"]=N
 def guild_join(guild: "discord.Guild") -> int:
     log_id = default_logger("bot", "Bot joined Guild", "event")
 
-    connection = sqlite3.connect(logic.config["file_paths"]["logs"])
+    connection = sqlite3.connect(lib.get.log_path())
     connection.execute("""
     INSERT INTO guild_join (log_id, guild_id, guild_name)
     VALUES (?, ?, ?)
@@ -162,7 +162,7 @@ def guild_join(guild: "discord.Guild") -> int:
 def member_join(member: "discord.Member") -> int:
     log_id = default_logger("bot", "Member joined Guild", "event")
 
-    connection = sqlite3.connect(logic.config["file_paths"]["logs"])
+    connection = sqlite3.connect(lib.get.log_path())
     connection.execute("""
     INSERT INTO member_join (log_id, guild_id, user_id, user_name)
     VALUES (?, ?, ?, ?)
@@ -176,7 +176,7 @@ def member_join(member: "discord.Member") -> int:
 def configure_channel(log_module: str, description: str, channel: "discord.TextChannel") -> int:
     log_id = default_logger(log_module, description, "command")
 
-    connection = sqlite3.connect(logic.config["file_paths"]["logs"])
+    connection = sqlite3.connect(lib.get.log_path())
     connection.execute("""
     INSERT INTO configure_channel (log_id, channel_id, channel_name)
     VALUES (?, ?, ?)
@@ -190,7 +190,7 @@ def configure_channel(log_module: str, description: str, channel: "discord.TextC
 def catch_peep(description: str, ctx: "Context", peep_amount: int, random_integer: int) -> int:
     log_id = command("peep", description, ctx, "member")
 
-    connection = sqlite3.connect(logic.config["file_paths"]["logs"])
+    connection = sqlite3.connect(lib.get.log_path())
     connection.execute("""
     INSERT INTO catch_peep (log_id, peep_amount, random_integer)
     VALUES (?, ?, ?,)
@@ -204,7 +204,7 @@ def catch_peep(description: str, ctx: "Context", peep_amount: int, random_intege
 def psps_denied(ctx: "Context", reason: str) -> int:
     log_id = command("peep", "psps denied", ctx, "member")
 
-    connection = sqlite3.connect(logic.config["file_paths"]["logs"])
+    connection = sqlite3.connect(lib.get.log_path())
     connection.execute("""
     INSERT INTO psps_denied (log_id, reason)
     VALUES (?, ?)
@@ -218,7 +218,7 @@ def psps_denied(ctx: "Context", reason: str) -> int:
 def change_peep_message(interaction: "Interaction", message_type: str, old_message: str, new_message: str) -> int:
     log_id = command("config", "PeepMessage changed", interaction, "manager")
 
-    connection = sqlite3.connect(logic.config["file_paths"]["logs"])
+    connection = sqlite3.connect(lib.get.log_path())
     connection.execute("""
     INSERT INTO change_peep_message (log_id, message_type, old_message, new_message)
     VALUES (?, ?, ?, ?)
@@ -232,7 +232,7 @@ def change_peep_message(interaction: "Interaction", message_type: str, old_messa
 def help_embed(help_type: str, context: Union["Context", "Interaction"], command_type: str) -> int:
     log_id = command("bot", "HelpEmbed sent", context, command_type)
 
-    connection = sqlite3.connect(logic.config["file_paths"]["logs"])
+    connection = sqlite3.connect(lib.get.log_path())
     connection.execute("""
     INSERT INTO help (log_id, help_type)
     VALUES (?, ?)
