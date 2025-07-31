@@ -1,23 +1,22 @@
+import logging
+
 from discord.ext import commands
 from discord import app_commands
-from discord import TextChannel
 
 from typing import TYPE_CHECKING
 import sqlite3
 
 import logic
+from lib import logging
 
 if TYPE_CHECKING:
-    from discord import Interaction
+    from discord import Interaction, TextChannel
 
 
 class Config(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        logic.logging("info", "peep", "Cog initialised", {
-            "cog_name": "Config",
-            "command": False
-        })
+        logging.extension_success("config", "Cog initialised", "setup", "Config")
 
     @app_commands.command(name="change_peep_message", description="changes the response a member gets when using !psps")
     @app_commands.describe(
@@ -35,6 +34,12 @@ class Config(commands.Cog):
     async def change_peep_message(self, interaction: "Interaction", message_type: app_commands.Choice[str], message: str):
         connection = sqlite3.connect(logic.config["file_paths"]["database"])
 
+        old_message = connection.execute("""
+        SELECT ?
+        FROM guilds
+        WHERE guild_id = ?
+        """, (message_type, interaction.guild_id)).fetchone()[0]
+
         connection.execute(f"""
         UPDATE guilds
         SET {message_type.value} = ?
@@ -43,24 +48,13 @@ class Config(commands.Cog):
         connection.commit()
 
         await interaction.response.send_message(f"New Message set to '{message}'")
-        logic.logging("info", "peep", "PeepMessage changed", {
-            "command": {
-                "guild": interaction.guild.id,
-                "channel": interaction.channel.id,
-                "user": interaction.user.id,
-                "type": "ManagerCommand",
-                "parameters": {
-                    "message_type": message_type.value,
-                    "message": message
-                }
-            }
-        })
+        logging.change_peep_message(interaction, message_type.value, old_message, message)
         connection.close()
 
     @app_commands.command(name="add_channel", description="adds a channel where commands can be used")
     @app_commands.describe(channel="The channel that is added to the allowed list")
     @app_commands.default_permissions(manage_guild=True)
-    async def add_channel(self, interaction: "Interaction", channel: TextChannel):
+    async def add_channel(self, interaction: "Interaction", channel: "TextChannel"):
         connection = sqlite3.connect(logic.config["file_paths"]["database"])
 
         known_channel = connection.execute("""
@@ -78,27 +72,14 @@ class Config(commands.Cog):
             connection.commit()
 
             await interaction.response.send_message(f"Channel <#{channel.id}> added as allowed command channel")
-            logic.logging("info", "peep", "Channel added to allowed channel list", {
-                "command": {
-                    "guild": interaction.guild.id,
-                    "channel": interaction.channel.id,
-                    "user": interaction.user.id,
-                    "type": "ManagerCommand",
-                    "parameters": {
-                        "channel": [
-                            interaction.channel.id,
-                            interaction.channel.name
-                        ]
-                    }
-                }
-            })
+            logging.configure_channel("config", "Channel added", channel)
         connection.close()
 
 
     @app_commands.command(name="remove_channel", description="removes a channel where commands can be used")
     @app_commands.describe(channel="The channel that is being removed form the list of allowed channels")
     @app_commands.default_permissions(manage_guild=True)
-    async def remove_channel(self, interaction: "Interaction", channel: TextChannel):
+    async def remove_channel(self, interaction: "Interaction", channel: "TextChannel"):
         connection = sqlite3.connect(logic.config["file_paths"]["database"])
 
         if not connection.execute(f"SELECT * FROM allowed_channels WHERE channel_id = {channel.id}"):
@@ -111,20 +92,7 @@ class Config(commands.Cog):
             connection.commit()
 
             await interaction.response.send_message(f"Channel <#{channel.id}> removed as allowed command channel")
-            logic.logging("info", "config", "Channel removed from allowed channel list", {
-                "command": {
-                    "guild": interaction.guild.id,
-                    "channel": interaction.channel.id,
-                    "user": interaction.user.id,
-                    "type": "ManagerCommand",
-                    "parameters": {
-                        "channel": [
-                            interaction.channel.id,
-                            interaction.channel.name
-                        ]
-                    }
-                }
-            })
+            logging.configure_channel("config", "Channel removed", channel)
         connection.close()
 
 

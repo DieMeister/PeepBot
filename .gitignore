@@ -2,8 +2,10 @@
 __*
 
 *.png
+*.db
 
 Logs/
+.venv/
 
 tokens.py
 intents.txt

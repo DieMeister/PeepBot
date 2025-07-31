@@ -20,7 +20,8 @@
   "file_paths": {
     "database": "./database.db",
     "database_saves": "./DatabaseSaves/",
-    "log_saves": "./Logs/"
+    "log_saves": "./Logs/",
+    "logs": "./logs.db"
   },
   "datetime_formats": {
     "datetime": "%Y-%m-%dT%H:%M:%S",

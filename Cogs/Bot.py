@@ -8,6 +8,7 @@ from datetime import datetime as dt, time, date
 
 import logic
 from lib.date_time import get_datetime_string
+from lib import logging
 
 from typing import TYPE_CHECKING
 import sqlite3
@@ -20,16 +21,11 @@ if TYPE_CHECKING:
 class Bot(commands.Cog):
     def __init__(self, bot) -> None:
         self.bot = bot
-        logic.logging("info", "bot", "Cog initialised", {
-            "cog_name": "Bot",
-            "command": False
-        })
-        self.database_save.start()
-        logic.logging("info", "bot", "DatabaseSavingLoop started", {
-            "command": False
-        })
+        logging.extension_success("bot", "Cog initialised", "setup", "Bot")
 
-    # FIXME figure out how to copy the database
+        self.database_save.start()
+        logging.default_logger("bot", "DatabaseSavingLoop started", "setup")
+
     @tasks.loop(time=time(1, tzinfo=datetime.UTC))
     async def database_save(self):
         database = sqlite3.connect(logic.config["file_paths"]["database"])
@@ -40,9 +36,7 @@ class Bot(commands.Cog):
         backup.close()
         database.close()
 
-        logic.logging("info", "bot", "Database saved", {
-            "command": False
-        })
+        logging.default_logger("bot", "Database saved", "loop")
 
     @commands.Cog.listener()
     async def on_guild_join(self, guild: "Guild"):
@@ -82,13 +76,7 @@ class Bot(commands.Cog):
         VALUES (?, ?, ?)
         """, members)
         connection.commit()
-
-        logic.logging("info", "bot", "Bot joined Guild", {
-            "guild_id": guild.id,
-            "guild_name": guild.name,
-            "command": False
-        })
-
+        logging.guild_join(guild)
         connection.close()
 
 
@@ -110,13 +98,7 @@ class Bot(commands.Cog):
         VALUES (?, ?, ?)
         """, (member.id, member.guild.id, get_datetime_string(dt.now(datetime.UTC))))
         connection.commit()
-
-        logic.logging("info", "bot", "Member joined Guild", {
-            "guild_id": member.guild.id,
-            "user_id": member.id,
-            "user_name": member.name,
-            "command": False
-        })
+        logging.member_join(member)
         connection.close()
 
 
@@ -125,16 +107,7 @@ class Bot(commands.Cog):
     async def sync(self, ctx: "Context") -> None:
         if logic.is_developer(ctx.author.id):
             synced = await self.bot.tree.sync()
-            logic.logging("info", "bot", "Commands synced", {
-                "amount": len(synced),
-                "command": {
-                    "guild": ctx.guild.id,
-                    "channel": ctx.channel.id,
-                    "user": ctx.author.id,
-                    "type": "DeveloperCommand",
-                    "parameters": None
-                }
-            })
+            logging.sync_commands("command", len(synced), ctx)
             await ctx.reply("Commands synced")
 
     # Reload a currently loaded extension
@@ -154,39 +127,19 @@ class Bot(commands.Cog):
                         }
                     }
                 })
+                logging.extension_success("bot", "Cog reloaded successfully", "command", cog, ctx)
                 await ctx.reply("Cog reloaded successfully")
             except ExtensionNotFound:
                 await ctx.reply("Cog does not exist")
+                logging.extension_error("Extension failed to reload", "command", cog, "Cog does not exist", ctx, "warn")
             except ExtensionNotLoaded:
                 await ctx.reply("Cog was not loaded before, try load_cog instead")
             except NoEntryPointError:
                 await ctx.reply("Cog has no entry point")
-                logic.logging("error", "bot", "Extension failed to load", {
-                    "reason": "Extension has no entry point",
-                    "command": {
-                        "guild": ctx.guild.id,
-                        "channel": ctx.channel.id,
-                        "user": ctx.author.id,
-                        "type": "DeveloperCommand",
-                        "parameters": {
-                            "extension": cog
-                        }
-                    }
-                })
+                logging.extension_error("Extension failed to reload", "command", cog, "Extension has no EntryPoint", ctx)
             except ExtensionFailed:
                 await ctx.reply("Cog failed to load")
-                logic.logging("error", "bot", "Extension failed to load", {
-                    "reason": "no further information",
-                    "command": {
-                        "guild": ctx.guild.id,
-                        "channel": ctx.channel.id,
-                        "user": ctx.author.id,
-                        "type": "DeveloperCommand",
-                        "parameters": {
-                            "extension": cog
-                        }
-                    }
-                })
+                logging.extension_error("Extension failed to reload", "command", cog, "No further information", ctx)
 
     # Load a currently unloaded extension
     @commands.command()
@@ -194,50 +147,20 @@ class Bot(commands.Cog):
         if logic.is_developer(ctx.author.id):
             try:
                 await self.bot.load_extension(f"Cogs.{cog}")
-                logic.logging("info", "bot", "Cog loaded", {
-                    "command": {
-                        "guild": ctx.guild.id,
-                        "channel": ctx.channel.id,
-                        "user": ctx.author.id,
-                        "type": "DeveloperCommand",
-                        "parameters": {
-                            "extension": cog
-                        }
-                    }
-                })
+                logging.extension_success("bot", "Cog loaded successfully", "command", cog, ctx)
                 await ctx.reply("Cog loaded")
             except ExtensionNotFound:
                 await ctx.reply("Cog does not exist")
+                logging.extension_error("Extension failed to load", "command", cog, "Cog does not exist", ctx, "warn")
             except ExtensionAlreadyLoaded:
                 await ctx.reply("Cog was already loaded")
+                logging.extension_error("Extension failed to load", "command", cog, "Cog was already loaded", ctx, "warn")
             except NoEntryPointError:
                 await ctx.reply("Cog has no entry point")
-                logic.logging("error", "bot", "Extension failed to load", {
-                    "reason": "Extension has no entry point",
-                    "command": {
-                        "guild": ctx.guild.id,
-                        "channel": ctx.channel.id,
-                        "user": ctx.author.id,
-                        "type": "DeveloperCommand",
-                        "parameters": {
-                            "extension": cog
-                        }
-                    }
-                })
+                logging.extension_error("Extension failed to load", "command", cog, "Extension has no EntryPoint", ctx)
             except ExtensionFailed:
                 await ctx.reply("Cog failed to load")
-                logic.logging("error", "bot", "Extension failed to load", {
-                    "reason": "no further information",
-                    "command": {
-                        "guild": ctx.guild.id,
-                        "channel": ctx.channel.id,
-                        "user": ctx.author.id,
-                        "type": "DeveloperCommand",
-                        "parameters": {
-                            "extension": cog
-                        }
-                    }
-                })
+                logging.extension_error("Extension failed to load", "command", cog, "no further information", ctx)
 
     # Unload a currently loaded extension
     @commands.command()
@@ -245,22 +168,14 @@ class Bot(commands.Cog):
         if logic.is_developer(ctx.author.id):
             try:
                 await self.bot.unload_extension(f"Cogs.{cog}")
-                logic.logging("info", "bot", "Cog unloaded", {
-                    "command": {
-                        "guild": ctx.guild.id,
-                        "channel": ctx.channel.id,
-                        "user": ctx.author.id,
-                        "type": "DeveloperCommand",
-                        "parameters": {
-                            "extension": cog
-                        }
-                    }
-                })
+                logging.extension_success("bot", "Extension loaded successfully", "command", cog, ctx)
                 await ctx.reply("Cog unloaded")
             except ExtensionNotFound:
                 await ctx.reply("Cog does not exist")
+                logging.extension_error("Extension failed to unload", "command", cog, "Cog does not exist", ctx, "warn")
             except ExtensionNotLoaded:
                 await ctx.reply("Cog was already not loaded")
+                logging.extension_error("Extension failed to unload", "command", cog, "Cog was already not loaded", ctx, "warn")
 
     # Shut down the bot, this cannot be undone from within Discord
     @commands.command()
@@ -268,15 +183,7 @@ class Bot(commands.Cog):
         if logic.is_developer(ctx.author.id):
             await ctx.reply("Bot is shutting down")
             await self.bot.close()
-            logic.logging("info", "bot", "Bot closed", {
-                "command": {
-                    "guild": ctx.guild.id,
-                    "channel": ctx.channel.id,
-                    "user": ctx.author.id,
-                    "type": "DeveloperCommand",
-                    "parameters": None
-                }
-            })
+            logging.command("bot", "Bot shut down", ctx, "developer", "warn")
 
     # Send an embed explaining the DeveloperCommands
     @commands.command()
@@ -296,15 +203,7 @@ class Bot(commands.Cog):
             embed.add_field(name="More Help", value="If this didn't explain the question feel free to dm `@diemeister`", inline=False)
 
             await ctx.reply(embed=embed)
-            logic.logging("info", "bot", "DeveloperHelpEmbed sent", {
-                "command": {
-                    "guild": ctx.guild.id,
-                    "channel": ctx.channel.id,
-                    "user": ctx.author.id,
-                    "type": "DeveloperCommand",
-                    "parameters": None
-                }
-            })
+            logging.help_embed("dev", ctx, "developer")
         else:
             await ctx.reply("This bot supports application (/) commands, please use `/help`")
 
@@ -330,17 +229,8 @@ class Bot(commands.Cog):
             embed.add_field(name="/remove_channel <channel>", value="removes a channel as allowed channel. This leads to !psps commands not getting a response anymore.")
             embed.add_field(name="/change_peep_message <message_type> <message>", value="changes the response the bot gives when executing !psps. `message_type` determines which message will be changed, and `message`is the actual response the bot sends.\nNote that the bot automatically adds 'You have {number of peeps} peeps now' after the `You got a peep` message. This can not be turned off.")
             embed.set_footer(text="Bot")
-            logic.logging("info", "bot", "Member executed /help", {
-                "command": {
-                    "guild": interaction.guild.id,
-                    "channel": interaction.channel.id,
-                    "user": interaction.user.id,
-                    "type": "DeveloperCommand",
-                    "parameters": {
-                        "problem": problem.value
-                    }
-                }
-            })
+
+            logging.help_embed("setup", interaction, "member")
         elif problem.value == "usage":
             embed = discord.Embed(
                 color=logic.config["embed_color"],
@@ -349,36 +239,11 @@ class Bot(commands.Cog):
             )
             embed.add_field(name="psps", value="To get peeps type `!psps` in an allowed chat, if you don't know which chats are allowed ask your server manager, admin, or owner. If you are the person responsible to set up the bot please execute /help <setup>\nYou have to wait 10 minutes before you can execute the command again.\nYou have to wait 1 minute after someone else executed the command before you can execute it.")
             embed.set_footer(text="Bot")
-            logic.logging("info", "bot", "Member executed /help", {
-                "command": {
-                    "guild": interaction.guild.id,
-                    "channel": interaction.channel.id,
-                    "user": interaction.user.id,
-                    "type": "DeveloperCommand",
-                    "parameters": {
-                        "problem": problem.value
-                    }
-                }
-            })
+
+            logging.help_embed("usage", interaction, "member")
         else:
-            embed = discord.Embed(
-                color=logic.config["embed_color"],
-                title="Error",
-                description="Something went wrong, please try again or contact `@diemeister`",
-                timestamp=dt(2025, 6, 22, 21, 20, tzinfo=datetime.UTC)
-            )
-            logic.logging("warn", "bot", "Member executed /help", {
-                "error": "`problem.value` different from possible values",
-                "command": {
-                    "guild": interaction.guild.id,
-                    "channel": interaction.channel.id,
-                    "user": interaction.user.id,
-                    "type": "DeveloperCommand",
-                    "parameters": {
-                        "problem": problem.value
-                    }
-                }
-            })
+            raise ValueError("HelpEmbedType does not match")
+
         await interaction.response.send_message(embed=embed)
 
         # TODO Leaderboard
