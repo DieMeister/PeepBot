@@ -33,7 +33,7 @@ class Peep(commands.Cog):
             return
 
         member = connection.execute("""
-        SELECT last_peep, caught_peeps
+        SELECT last_peep, caught_peeps, tries
         FROM members
         WHERE user_id = ?
         AND guild_id = ?
@@ -93,6 +93,14 @@ class Peep(commands.Cog):
         else:
             await ctx.reply(guild[3])
             logging.catch_peep("Member did not get a Peep", ctx, member[1], number)
+
+        tries = member[2] + 1
+        connection.execute("""
+        UPDATE members
+        SET tries = ?
+        WHERE user_id = ?
+        AND guild_id = ?
+        """, (tries, ctx.author.id, ctx.guild.id))
         connection.commit()
         connection.close()
 

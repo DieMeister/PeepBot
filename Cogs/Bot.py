@@ -234,9 +234,43 @@ class Bot(commands.Cog):
 
         await interaction.response.send_message(embed=embed)
 
-        # TODO Leaderboard
-        # TODO Show amount of peeps
+    @app_commands.command(name="leaderboard", description="shows the 10 Members with the most Peeps")
+    async def leaderboard(self, interaction: "Interaction"):
+        connection = sqlite3.connect(lib.get.database_path())
+        top_10 = connection.execute("""
+        SELECT
+            user_id,
+            caught_peeps,
+            tries
+        FROM
+            members
+        WHERE
+            guild_id = ?
+        AND
+            caught_peeps > 0
+        ORDER BY
+            caught_peeps DESC,
+            user_id ASC
+        LIMIT 10
+        """, (interaction.guild_id,)).fetchall()
 
+        output = ""
+        guild = self.bot.get_guild(interaction.guild_id)
+        embed = discord.Embed(
+            color=lib.get.embed_color(),
+            timestamp=dt.now(datetime.UTC)
+        )
+        for i in top_10:
+            member = guild.get_member(top_10[0])
+            embed.add_field(
+                name=member.nick,
+                value=f"Peeps: {i[1]}\nTries: {i[2]}",
+                inline=False
+            )
+        interaction.response.send_message(embed=embed)
+        logging.command("bot", "Leaderboard sent", interaction, "member")
+
+    # TODO Show amount of peeps
 
 async def setup(bot) -> None:
     await bot.add_cog(Bot(bot))
