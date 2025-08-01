@@ -254,7 +254,6 @@ class Bot(commands.Cog):
         LIMIT 10
         """, (interaction.guild_id,)).fetchall()
 
-        output = ""
         guild = self.bot.get_guild(interaction.guild_id)
         embed = discord.Embed(
             color=lib.get.embed_color(),
@@ -270,7 +269,24 @@ class Bot(commands.Cog):
         interaction.response.send_message(embed=embed)
         logging.command("bot", "Leaderboard sent", interaction, "member")
 
-    # TODO Show amount of peeps
+
+    @app_commands.command(name="rank", description="shows your peeps and total tries")
+    def rank(self, interaction: "Interaction"):
+        connection = sqlite3.connect(lib.get.database_path())
+        peeps, tries = connection.execute("""
+        SELECT
+            caught_peeps,
+            tries
+        FROM
+            members
+        WHERE
+            guild_id = ?
+        AND
+            user_id = ?
+        """, (interaction.guild_id, interaction.user.id)).fetchone()
+        interaction.response.send_message(f"in {tries} tries you got {peeps} peeps")
+        logging.command("bot", "RankCommand sent", interaction, "member")
+
 
 async def setup(bot) -> None:
     await bot.add_cog(Bot(bot))
