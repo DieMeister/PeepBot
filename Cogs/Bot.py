@@ -26,7 +26,7 @@ class Bot(commands.Cog):
         logging.default_logger("bot", "DatabaseSavingLoop started", "setup")
 
     @tasks.loop(time=time(1, tzinfo=datetime.UTC))
-    async def database_save(self):
+    async def database_save(self) -> None:
         database = sqlite3.connect(lib.get.database_path())
         backup = sqlite3.connect(f"{lib.get.database_backup_path()}{date.today().strftime(lib.get.date_format())}.json")
         database.backup(backup)
@@ -38,7 +38,7 @@ class Bot(commands.Cog):
         logging.default_logger("bot", "Database saved", "loop")
 
     @commands.Cog.listener()
-    async def on_guild_join(self, guild: "Guild"):
+    async def on_guild_join(self, guild: "Guild") -> None:
         connection = sqlite3.connect(lib.get.database_path())
 
         # checks if guild is already in database
@@ -78,9 +78,8 @@ class Bot(commands.Cog):
         logging.guild_join(guild)
         connection.close()
 
-
     @commands.Cog.listener()
-    async def on_member_join(self, member: "Member"):
+    async def on_member_join(self, member: "Member") -> None:
         connection = sqlite3.connect(lib.get.database_path())
 
         known_member = connection.execute("""
@@ -99,7 +98,6 @@ class Bot(commands.Cog):
         connection.commit()
         logging.member_join(member)
         connection.close()
-
 
     # Sync all application commands with Discord
     @commands.command()
@@ -131,7 +129,7 @@ class Bot(commands.Cog):
 
     # Load a currently unloaded extension
     @commands.command()
-    async def load_cog(self, ctx: "Context", cog: str):
+    async def load_cog(self, ctx: "Context", cog: str) -> None:
         if lib.is_developer(ctx.author.id):
             try:
                 await self.bot.load_extension(f"Cogs.{cog}")
@@ -152,7 +150,7 @@ class Bot(commands.Cog):
 
     # Unload a currently loaded extension
     @commands.command()
-    async def unload_cog(self, ctx: "Context", cog: str):
+    async def unload_cog(self, ctx: "Context", cog: str) -> None:
         if lib.is_developer(ctx.author.id):
             try:
                 await self.bot.unload_extension(f"Cogs.{cog}")
@@ -167,7 +165,7 @@ class Bot(commands.Cog):
 
     # Shut down the bot, this cannot be undone from within Discord
     @commands.command()
-    async def shutdown(self, ctx: "Context"):
+    async def shutdown(self, ctx: "Context") -> None:
         if lib.is_developer(ctx.author.id):
             await ctx.reply("Bot is shutting down")
             await self.bot.close()
@@ -175,7 +173,7 @@ class Bot(commands.Cog):
 
     # Send an embed explaining the DeveloperCommands
     @commands.command()
-    async def devhelp(self, ctx: "Context"):
+    async def devhelp(self, ctx: "Context") -> None:
         if lib.is_developer(ctx.author.id):
             embed = discord.Embed(color=lib.get.embed_color(),
                                   title="Developer Help",
@@ -205,7 +203,7 @@ class Bot(commands.Cog):
             app_commands.Choice(name="Usage", value="usage")
         ]
     )
-    async def help(self, interaction: "Interaction", problem: app_commands.Choice[str]):
+    async def help(self, interaction: "Interaction", problem: app_commands.Choice[str]) -> None:
         if problem.value == "setup":
             embed = discord.Embed(
                 color=lib.get.embed_color(),
@@ -235,7 +233,7 @@ class Bot(commands.Cog):
         await interaction.response.send_message(embed=embed)
 
     @app_commands.command(name="leaderboard", description="shows the 10 Members with the most Peeps")
-    async def leaderboard(self, interaction: "Interaction"):
+    async def leaderboard(self, interaction: "Interaction") -> None:
         connection = sqlite3.connect(lib.get.database_path())
         top_10 = connection.execute("""
         SELECT
@@ -270,7 +268,7 @@ class Bot(commands.Cog):
         logging.command("bot", "Leaderboard sent", interaction, "member")
 
     @app_commands.command(name="rank", description="shows your peeps and total tries")
-    def rank(self, interaction: "Interaction"):
+    def rank(self, interaction: "Interaction") -> None:
         connection = sqlite3.connect(lib.get.database_path())
         peeps, tries = connection.execute("""
         SELECT

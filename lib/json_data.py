@@ -1,8 +1,10 @@
 import json
 import os
 
+from typing import Optional, Union
 
-def load_data(file_path: str) -> dict | list | None:
+
+def load_data(file_path: str) -> Optional[Union[dict, list]]:
     """Load a json file and return it; return None if the file does not exist."""
     try:
         with open(file_path) as f:

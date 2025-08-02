@@ -15,12 +15,12 @@ if TYPE_CHECKING:
 
 
 class Peep(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot) -> None:
         self.bot = bot
         logging.extension_success("peep", "Cog initialised", "setup")
 
     @commands.command()
-    async def psps(self, ctx: "Context"):
+    async def psps(self, ctx: "Context") -> None:
         connection = sqlite3.connect(lib.get.database_path())
 
         allowed_channel = connection.execute("""

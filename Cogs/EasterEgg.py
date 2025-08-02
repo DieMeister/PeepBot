@@ -8,12 +8,12 @@ if TYPE_CHECKING:
 
 
 class EasterEgg(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot) -> None:
         self.bot = bot
         logging.extension_success("eastregg", "Cog initialised", "setup", "EasterEgg")
 
     @commands.command()
-    async def thx(self, ctx: "Context"):
+    async def thx(self, ctx: "Context") -> None:
         await ctx.reply("Thank you Jas and Mono for suffering with me for the whole time")
         logging.command("eastregg", "ThanksMessage sent", ctx, "member")
 

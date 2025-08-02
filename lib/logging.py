@@ -12,6 +12,7 @@ if TYPE_CHECKING:
     from discord import Interaction
     from discord.ext.commands import Context
 
+
 def default_logger(log_module: str, description: str, execution_method: str, log_type: str="info") -> int:
     timestamp = datetime.now(dt.UTC)
     database_time = timestamp.strftime(lib.get.datetime_format())

@@ -11,7 +11,7 @@ from tokens import BOTTOKEN
 
 
 class PeepBot(commands.Bot):
-    async def setup_hook(self):
+    async def setup_hook(self) -> None:
         for file in os.listdir("./Cogs"):
             if file.endswith(".py"):
                 await self.load_extension(f"Cogs.{file[:-3]}")

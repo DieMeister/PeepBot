@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 
 
 class Config(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot) -> None:
         self.bot = bot
         logging.extension_success("config", "Cog initialised", "setup", "Config")
 
@@ -31,7 +31,7 @@ class Config(commands.Cog):
         ]
     )
     @app_commands.default_permissions(manage_guild=True)
-    async def change_peep_message(self, interaction: "Interaction", message_type: app_commands.Choice[str], message: str):
+    async def change_peep_message(self, interaction: "Interaction", message_type: app_commands.Choice[str], message: str) -> None:
         connection = sqlite3.connect(lib.get.database_path())
 
         old_message = connection.execute("""
@@ -54,7 +54,7 @@ class Config(commands.Cog):
     @app_commands.command(name="add_channel", description="adds a channel where commands can be used")
     @app_commands.describe(channel="The channel that is added to the allowed list")
     @app_commands.default_permissions(manage_guild=True)
-    async def add_channel(self, interaction: "Interaction", channel: "TextChannel"):
+    async def add_channel(self, interaction: "Interaction", channel: "TextChannel") -> None:
         connection = sqlite3.connect(lib.get.database_path())
 
         known_channel = connection.execute("""
@@ -79,7 +79,7 @@ class Config(commands.Cog):
     @app_commands.command(name="remove_channel", description="removes a channel where commands can be used")
     @app_commands.describe(channel="The channel that is being removed form the list of allowed channels")
     @app_commands.default_permissions(manage_guild=True)
-    async def remove_channel(self, interaction: "Interaction", channel: "TextChannel"):
+    async def remove_channel(self, interaction: "Interaction", channel: "TextChannel") -> None:
         connection = sqlite3.connect(lib.get.database_path())
 
         if not connection.execute(f"SELECT * FROM allowed_channels WHERE channel_id = {channel.id}"):
