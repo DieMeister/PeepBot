@@ -35,3 +35,11 @@ def datetime_format() -> str:
 
 def date_format() -> str:
     return lib.config["datetime_formats"]["date"]
+
+
+def database_query() -> str:
+    return lib.config["sql_table_queries"]["database"]
+
+
+def log_query() -> str:
+    return lib.config["sql_table_queries"]["logs"]

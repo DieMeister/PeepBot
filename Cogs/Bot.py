@@ -269,7 +269,6 @@ class Bot(commands.Cog):
         interaction.response.send_message(embed=embed)
         logging.command("bot", "Leaderboard sent", interaction, "member")
 
-
     @app_commands.command(name="rank", description="shows your peeps and total tries")
     def rank(self, interaction: "Interaction"):
         connection = sqlite3.connect(lib.get.database_path())

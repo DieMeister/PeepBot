@@ -19,7 +19,7 @@ class PeepBot(commands.Bot):
 
         if not os.path.isfile(lib.get.database_path()):
             connection = sqlite3.connect(lib.get.database_path())
-            with open("sql/tables.sql") as f:
+            with open(lib.get.database_query()) as f:
                 script = f.read()
             connection.executescript(script)
             connection.commit()
@@ -29,7 +29,7 @@ class PeepBot(commands.Bot):
 
         if not os.path.isfile(lib.get.log_path()):
             connection = sqlite3.connect(lib.get.log_path())
-            with open("sql/logging.sql") as f:
+            with open(lib.get.log_query()) as f:
                 script = f.read()
             connection.executescript(script)
             connection.commit()

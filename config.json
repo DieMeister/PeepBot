@@ -26,5 +26,9 @@
   "datetime_formats": {
     "datetime": "%Y-%m-%dT%H:%M:%S",
     "date": "%Y-%m-%d"
+  },
+  "sql_table_queries":  {
+   "database": "./sql/tables.sql",
+    "logs": "./sql/logging.sql"
   }
 }
