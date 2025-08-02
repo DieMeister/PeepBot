@@ -171,6 +171,7 @@ class Bot(commands.Cog):
             await self.bot.close()
             logging.command("bot", "Bot shut down", ctx, "developer", "warn")
 
+    # FIXME update embed
     # Send an embed explaining the DeveloperCommands
     @commands.command()
     async def devhelp(self, ctx: "Context") -> None:
