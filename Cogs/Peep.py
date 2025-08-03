@@ -1,23 +1,26 @@
 import datetime
 from datetime import datetime as dt, timedelta
 
+import discord
+from discord import app_commands
+from discord.ext import commands
+
+import sqlite3
 from typing import TYPE_CHECKING
 from random import randint
-
-from discord.ext import commands
-import sqlite3
 
 import lib
 from lib import logging, get_datetime_object, get_datetime_string
 
 if TYPE_CHECKING:
-    from discord.ext.commands import Context
+    from discord import Interaction
+    from discord.ext.commands.context import Context
 
 
 class Peep(commands.Cog):
     def __init__(self, bot) -> None:
         self.bot = bot
-        logging.extension_success("peep", "Cog initialised", "setup")
+        logging.extension_success("peep", "Cog initialised", "setup", "Peep")
 
     @commands.command()
     async def psps(self, ctx: "Context") -> None:
@@ -103,6 +106,63 @@ class Peep(commands.Cog):
         """, (tries, ctx.author.id, ctx.guild.id))
         connection.commit()
         connection.close()
+
+    @app_commands.command(name="leaderboard", description="shows the 10 Members with the most Peeps")
+    async def leaderboard(self, interaction: "Interaction") -> None:
+        connection = sqlite3.connect(lib.get.database_path())
+        top_10 = connection.execute("""
+           SELECT
+               user_id,
+               caught_peeps,
+               tries
+           FROM
+               members
+           WHERE
+               guild_id = ?
+           AND
+               caught_peeps > 0
+           ORDER BY
+               caught_peeps DESC,
+               user_id ASC
+           LIMIT 10
+           """, (interaction.guild_id,)).fetchall()
+
+        if not top_10:
+            await interaction.response.send_message("nobody got a peep yet")
+            logging.command("bot", "Leaderboard sent", interaction, "member")
+        else:
+
+            guild = self.bot.get_guild(interaction.guild_id)
+            embed = discord.Embed(
+                color=lib.get.embed_color(),
+                timestamp=dt.now(datetime.UTC)
+            )
+            for i in top_10:
+                member = guild.get_member(i[0])
+                embed.add_field(
+                    name=member.nick,
+                    value=f"Peeps: {i[1]}\nTries: {i[2]}",
+                    inline=False
+                )
+            await interaction.response.send_message(embed=embed)
+            logging.command("bot", "Leaderboard sent", interaction, "member")
+
+    @app_commands.command(name="rank", description="shows your peeps and total tries")
+    async def rank(self, interaction: "Interaction") -> None:
+        connection = sqlite3.connect(lib.get.database_path())
+        peeps, tries = connection.execute("""
+           SELECT
+               caught_peeps,
+               tries
+           FROM
+               members
+           WHERE
+               guild_id = ?
+           AND
+               user_id = ?
+           """, (interaction.guild_id, interaction.user.id)).fetchone()
+        await interaction.response.send_message(f"in {tries} tries you got {peeps} peeps")
+        logging.command("bot", "RankCommand sent", interaction, "member")
 
 
 async def setup(bot) -> None:

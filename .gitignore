@@ -7,6 +7,9 @@
 Logs/
 .venv/
 
-tokens.py
 intents.txt
 test.py
+test_data.json
+transfer_data.py
+
+tokens.py

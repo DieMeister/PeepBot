@@ -13,7 +13,7 @@ import lib
 from lib import logging, get_datetime_string
 
 if TYPE_CHECKING:
-    from discord.ext.commands import Context
+    from discord.ext.commands.context import Context
     from discord import Guild, Member, Interaction
 
 
@@ -232,58 +232,6 @@ class Bot(commands.Cog):
             raise ValueError("HelpEmbedType does not match")
 
         await interaction.response.send_message(embed=embed)
-
-    @app_commands.command(name="leaderboard", description="shows the 10 Members with the most Peeps")
-    async def leaderboard(self, interaction: "Interaction") -> None:
-        connection = sqlite3.connect(lib.get.database_path())
-        top_10 = connection.execute("""
-        SELECT
-            user_id,
-            caught_peeps,
-            tries
-        FROM
-            members
-        WHERE
-            guild_id = ?
-        AND
-            caught_peeps > 0
-        ORDER BY
-            caught_peeps DESC,
-            user_id ASC
-        LIMIT 10
-        """, (interaction.guild_id,)).fetchall()
-
-        guild = self.bot.get_guild(interaction.guild_id)
-        embed = discord.Embed(
-            color=lib.get.embed_color(),
-            timestamp=dt.now(datetime.UTC)
-        )
-        for i in top_10:
-            member = guild.get_member(top_10[0])
-            embed.add_field(
-                name=member.nick,
-                value=f"Peeps: {i[1]}\nTries: {i[2]}",
-                inline=False
-            )
-        interaction.response.send_message(embed=embed)
-        logging.command("bot", "Leaderboard sent", interaction, "member")
-
-    @app_commands.command(name="rank", description="shows your peeps and total tries")
-    def rank(self, interaction: "Interaction") -> None:
-        connection = sqlite3.connect(lib.get.database_path())
-        peeps, tries = connection.execute("""
-        SELECT
-            caught_peeps,
-            tries
-        FROM
-            members
-        WHERE
-            guild_id = ?
-        AND
-            user_id = ?
-        """, (interaction.guild_id, interaction.user.id)).fetchone()
-        interaction.response.send_message(f"in {tries} tries you got {peeps} peeps")
-        logging.command("bot", "RankCommand sent", interaction, "member")
 
 
 async def setup(bot) -> None:

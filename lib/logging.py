@@ -5,12 +5,13 @@ from colorama import Fore
 import sqlite3
 from typing import TYPE_CHECKING, Optional, Union
 
+from discord import Interaction
+from discord.ext.commands.context import Context
+
 import lib
 
 if TYPE_CHECKING:
     import discord
-    from discord import Interaction
-    from discord.ext.commands import Context
 
 
 def default_logger(log_module: str, description: str, execution_method: str, log_type: str="info") -> int:
@@ -47,7 +48,7 @@ def default_logger(log_module: str, description: str, execution_method: str, log
 
     connection = sqlite3.connect(lib.get.log_path())
     log_id = connection.execute("""
-    INSERT INTO logs (timestamp, type, module, description, execution_method)
+    INSERT INTO logs (timestamp, type, log_module, description, execution_method)
     VALUES (?, ?, ?, ?, ?)
     RETURNING log_id
     """, (database_time, log_type, log_module, description, execution_method)).fetchone()[0]
@@ -61,7 +62,7 @@ def default_logger(log_module: str, description: str, execution_method: str, log
     return log_id
 
 
-def command(log_module: str, description: str, context: Union["Context", "Interaction"], command_type: str, log_type: str="info") -> int:
+def command(log_module: str, description: str, context: Union[Context, Interaction], command_type: str, log_type: str="info") -> int:
     command_types = [
         "developer",
         "manager",
@@ -74,9 +75,9 @@ def command(log_module: str, description: str, context: Union["Context", "Intera
 
     guild_id = context.guild.id
     channel_id = context.channel.id
-    if context is Context:
+    if isinstance(context, Context):
         user_id = context.author.id
-    elif context is Interaction:
+    elif isinstance(context, Interaction):
         user_id = context.user.id
     else:
         raise ValueError("command context not of type Context or Interaction")
@@ -92,20 +93,20 @@ def command(log_module: str, description: str, context: Union["Context", "Intera
     return log_id
 
 
-def command_possible(log_module: str, description: str, execution_method: str, log_type: str, ctx: Optional["Context"], command_type: str) -> int:
+def command_possible(log_module: str, description: str, execution_method: str, log_type: str, ctx: Optional[Context], command_type: str) -> int:
     if execution_method == "command":
         if ctx is None:
             raise ValueError("Missing Argument: ctx")
         if command_type is None:
             raise ValueError("Missing Argument: command_type")
-        log_id = command(log_module, description, ctx, log_type)
+        log_id = command(log_module, description, ctx, command_type, log_type)
     else:
         log_id = default_logger(log_module, description, execution_method, log_type)
 
     return log_id
 
 
-def extension_success(log_module: str, description: str, execution_method: str, extension_name: str, ctx: Optional["Context"]=None) -> int:
+def extension_success(log_module: str, description: str, execution_method: str, extension_name: str, ctx: Optional[Context]=None) -> int:
     log_id = command_possible(log_module, description, execution_method, "info", ctx, "developer")
 
     connection = sqlite3.connect(lib.get.log_path())
@@ -119,7 +120,7 @@ def extension_success(log_module: str, description: str, execution_method: str, 
     return log_id
 
 
-def extension_error(description: str, execution_method: str, extension_name: str, failure_reason: str, ctx: Optional["Context"]=None, log_type: str="error", log_module: str="bot") -> int:
+def extension_error(description: str, execution_method: str, extension_name: str, failure_reason: str, ctx: Optional[Context]=None, log_type: str="error", log_module: str="bot") -> int:
     log_id = command_possible(log_module, description, execution_method, log_type, ctx, "developer")
 
     connection = sqlite3.connect(lib.get.log_path())
@@ -133,7 +134,7 @@ def extension_error(description: str, execution_method: str, extension_name: str
     return log_id
 
 
-def sync_commands(execution_method: str, amount: int, ctx: Optional["Context"]=None) -> int:
+def sync_commands(execution_method: str, amount: int, ctx: Optional[Context]=None) -> int:
     log_id = command_possible("bot", "Commands synced", execution_method, "info", ctx, "developer")
     connection = sqlite3.connect(lib.get.log_path())
     connection.execute("""
@@ -188,7 +189,7 @@ def configure_channel(log_module: str, description: str, channel: "discord.TextC
     return log_id
 
 
-def catch_peep(description: str, ctx: "Context", peep_amount: int, random_integer: int) -> int:
+def catch_peep(description: str, ctx: Context, peep_amount: int, random_integer: int) -> int:
     log_id = command("peep", description, ctx, "member")
 
     connection = sqlite3.connect(lib.get.log_path())
@@ -202,7 +203,7 @@ def catch_peep(description: str, ctx: "Context", peep_amount: int, random_intege
     return log_id
 
 
-def psps_denied(ctx: "Context", reason: str) -> int:
+def psps_denied(ctx: Context, reason: str) -> int:
     log_id = command("peep", "psps denied", ctx, "member")
 
     connection = sqlite3.connect(lib.get.log_path())
@@ -216,7 +217,7 @@ def psps_denied(ctx: "Context", reason: str) -> int:
     return log_id
 
 
-def change_peep_message(interaction: "Interaction", message_type: str, old_message: str, new_message: str) -> int:
+def change_peep_message(interaction: Interaction, message_type: str, old_message: str, new_message: str) -> int:
     log_id = command("config", "PeepMessage changed", interaction, "manager")
 
     connection = sqlite3.connect(lib.get.log_path())
@@ -230,12 +231,12 @@ def change_peep_message(interaction: "Interaction", message_type: str, old_messa
     return log_id
 
 
-def help_embed(help_type: str, context: Union["Context", "Interaction"], command_type: str) -> int:
+def help_embed(help_type: str, context: Union[Context, Interaction], command_type: str) -> int:
     log_id = command("bot", "HelpEmbed sent", context, command_type)
 
     connection = sqlite3.connect(lib.get.log_path())
     connection.execute("""
-    INSERT INTO help (log_id, help_type)
+    INSERT INTO help (log_id, type)
     VALUES (?, ?)
     """, (log_id, help_type))
     connection.commit()

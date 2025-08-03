@@ -13,7 +13,7 @@ CREATE TABLE members (
     guild_id INTEGER REFERENCES guilds(guild_id),
     last_peep VARCHAR(19),
     caught_peeps INTEGER DEFAULT(0),
-    tries INTEGER DEFAULT(0)
+    tries INTEGER DEFAULT(0),
     PRIMARY KEY (user_id, guild_id)
 )
 WITHOUT ROWID;

@@ -18,10 +18,10 @@
   },
   "embed_color": 13421823,
   "file_paths": {
-    "database": "./database.db",
+    "database": "./databases/database.db",
     "database_saves": "./DatabaseSaves/",
     "log_saves": "./Logs/",
-    "logs": "./logs.db"
+    "logs": "./Databases/logs.db"
   },
   "datetime_formats": {
     "datetime": "%Y-%m-%dT%H:%M:%S",
