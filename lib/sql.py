@@ -101,3 +101,5 @@ def add_member(user_id: int, guild_id: int, timestamp: "datetime"):
     )
     VALUES (?, ?, ?)
     """, (user_id, guild_id, get_datetime_string(timestamp)))
+    con.commit()
+    con.close()
