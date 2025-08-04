@@ -168,7 +168,7 @@ def guild_join(guild: "discord.Guild", members_added: int, log_type: str="info")
     connection = sqlite3.connect(log_path())
     connection.execute("""
     INSERT INTO guild_join (log_id, guild_id, guild_name, members_added, members_total)
-    VALUES (?, ?, ?)
+    VALUES (?, ?, ?, ?, ?)
     """, (log_id, guild.id, guild.name, members_added, len(guild.members)))
     connection.commit()
     connection.close()

@@ -27,12 +27,6 @@ class Peep(commands.Cog):
     async def psps(self, ctx: "Context") -> None:
         timestamp = dt.now(datetime.UTC)
 
-        # check if the used channel is valid
-        channel = lib.sql.get_channel(ctx.channel.id)
-        if not channel:
-            logging.psps_denied(ctx, "Outside of allowed Channel")
-            return
-
         # get the data of the guild and create a new entry if it doesn't exist
         guild = lib.sql.get_guild(ctx.guild.id)
         if guild:
@@ -40,6 +34,12 @@ class Peep(commands.Cog):
         else:
             member_count = lib.sql.add_guild(ctx.guild, timestamp)
             logging.guild_join(ctx.guild, member_count, "warn")
+            return
+
+        # check if the used channel is valid
+        channel = lib.sql.get_channel(ctx.channel.id)
+        if not channel:
+            logging.psps_denied(ctx, "Outside of allowed Channel")
             return
 
         # get the data of the member and create a new entry if it doesn't exist

@@ -65,6 +65,7 @@ def add_members(members_data: list[tuple[int, int, str]]) -> int:
     )
     VALUES (?, ?, ?)
     """, members_data)
+    con.commit()
     con.close()
     return len(members_data)
 
@@ -75,6 +76,7 @@ def add_guild(guild: "Guild", timestamp: "datetime") -> int:
     INSERT INTO guilds (guild_id, last_peep)
     VALUES (?, ?)
     """, (guild.id, get_datetime_string(timestamp)))
+    con.commit()
     con.close()
 
     members = []
