@@ -69,7 +69,7 @@ def add_members(members_data: list[tuple[int, int, str]]) -> int:
     return len(members_data)
 
 
-def add_guild(guild: Guild, timestamp: "datetime") -> int:
+def add_guild(guild: "Guild", timestamp: "datetime") -> int:
     con = sqlite3.connect(database_path())
     con.execute("""
     INSERT INTO guilds (guild_id, last_peep)
