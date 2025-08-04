@@ -7,7 +7,7 @@ from discord.ext import commands
 
 import sqlite3
 from typing import TYPE_CHECKING
-from random import randint
+from random import randint, choice
 
 import lib
 from lib import logging, get_datetime_object, get_datetime_string
@@ -22,90 +22,92 @@ class Peep(commands.Cog):
         self.bot = bot
         logging.extension_success("peep", "Cog initialised", "setup", "Peep")
 
+    # TODO rewrite
     @commands.command()
     async def psps(self, ctx: "Context") -> None:
-        connection = sqlite3.connect(lib.get.database_path())
+        timestamp = dt.now(datetime.UTC)
 
-        allowed_channel = connection.execute("""
-        SELECT *
-        FROM allowed_channels
-        WHERE channel_id = ?
-        """, (ctx.channel.id,)).fetchone()
-        if not allowed_channel:
+        # check if the used channel is valid
+        channel = lib.sql.get_channel(ctx.channel.id)
+        if not channel:
             logging.psps_denied(ctx, "Outside of allowed Channel")
             return
 
-        member = connection.execute("""
-        SELECT last_peep, caught_peeps, tries
-        FROM members
-        WHERE user_id = ?
-        AND guild_id = ?
-        """, (ctx.author.id, ctx.guild.id)).fetchone()
-        guild = connection.execute("""
-        SELECT last_peep, success_message, scratch_message, no_peep_message
-        FROM guilds
-        WHERE guild_id = ?
-        """, (ctx.guild.id,)).fetchone()
+        # get the data of the guild and create a new entry if it doesn't exist
+        guild = lib.sql.get_guild(ctx.guild.id)
+        if guild:
+            guild_last_try = get_datetime_object(guild[4])
+        else:
+            member_count = lib.sql.add_guild(ctx.guild, timestamp)
+            logging.guild_join(ctx.guild, member_count, "warn")
+            return
 
-        timestamp = dt.now(datetime.UTC)
-        last_member_count = get_datetime_object(member[0])
-        last_guild_count = get_datetime_object(guild[0])
+        # get the data of the member and create a new entry if it doesn't exist
+        member = lib.sql.get_member(ctx.guild.id, ctx.author.id)
+        if member:
+            member_last_try = get_datetime_object(member[2])
+            member_peeps = member[3]
+            member_tries = member[4]
+        else:
+            lib.sql.add_member(ctx.author.id, ctx.guild.id, timestamp)
+            logging.member_join(ctx.author, "warn")
+            return
 
-        if last_guild_count + timedelta(minutes=1) > timestamp:
+        # check if someone else tried within a minute
+        if guild_last_try + timedelta(minutes=1) > timestamp:
             logging.psps_denied(ctx, "Within 1 minute of another member")
             return
+
+        # check if the member tried again within their cooldown
         if ctx.author.id in lib.get.vip():
-            if last_member_count + timedelta(minutes=5) > timestamp:
+            if member_last_try + timedelta(minutes=5) > timestamp:
                 logging.psps_denied(ctx, "vip used twice within 5 minutes")
                 return
         elif ctx.author.id in lib.get.vup():
-            if last_member_count + timedelta(minutes=30) > timestamp:
+            if member_last_try + timedelta(minutes=30) > timestamp:
                 logging.psps_denied(ctx, "vup used twice within 30 minutes")
                 return
-        elif last_member_count + timedelta(minutes=10) > timestamp:
+        elif member_last_try + timedelta(minutes=10) > timestamp:
             logging.psps_denied(ctx, "member used twice within 10 minutes")
             return
 
-        connection.execute("""
-        UPDATE members
-        SET last_peep = ?
-        WHERE user_id = ?
-        AND guild_id = ?
-        """, (get_datetime_string(timestamp), ctx.author.id, ctx.guild.id))
-        connection.execute("""
+        member_tries += 1
+        peep_number = randint(1, 7)
+        if peep_number == 1:
+            steal_number = randint(1, 100)
+            if steal_number == 1:
+                thieves = lib.get.thieves()
+                mod, emote = choice(list(thieves.items()))
+                await ctx.reply(f"{emote} your peep got stolen")
+                logging.steal_peep(ctx, mod, emote)
+            else:
+                member_peeps += 1
+                await ctx.reply(f"{guild[1]} You have {member_peeps} peeps now")
+                logging.catch_peep("Member got a Peep", ctx, member_peeps, peep_number)
+        elif peep_number == 2 or peep_number == 3:
+            await ctx.reply(guild[2])
+            logging.catch_peep("Member got scratched", ctx, member_peeps, peep_number)
+        else:
+            await ctx.reply(guild[3])
+            logging.catch_peep("Member did not get a Peep", ctx, member_peeps, peep_number)
+
+        con = sqlite3.connect(lib.get.database_path())
+        con.execute("""
         UPDATE guilds
         SET last_peep = ?
         WHERE guild_id = ?
         """, (get_datetime_string(timestamp), ctx.guild.id))
-
-        number = randint(1, 7)
-        if number == 1:
-            new_count = member[1] + 1
-            connection.execute("""
-            UPDATE members
-            SET caught_peeps = ?
-            WHERE user_id = ?
-            AND guild_id = ?
-            """, (new_count, ctx.author.id, ctx.guild.id))
-
-            await ctx.reply(f"{guild[1]} You have {new_count} peeps now")
-            logging.catch_peep("Member got a Peep", ctx, new_count, number)
-        elif number == 2 or number == 3:
-            await ctx.reply(guild[2])
-            logging.catch_peep("Member got scratched", ctx, member[1], number)
-        else:
-            await ctx.reply(guild[3])
-            logging.catch_peep("Member did not get a Peep", ctx, member[1], number)
-
-        tries = member[2] + 1
-        connection.execute("""
+        con.execute("""
         UPDATE members
-        SET tries = ?
-        WHERE user_id = ?
-        AND guild_id = ?
-        """, (tries, ctx.author.id, ctx.guild.id))
-        connection.commit()
-        connection.close()
+        SET
+            last_peep = ?,
+            caught_peeps = ?,
+            tries = ?
+        WHERE guild_id = ? AND user_id = ?
+        """, (get_datetime_string(timestamp), member_peeps, member_tries, ctx.guild.id, ctx.author.id))
+
+        con.commit()
+        con.close()
 
     @app_commands.command(name="leaderboard", description="shows the 10 Members with the most Peeps")
     async def leaderboard(self, interaction: "Interaction") -> None:

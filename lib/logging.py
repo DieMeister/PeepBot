@@ -25,6 +25,7 @@ __all__ = [
     "catch_peep",
     "psps_denied",
     "change_peep_message",
+    "steal_peep",
     "help_embed"
 ]
 
@@ -161,8 +162,8 @@ def sync_commands(execution_method: str, amount: int, ctx: Optional[Context]=Non
     return log_id
 
 
-def guild_join(guild: "discord.Guild", members_added: int) -> int:
-    log_id = default_logger("bot", "Bot joined Guild", "event")
+def guild_join(guild: "discord.Guild", members_added: int, log_type: str="info") -> int:
+    log_id = default_logger("bot", "Bot joined Guild", "event", log_type)
 
     connection = sqlite3.connect(log_path())
     connection.execute("""
@@ -175,8 +176,8 @@ def guild_join(guild: "discord.Guild", members_added: int) -> int:
     return log_id
 
 
-def member_join(member: "discord.Member") -> int:
-    log_id = default_logger("bot", "Member joined Guild", "event")
+def member_join(member: "discord.Member", log_type: str="info") -> int:
+    log_id = default_logger("bot", "Member joined Guild", "event", log_type)
 
     connection = sqlite3.connect(log_path())
     connection.execute("""
@@ -244,6 +245,19 @@ def change_peep_message(interaction: Interaction, message_type: str, old_message
 
     return log_id
 
+
+def steal_peep(context: "Context", mod: str, emote: str) -> int:
+    log_id = command("peep", "Peep got stolen", context, "member")
+
+    con = sqlite3.connect(log_path())
+    con.execute("""
+    INSERT INTO steal_peep (log_id, mod, emote)
+    VALUES (?, ?, ?)
+    """, (log_id, mod, emote))
+    con.commit()
+    con.close()
+
+    return log_id
 
 def help_embed(help_type: str, context: Union[Context, Interaction], command_type: str) -> int:
     log_id = command("bot", "HelpEmbed sent", context, command_type)

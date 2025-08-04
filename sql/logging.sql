@@ -70,6 +70,12 @@ CREATE TABLE change_peep_message (
     new_message TEXT NOT NULL
 );
 
+CREATE TABLE steal_peep(
+    log_id INTEGER PRIMARY KEY REFERENCES logs(log_id),
+    mod TEXT NOT NULL,
+    emote TEXT NOT NULL
+);
+
 CREATE TABLE help (
     log_id INTEGER PRIMARY KEY REFERENCES logs(log_id),
     type TEXT NOT NULL

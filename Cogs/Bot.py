@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING
 import sqlite3
 
 import lib
-from lib import logging, get_datetime_string, is_member_in_database, is_guild_in_database
+from lib import logging, get_datetime_string
 
 if TYPE_CHECKING:
     from discord.ext.commands.context import Context
@@ -43,9 +43,9 @@ class Bot(commands.Cog):
         timestamp_str = get_datetime_string(timestamp)
         members = []
 
-        if is_guild_in_database(guild.id):
+        if lib.sql.get_guild(guild.id):
             for member in guild.members:
-                if not is_member_in_database(guild.id, member.id):
+                if not lib.sql.get_member(guild.id, member.id):
                     members.append(
                         (
                             member.id,
@@ -53,23 +53,15 @@ class Bot(commands.Cog):
                             timestamp_str
                         )
                     )
+            members_added = lib.sql.add_members(members)
         else:
-            lib.sql.add_guild(guild.id, timestamp)
-            for member in guild.members:
-                members.append(
-                    (
-                        member.id,
-                        guild.id,
-                        timestamp_str
-                    )
-                )
+            members_added = lib.sql.add_guild(guild, timestamp)
 
-        members_added = lib.sql.add_members(members)
         logging.guild_join(guild, members_added)
 
     @commands.Cog.listener()
     async def on_member_join(self, member: "Member") -> None:
-        if not is_member_in_database(member.guild.id, member.id):
+        if not lib.sql.get_member(member.guild.id, member.id):
             lib.sql.add_member(member.id, member.guild.id, datetime.now(dt.UTC))
         logging.member_join(member)
 
@@ -146,7 +138,6 @@ class Bot(commands.Cog):
             await self.bot.close()
             logging.command("bot", "Bot shut down", ctx, "developer", "warn")
 
-    # FIXME update embed
     # Send an embed explaining the DeveloperCommands
     @commands.command()
     async def devhelp(self, ctx: "Context") -> None:

@@ -9,7 +9,8 @@ __all__ = [
     "datetime_format",
     "date_time",
     "date_format",
-    "log_query"
+    "log_query",
+    "thieves"
 ]
 
 
@@ -57,3 +58,7 @@ def database_query() -> str:
 
 def log_query() -> str:
     return config["sql_table_queries"]["logs"]
+
+
+def thieves() -> dict:
+    return config["people"]["thieves"]
