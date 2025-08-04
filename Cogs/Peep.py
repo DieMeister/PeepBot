@@ -131,7 +131,7 @@ class Peep(commands.Cog):
 
         if not top_10:
             await interaction.response.send_message("nobody got a peep yet")
-            logging.command("bot", "Leaderboard sent", interaction, "member")
+            logging.command("peep", "Leaderboard sent", interaction, "member")
         else:
 
             guild = self.bot.get_guild(interaction.guild_id)
@@ -168,7 +168,7 @@ class Peep(commands.Cog):
                user_id = ?
            """, (interaction.guild_id, interaction.user.id)).fetchone()
         await interaction.response.send_message(f"in {tries} tries you got {peeps} peeps")
-        logging.command("bot", "RankCommand sent", interaction, "member")
+        logging.command("peep", "RankCommand sent", interaction, "member")
 
 
 async def setup(bot) -> None:
