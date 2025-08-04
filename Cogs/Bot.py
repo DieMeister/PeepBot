@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING
 import sqlite3
 
 import lib
-from lib import logging, get_datetime_string, is_member_in_database
+from lib import logging, get_datetime_string, is_member_in_database, is_guild_in_database
 
 if TYPE_CHECKING:
     from discord.ext.commands.context import Context
@@ -42,27 +42,8 @@ class Bot(commands.Cog):
         timestamp = datetime.now(dt.UTC)
         timestamp_str = get_datetime_string(timestamp)
         members = []
-        con = sqlite3.connect(lib.get.database_path())
 
-        # checks if guild is already in database
-        known_guild = con.execute("""
-        SELECT *
-        FROM guilds
-        WHERE guild_id = ?
-        """, (guild.id,)).fetchone()
-        con.close()
-
-        if known_guild is None:
-            lib.sql.add_guild(guild.id, timestamp)
-            for member in guild.members:
-                members.append(
-                    (
-                        member.id,
-                        guild.id,
-                        timestamp_str
-                    )
-                )
-        else:
+        if is_guild_in_database(guild.id):
             for member in guild.members:
                 if not is_member_in_database(guild.id, member.id):
                     members.append(
@@ -72,30 +53,26 @@ class Bot(commands.Cog):
                             timestamp_str
                         )
                     )
+        else:
+            lib.sql.add_guild(guild.id, timestamp)
+            for member in guild.members:
+                members.append(
+                    (
+                        member.id,
+                        guild.id,
+                        timestamp_str
+                    )
+                )
 
         members_added = lib.sql.add_members(members)
         logging.guild_join(guild, members_added)
 
     @commands.Cog.listener()
     async def on_member_join(self, member: "Member") -> None:
-        connection = sqlite3.connect(lib.get.database_path())
-
-        known_member = connection.execute("""
-        SELECT *
-        FROM guilds
-        WHERE user_id = ?
-        AND guild_id = ?
-        """, (member.id, member.guild.id)).fetchone()
-        if known_member:
-            return
-
-        connection.execute("""
-        INSERT INTO members (user_id, guild_id, last_peep)
-        VALUES (?, ?, ?)
-        """, (member.id, member.guild.id, get_datetime_string(datetime.now(dt.UTC))))
-        connection.commit()
+        if not is_member_in_database(member.guild.id, member.id):
+            lib.sql.add_member(member.id, member.guild.id, datetime.now(dt.UTC))
         logging.member_join(member)
-        connection.close()
+
 
     # Sync all application commands with Discord
     @commands.command()

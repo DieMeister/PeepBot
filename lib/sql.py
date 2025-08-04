@@ -24,8 +24,16 @@ def add_guild(guild_id: int, timestamp: "datetime") -> None:
     con.close()
 
 
-def add_member():
-    pass
+def add_member(user_id: int, guild_id: int, timestamp: "datetime"):
+    con = sqlite3.connect(database_path())
+    con.execute("""
+    INSERT INTO members (
+        user_id,
+        guild_id,
+        last_peep
+    )
+    VALUES (?, ?, ?)
+    """, (user_id, guild_id, get_datetime_string(timestamp)))
 
 
 def add_members(members_data: list[tuple[int, int, str]]) -> int:
