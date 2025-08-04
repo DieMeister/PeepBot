@@ -210,7 +210,7 @@ def catch_peep(description: str, ctx: Context, peep_amount: int, random_integer:
     connection = sqlite3.connect(log_path())
     connection.execute("""
     INSERT INTO catch_peep (log_id, peep_amount, random_integer)
-    VALUES (?, ?, ?,)
+    VALUES (?, ?, ?)
     """, (log_id, peep_amount, random_integer))
     connection.commit()
     connection.close()
