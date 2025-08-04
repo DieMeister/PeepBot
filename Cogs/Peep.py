@@ -141,8 +141,12 @@ class Peep(commands.Cog):
             )
             for i in top_10:
                 member = guild.get_member(i[0])
+                if member.nick:
+                   name = member.nick
+                else:
+                    name = member.name
                 embed.add_field(
-                    name=member.nick,
+                    name=name,
                     value=f"Peeps: {i[1]}\nTries: {i[2]}",
                     inline=False
                 )
