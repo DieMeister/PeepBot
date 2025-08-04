@@ -3,14 +3,14 @@ from discord import app_commands
 from discord.ext import commands, tasks
 from discord.ext.commands import ExtensionFailed, ExtensionNotLoaded, ExtensionNotFound, NoEntryPointError, ExtensionAlreadyLoaded
 
-import datetime
-from datetime import datetime as dt, time, date
+import datetime as dt
+from datetime import datetime, time, date
 
 from typing import TYPE_CHECKING
 import sqlite3
 
 import lib
-from lib import logging, get_datetime_string
+from lib import logging, get_datetime_string, is_member_in_database
 
 if TYPE_CHECKING:
     from discord.ext.commands.context import Context
@@ -25,7 +25,7 @@ class Bot(commands.Cog):
         self.database_save.start()
         logging.default_logger("bot", "DatabaseSavingLoop started", "setup")
 
-    @tasks.loop(time=time(1, tzinfo=datetime.UTC))
+    @tasks.loop(time=time(1, tzinfo=dt.UTC))
     async def database_save(self) -> None:
         database = sqlite3.connect(lib.get.database_path())
         backup = sqlite3.connect(f"{lib.get.database_backup_path()}{date.today().strftime(lib.get.date_format())}.json")
@@ -39,44 +39,42 @@ class Bot(commands.Cog):
 
     @commands.Cog.listener()
     async def on_guild_join(self, guild: "Guild") -> None:
-        connection = sqlite3.connect(lib.get.database_path())
+        timestamp = datetime.now(dt.UTC)
+        timestamp_str = get_datetime_string(timestamp)
+        members = []
+        con = sqlite3.connect(lib.get.database_path())
 
         # checks if guild is already in database
-        known_guild = connection.execute("""
+        known_guild = con.execute("""
         SELECT *
         FROM guilds
         WHERE guild_id = ?
         """, (guild.id,)).fetchone()
-        if known_guild:
-            # FIXME add missing members
-            return
+        con.close()
 
-        connection.execute("""
-        INSERT INTO guilds (guild_id, last_peep)
-        VALUES (?, ?)
-        """, (guild.id, get_datetime_string(dt.now(datetime.UTC))))
-        connection.commit()
-
-        members = []
-        for member in guild.members:
-            members.append(
-                (
-                    member.id,
-                    guild.id,
-                    get_datetime_string(dt.now(datetime.UTC))
+        if known_guild is None:
+            lib.sql.add_guild(guild.id, timestamp)
+            for member in guild.members:
+                members.append(
+                    (
+                        member.id,
+                        guild.id,
+                        timestamp_str
+                    )
                 )
-            )
-        connection.executemany("""
-        INSERT INTO members (
-            user_id,
-            guild_id,
-            last_peep
-        )
-        VALUES (?, ?, ?)
-        """, members)
-        connection.commit()
-        logging.guild_join(guild)
-        connection.close()
+        else:
+            for member in guild.members:
+                if not is_member_in_database(guild.id, member.id):
+                    members.append(
+                        (
+                            member.id,
+                            guild.id,
+                            timestamp_str
+                        )
+                    )
+
+        members_added = lib.sql.add_members(members)
+        logging.guild_join(guild, members_added)
 
     @commands.Cog.listener()
     async def on_member_join(self, member: "Member") -> None:
@@ -94,7 +92,7 @@ class Bot(commands.Cog):
         connection.execute("""
         INSERT INTO members (user_id, guild_id, last_peep)
         VALUES (?, ?, ?)
-        """, (member.id, member.guild.id, get_datetime_string(dt.now(datetime.UTC))))
+        """, (member.id, member.guild.id, get_datetime_string(datetime.now(dt.UTC))))
         connection.commit()
         logging.member_join(member)
         connection.close()
@@ -179,7 +177,7 @@ class Bot(commands.Cog):
             embed = discord.Embed(color=lib.get.embed_color(),
                                   title="Developer Help",
                                   description="Explains every DeveloperCommand",
-                                  timestamp=dt(2025, 6, 16, 11, 7, tzinfo=datetime.UTC))
+                                  timestamp=datetime(2025, 6, 16, 11, 7, tzinfo=dt.UTC))
             embed.set_footer(text="Bot")
             embed.add_field(name="reload_cog <Cog>", value="Reloads a provided Cog. Existing Cogs are:\n- Bot\n- Peep\n- Config\n- EasterEgg", inline=True)
             embed.add_field(name="unload_cog <Cog>", value="Unloads a before loaded Cog (the same as `reload_cog` can access).\n**WARNING:** once Bot is unloaded it can not be loaded again, use `reload_cog` instead.")
@@ -210,7 +208,7 @@ class Bot(commands.Cog):
                 color=lib.get.embed_color(),
                 title="Setup Help",
                 description="Everything you need to do to make the bot working",
-                timestamp=dt(2025, 6, 22, 21, 20, tzinfo=datetime.UTC)
+                timestamp=datetime(2025, 6, 22, 21, 20, tzinfo=dt.UTC)
             )
             embed.add_field(name="/add_channel <channel>", value="adds a channel as allowed channel. The !psps command works only in allowed channels, everywhere else it will not send a response.")
             embed.add_field(name="/remove_channel <channel>", value="removes a channel as allowed channel. This leads to !psps commands not getting a response anymore.")
@@ -222,7 +220,7 @@ class Bot(commands.Cog):
             embed = discord.Embed(
                 color=lib.get.embed_color(),
                 title="Usage Help",
-                timestamp=dt(2025, 6, 22, 21, 20, tzinfo=datetime.UTC)
+                timestamp=datetime(2025, 6, 22, 21, 20, tzinfo=dt.UTC)
             )
             embed.add_field(name="psps", value="To get peeps type `!psps` in an allowed chat, if you don't know which chats are allowed ask your server manager, admin, or owner. If you are the person responsible to set up the bot please execute /help <setup>\nYou have to wait 10 minutes before you can execute the command again.\nYou have to wait 1 minute after someone else executed the command before you can execute it.")
             embed.set_footer(text="Bot")

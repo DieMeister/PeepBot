@@ -6,6 +6,7 @@
 
 Logs/
 .venv/
+img/
 
 intents.txt
 test.py

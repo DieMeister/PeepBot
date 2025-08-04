@@ -4,6 +4,12 @@ import os
 from typing import Optional, Union
 
 
+__all__ = [
+    "load_data",
+    "save_data"
+]
+
+
 def load_data(file_path: str) -> Optional[Union[dict, list]]:
     """Load a json file and return it; return None if the file does not exist."""
     try:
