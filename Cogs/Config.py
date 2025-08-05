@@ -34,6 +34,8 @@ class Config(commands.Cog):
     async def change_peep_message(self, interaction: "Interaction", message_type: app_commands.Choice[str], message: str) -> None:
         connection = sqlite3.connect(lib.get.database_path())
 
+        # FIXME add guild if missing in database
+
         old_message = connection.execute("""
         SELECT ?
         FROM guilds

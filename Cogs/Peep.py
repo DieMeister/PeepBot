@@ -75,22 +75,27 @@ class Peep(commands.Cog):
         peep_number = randint(1, 7)
         if peep_number == 1:
             steal_number = randint(1, 100)
+            # steal peep
             if steal_number == 1:
                 thieves = lib.get.thieves()
                 mod, emote = choice(list(thieves.items()))
                 await ctx.reply(f"{emote} your peep got stolen")
                 logging.steal_peep(ctx, mod, emote)
+            # give member a peep
             else:
                 member_peeps += 1
                 await ctx.reply(f"{guild[1]} You have {member_peeps} peeps now")
                 logging.catch_peep("Member got a Peep", ctx, member_peeps, peep_number)
+        # scratch member
         elif peep_number == 2 or peep_number == 3:
             await ctx.reply(guild[2])
             logging.catch_peep("Member got scratched", ctx, member_peeps, peep_number)
+        # don't get a peep
         else:
             await ctx.reply(guild[3])
             logging.catch_peep("Member did not get a Peep", ctx, member_peeps, peep_number)
 
+        # update database
         con = sqlite3.connect(lib.get.database_path())
         con.execute("""
         UPDATE guilds
@@ -105,7 +110,6 @@ class Peep(commands.Cog):
             tries = ?
         WHERE guild_id = ? AND user_id = ?
         """, (get_datetime_string(timestamp), member_peeps, member_tries, ctx.guild.id, ctx.author.id))
-
         con.commit()
         con.close()
 
