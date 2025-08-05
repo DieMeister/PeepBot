@@ -1,10 +1,11 @@
-import logging
-
 from discord import app_commands, TextChannel
 from discord.ext import commands
 
 import lib
 from lib import logging
+
+import datetime as dt
+from datetime import datetime
 
 from typing import TYPE_CHECKING
 import sqlite3
@@ -32,26 +33,29 @@ class Config(commands.Cog):
     )
     @app_commands.default_permissions(manage_guild=True)
     async def change_peep_message(self, interaction: "Interaction", message_type: app_commands.Choice[str], message: str) -> None:
-        connection = sqlite3.connect(lib.get.database_path())
+        if not lib.sql.get_guild(interaction.guild_id):
+            member_count = lib.sql.add_guild(interaction.guild, datetime.now(dt.UTC))
+            logging.guild_join(interaction.guild, member_count, "warn")
+            await interaction.response.send_message("Due to an internal error it was not possible to process the request, please try again")
+            return
 
-        # FIXME add guild if missing in database
-
-        old_message = connection.execute("""
+        con = sqlite3.connect(lib.get.database_path())
+        old_message = con.execute("""
         SELECT ?
         FROM guilds
         WHERE guild_id = ?
-        """, (message_type, interaction.guild_id)).fetchone()[0]
+        """, (message_type.value, interaction.guild_id)).fetchone()[0]
 
-        connection.execute(f"""
+        con.execute(f"""
         UPDATE guilds
         SET {message_type.value} = ?
         WHERE guild_id = ?
         """, (message, interaction.guild_id))
-        connection.commit()
+        con.commit()
 
         await interaction.response.send_message(f"New Message set to '{message}'")
         logging.change_peep_message(interaction, message_type.value, old_message, message)
-        connection.close()
+        con.close()
 
     @app_commands.command(name="add_channel", description="adds a channel where commands can be used")
     @app_commands.describe(channel="The channel that is added to the allowed list")
