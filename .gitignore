@@ -2,11 +2,12 @@
 *pycache*
 
 *.png
+*.jpeg
+*.avif
 *.db
 
 Logs/
 .venv/
-img/
 
 intents.txt
 test.py

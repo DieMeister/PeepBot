@@ -14,5 +14,6 @@ The commands `/rank` and `/leaderboard` show ones amount of peeps and tries, or 
 
 # When Hosting
 Make sure to change `BOTTOKEN` in [main.py](./main.py) to your actual bot token.
-No other code changes are required to run the bot.  
+No other code changes are required to run the bot,
+but it is recommended to change the UserIDs in [config.json](config.json) as well as adding emotes and changing the markdown of them.  
 It is still required to [create a discord bot](https://discord.com/developers/applications) that is controlled by the provided code.
