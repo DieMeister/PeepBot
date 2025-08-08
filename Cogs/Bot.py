@@ -190,7 +190,21 @@ class Bot(commands.Cog):
                 title="Usage Help",
                 timestamp=datetime(2025, 6, 22, 21, 20, tzinfo=dt.UTC)
             )
-            embed.add_field(name="psps", value="To get peeps type `!psps` in an allowed chat, if you don't know which chats are allowed ask your server manager, admin, or owner. If you are the person responsible to set up the bot please execute /help <setup>\nYou have to wait 10 minutes before you can execute the command again.\nYou have to wait 1 minute after someone else executed the command before you can execute it.")
+            embed.add_field(
+                name="psps",
+                value="- To get peeps type `!psps` in an allowed chat, if you don't know which chats are allowed ask your server manager, admin, or owner. If you are the person responsible to set up the bot please execute /help <setup>\n- You have to wait 10 minutes before you can execute the command again.\n- You have to wait 1 minute after someone else executed the command before you can execute it.",
+                inline=False
+            )
+            embed.add_field(
+                name="/rank",
+                value="shows the current amount of peeps you have and how often you tried",
+                inline=True
+            )
+            embed.add_field(
+                name="/leaderboard",
+                value="shows the 10 members of the server with the most peeps",
+                inline=True
+            )
             embed.set_footer(text="Bot")
 
             logging.help_embed("usage", interaction, "member")
