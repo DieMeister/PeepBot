@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING
 from random import randint, choice
 
 import lib
-from lib import logging, get_datetime_object, get_datetime_string
+from lib import logging, get
 
 if TYPE_CHECKING:
     from discord import Interaction
@@ -22,7 +22,6 @@ class Peep(commands.Cog):
         self.bot = bot
         logging.extension_success("peep", "Cog initialised", "setup", "Peep")
 
-    # TODO rewrite
     @commands.command()
     async def psps(self, ctx: "Context") -> None:
         timestamp = dt.now(datetime.UTC)
@@ -30,7 +29,7 @@ class Peep(commands.Cog):
         # get the data of the guild and create a new entry if it doesn't exist
         guild = lib.sql.get_guild(ctx.guild.id)
         if guild:
-            guild_last_try = get_datetime_object(guild[4])
+            guild_last_try = get.dt_object(guild[4])
         else:
             member_count = lib.sql.add_guild(ctx.guild, timestamp)
             logging.guild_join(ctx.guild, member_count, "warn")
@@ -45,7 +44,7 @@ class Peep(commands.Cog):
         # get the data of the member and create a new entry if it doesn't exist
         member = lib.sql.get_member(ctx.guild.id, ctx.author.id)
         if member:
-            member_last_try = get_datetime_object(member[2])
+            member_last_try = get.dt_object(member[2])
             member_peeps = member[3]
             member_tries = member[4]
         else:
@@ -101,7 +100,7 @@ class Peep(commands.Cog):
         UPDATE guilds
         SET last_peep = ?
         WHERE guild_id = ?
-        """, (get_datetime_string(timestamp), ctx.guild.id))
+        """, (get.dt_string(timestamp), ctx.guild.id))
         con.execute("""
         UPDATE members
         SET
@@ -109,7 +108,7 @@ class Peep(commands.Cog):
             caught_peeps = ?,
             tries = ?
         WHERE guild_id = ? AND user_id = ?
-        """, (get_datetime_string(timestamp), member_peeps, member_tries, ctx.guild.id, ctx.author.id))
+        """, (get.dt_string(timestamp), member_peeps, member_tries, ctx.guild.id, ctx.author.id))
         con.commit()
         con.close()
 

@@ -1,20 +1,18 @@
-from .checks import *
-from .date_time import *
-from .json_data import *
-from . import getter as get
-from . import sql
-from . import logging
+from lib.json_data import *
+from lib import getter as get
+from lib import embeds as embed
+from lib import logging
+from lib import sql
 
 
-__all__ = [
-    "is_developer",
-    "get_datetime_string",
-    "get_datetime_object",
-    "load_data",
-    "save_data",
+__all__ =  [
     "get",
+    "embed",
+    "logging",
     "sql",
-    "logging"
+    "load_data",
+    "save_data"
 ]
 
-get.config = load_data("./config.json")
+
+get.config.data = load_data("./config.json")

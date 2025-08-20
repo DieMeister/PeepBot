@@ -72,11 +72,34 @@ CREATE TABLE change_peep_message (
 
 CREATE TABLE steal_peep(
     log_id INTEGER PRIMARY KEY REFERENCES logs(log_id),
-    mod TEXT NOT NULL,
+    moderator TEXT NOT NULL,
     emote TEXT NOT NULL
 );
 
 CREATE TABLE help (
     log_id INTEGER PRIMARY KEY REFERENCES logs(log_id),
     type TEXT NOT NULL
+);
+
+CREATE TABLE adding_role_to_list (
+    log_id INTEGER PRIMARY KEY REFERENCES logs(log_id),
+    role_id INTEGER NOT NULL,
+    reason TEXT
+);
+
+CREATE TABLE assigning_role (
+    log_id INTEGER PRIMARY KEY REFERENCES logs(log_id),
+    role_id INTEGER NOT NULL,
+    receiver_id INTEGER NOT NULL,
+    reason TEXT
+);
+
+CREATE TABLE invalid_input (
+    log_id INTEGER PRIMARY KEY REFERENCES logs(log_id),
+    input TEXT NOT NULL
+);
+
+CREATE TABLE log_channel (
+    log_id INTEGER PRIMARY KEY REFERENCES logs(log_id),
+    channel_id INTEGER NOT NULL
 );

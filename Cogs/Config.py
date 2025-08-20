@@ -78,7 +78,7 @@ class Config(commands.Cog):
             connection.commit()
 
             await interaction.response.send_message(f"Channel <#{channel.id}> added as allowed command channel")
-            logging.configure_channel("config", "Channel added", channel)
+            logging.configure_channel("config", "Channel added", interaction, channel)
         connection.close()
 
 
@@ -98,7 +98,7 @@ class Config(commands.Cog):
             connection.commit()
 
             await interaction.response.send_message(f"Channel <#{channel.id}> removed as allowed command channel")
-            logging.configure_channel("config", "Channel removed", channel)
+            logging.configure_channel("config", "Channel removed", interaction, channel)
         connection.close()
 
 

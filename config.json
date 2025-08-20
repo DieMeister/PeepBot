@@ -24,17 +24,20 @@
   },
   "embed_color": 13421823,
   "file_paths": {
-    "database": "./databases/database.db",
+    "database": "./Databases/database.db",
     "database_saves": "./DatabaseSaves/",
-    "log_saves": "./Logs/",
     "logs": "./Databases/logs.db"
   },
   "datetime_formats": {
     "datetime": "%Y-%m-%dT%H:%M:%S",
-    "date": "%Y-%m-%d"
+    "date": "%Y-%m-%d",
+    "discord": "%Y-%m-%dT%H:%M:%S.%f%z"
   },
   "sql_table_queries":  {
    "database": "./sql/tables.sql",
     "logs": "./sql/logging.sql"
+  },
+  "messages": {
+    "log_channel_missing": "- **!!You have no logging channel specified!!**"
   }
 }
