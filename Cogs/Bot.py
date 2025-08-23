@@ -35,34 +35,6 @@ class Bot(commands.Cog):
 
         logging.default_logger("bot", "Database saved", "loop")
 
-    @commands.Cog.listener()
-    async def on_guild_join(self, guild: "Guild") -> None:
-        timestamp = datetime.now(dt.UTC)
-        timestamp_str = get.dt_string(timestamp)
-        members = []
-
-        if lib.sql.get_guild(guild.id):
-            for member in guild.members:
-                if not lib.sql.get_member(guild.id, member.id):
-                    members.append(
-                        (
-                            member.id,
-                            guild.id,
-                            timestamp_str
-                        )
-                    )
-            members_added = lib.sql.add_members(members)
-        else:
-            members_added = lib.sql.add_guild(guild, timestamp)
-
-        logging.guild_join(guild, members_added)
-
-    @commands.Cog.listener()
-    async def on_member_join(self, member: "Member") -> None:
-        if not lib.sql.get_member(member.guild.id, member.id):
-            lib.sql.add_member(member.id, member.guild.id, datetime.now(dt.UTC))
-        logging.member_join(member)
-
 
     # Sync all application commands with Discord
     @commands.command()

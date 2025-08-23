@@ -14,7 +14,7 @@ __all__ = [
 ]
 
 
-def guild_join(guild: "Guild", members_added: int, log_type: str="info") -> int:
+def guild_join(guild: "Guild", members_added: int=0, log_type: str="info") -> int:
     log_id = default_logger("bot", "Bot joined Guild", "event", log_type)
 
     connection = sqlite3.connect(log_path())

@@ -34,11 +34,7 @@ class Config(commands.Cog):
     )
     @app_commands.default_permissions(manage_guild=True)
     async def change_peep_message(self, interaction: "Interaction", message_type: app_commands.Choice[str], message: str) -> None:
-        if not lib.sql.get_guild(interaction.guild_id):
-            member_count = lib.sql.add_guild(interaction.guild, datetime.now(dt.UTC))
-            logging.guild_join(interaction.guild, member_count, "warn")
-            await interaction.response.send_message("Due to an internal error it was not possible to process the request, please try again")
-            return
+        lib.sql.add_guild(interaction.guild)
 
         con = sqlite3.connect(lib.get.database_path())
         old_message = con.execute("""
@@ -62,6 +58,7 @@ class Config(commands.Cog):
     @app_commands.describe(channel="The channel that is added to the allowed list")
     @app_commands.default_permissions(manage_guild=True)
     async def add_psps_channel(self, interaction: "Interaction", channel: TextChannel) -> None:
+        lib.sql.add_guild(interaction.guild)
         connection = sqlite3.connect(lib.get.database_path())
 
         known_channel = connection.execute("""
@@ -87,6 +84,7 @@ class Config(commands.Cog):
     @app_commands.describe(channel="The channel that is being removed form the list of allowed channels")
     @app_commands.default_permissions(manage_guild=True)
     async def remove_psps_channel(self, interaction: "Interaction", channel: TextChannel) -> None:
+        lib.sql.add_guild(interaction.guild)
         connection = sqlite3.connect(lib.get.database_path())
 
         if not connection.execute(f"SELECT * FROM allowed_channels WHERE channel_id = {channel.id}"):
@@ -161,14 +159,8 @@ class Config(commands.Cog):
     @app_commands.describe(channel="the channel you set as new LogChanel")
     @app_commands.default_permissions(administrator=True)
     async def set_log_channel(self, interaction: "Interaction", channel: TextChannel) -> None:
+        lib.sql.add_guild(interaction.guild)
         con = sqlite3.connect(lib.get.database_path())
-        guild = con.execute("""
-        SELECT *
-        FROM guilds
-        WHERE guild_id = ?
-        """, (interaction.guild_id,)).fetchone()
-        if guild is None:
-            lib.sql.add_guild(interaction.guild, datetime.now(dt.UTC))
         con.execute("""
         UPDATE guilds
         SET log_channel_id = ?

@@ -27,13 +27,9 @@ class Peep(commands.Cog):
         timestamp = dt.now(datetime.UTC)
 
         # get the data of the guild and create a new entry if it doesn't exist
+        lib.sql.add_guild(ctx.guild)
         guild = lib.sql.get_guild(ctx.guild.id)
-        if guild:
-            guild_last_try = get.dt_object(guild[4])
-        else:
-            member_count = lib.sql.add_guild(ctx.guild, timestamp)
-            logging.guild_join(ctx.guild, member_count, "warn")
-            return
+        guild_last_try = get.dt_object(guild[4])
 
         # check if the used channel is valid
         channel = lib.sql.get_channel(ctx.channel.id)
@@ -42,15 +38,11 @@ class Peep(commands.Cog):
             return
 
         # get the data of the member and create a new entry if it doesn't exist
+        lib.sql.add_member(ctx.author)
         member = lib.sql.get_member(ctx.guild.id, ctx.author.id)
-        if member:
-            member_last_try = get.dt_object(member[2])
-            member_peeps = member[3]
-            member_tries = member[4]
-        else:
-            lib.sql.add_member(ctx.author.id, ctx.guild.id, timestamp)
-            logging.member_join(ctx.author, "warn")
-            return
+        member_last_try = get.dt_object(member[2])
+        member_peeps = member[3]
+        member_tries = member[4]
 
         # check if someone else tried within a minute
         if guild_last_try + timedelta(minutes=1) > timestamp:
