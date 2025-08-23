@@ -1,11 +1,14 @@
 from discord import Embed
-from typing import Optional, TypedDict
+from typing import Optional, TYPE_CHECKING
 
 import datetime as dt
 from datetime import datetime
 
 from lib.getter.config import embed_color
 from lib.getter.date_time import discord_dt_string
+
+if TYPE_CHECKING:
+    from lib import types
 
 
 __all__ = [
@@ -14,16 +17,11 @@ __all__ = [
 ]
 
 
-class Field(TypedDict):
-    name: str
-    value: str
-    inline: bool
-
-
-def default_log(log_id: str, action: str, fields: Optional[list[Field]]) -> Embed:
-    embed = {
+def default_log(log_id: str, action: str, fields: Optional[list["types.Field"]]) -> Embed:
+    embed: "types.Embed" = {
         "type": "rich",
         "title": action,
+        "description": None,
         "color": embed_color(),
         "timestamp": discord_dt_string(datetime.now(dt.UTC)),
         "footer": {
@@ -35,7 +33,7 @@ def default_log(log_id: str, action: str, fields: Optional[list[Field]]) -> Embe
 
 
 def role_log(log_id: str, action: str, role_id: str, moderator_id: str, reason: Optional[str], receiver_id: Optional[str]=None) -> Embed:
-    fields: list[Field] = [
+    fields: list["types.Field"] = [
         {
             "name": "Role",
             "value": f"<@&{role_id}>",
@@ -63,7 +61,7 @@ def role_log(log_id: str, action: str, role_id: str, moderator_id: str, reason: 
 
 
 def channel_log(log_id: str, action: str, channel_id: str, moderator_id: str) -> Embed:
-    fields: list[Field] = [
+    fields: list["types.Field"] = [
         {
             "name": "Channel",
             "value": f"<#{channel_id}>",
