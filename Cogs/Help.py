@@ -1,15 +1,10 @@
-import discord
 from discord import app_commands
 from discord.ext import commands
-
-import datetime as dt
-from datetime import datetime
 
 from typing import TYPE_CHECKING
 
 import lib
 from lib import logging, embed
-from lib.types import Embed
 
 if TYPE_CHECKING:
     from discord import Interaction

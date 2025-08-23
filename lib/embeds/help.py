@@ -138,18 +138,18 @@ def help_config() -> "Embed":
         "inline": False
     }
     psps_add_psps_channel: "types.Field" = {
-        "name": "add_psps_channel",
-        "value": "Adds a channel where the psps command can be executed. By default the command works in no channel",
+        "name": "add_psps_channel <channel>",
+        "value": "Adds a channel where the psps command can be executed. By default the command works in no channel\n`channel`: The channel that is being added",
         "inline": True
     }
     psps_remove_psps_channel: "types.Field" = {
-        "name": "remove_psps_channel",
-        "value": "Removes a channel from the list of channels where the pssp command works",
+        "name": "remove_psps_channel <channel>",
+        "value": "Removes a channel from the list of channels where the pssp command works\n`channel`: The channel that is being removed",
         "inline": True
     }
     psps_change_psps_message: "types.Field" = {
-        "name": "change_psps_message",
-        "value": "changes the message that is sent when psps is executed",
+        "name": "change_psps_message <message_type> <message>",
+        "value": "changes the message that is sent when psps is executed\n`message_type`: The Message that is being changed (`No Peep`, `Peep scratched you`, or `You got a peep`\n`message`: The content the Message is being changed to",
         "inline": True
     }
     divider_assignable_role: "types.Field" = {
@@ -158,18 +158,18 @@ def help_config() -> "Embed":
         "inline": False
     }
     ar_add_assignable_role: types.Field = {
-        "name": "add_assignable_role",
-        "value": "Adds a Role to the list of Roles that can be assigned to Members using `/add_role`",
+        "name": "add_assignable_role <role> [reason]",
+        "value": "Adds a Role to the list of Roles that can be assigned to Members using `/add_role`\n`role`: The Role that is being added\n`reason`: Optional - The reason why the Role is being added",
         "inline": True
     }
     ar_remove_assignable_role: types.Field = {
-        "name": "remove_assignable_role",
-        "value": "Removes a Roles from the list of Roles that can be assigned to members using `/add_role`",
+        "name": "remove_assignable_role <role> [reason]",
+        "value": "Removes a Roles from the list of Roles that can be assigned to members using `/add_role`\n`role`: The Role that is being removed\n`reason`: Optional - the reason why the Role is being removed",
         "inline": True
     }
     set_log_channel: types.Field = {
-        "name": "set_log_channel",
-        "value": "Sets the provided TextChannel as the Channel where the Bot sends LogMessages",
+        "name": "set_log_channel <channel>",
+        "value": "Sets the provided TextChannel as the Channel where the Bot sends LogMessages\n`channel`: The Channel that is set as new LogChannel",
         "inline": False
     }
 
@@ -223,13 +223,13 @@ def help_usage() -> "Embed":
         "inline": False
     }
     role_add_role: "types.Field" = {
-        "name": "/add_role",
-        "value": "Adds a Role from a predefined list to a Member",
+        "name": "/add_role <role_id> <member> [reason]",
+        "value": "Adds a Role from a predefined list to a Member\n`role_id`: The Role that is assigned to the Member\n`member`: The Member that gets the Role\n`reason`: Optional - The Reason why the Role is given to the Member",
         "inline": True
     }
     role_remove_role: "types.Field" = {
-        "name": "/remove_role",
-        "value": "Removaes a Role from a predefined list from a Member",
+        "name": "/remove_role <role_id> <member> [reason]",
+        "value": "Removaes a Role from a predefined list from a Member\n`role_id`: The Role that is removed from the Member\n`member`: The Member that looses the Role\n`reason`: Optional - The Reason why the Role is being removed from the Member",
         "inline": True
     }
 
@@ -244,7 +244,13 @@ def help_usage() -> "Embed":
             "text": "Help"
         },
         "fields": [
-
+            divider_psps,
+            psps_psps,
+            psps_rank,
+            psps_leaderboard,
+            divider_role,
+            role_add_role,
+            role_remove_role
         ]
     }
     return Embed.from_dict(embed)
