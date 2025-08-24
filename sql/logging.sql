@@ -35,8 +35,8 @@ CREATE TABLE guild_join (
     log_id INTEGER PRIMARY KEY REFERENCES logs(log_id),
     guild_id INTEGER NOT NULL,
     guild_name TEXT NOT NULL,
-    members_added INTEGER NOT NULL,
-    members_total INTEGER NOT NULL
+    members_total INTEGER NOT NULL,
+    members_added INTEGER
 );
 
 CREATE TABLE member_join (

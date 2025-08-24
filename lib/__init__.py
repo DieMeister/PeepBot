@@ -1,5 +1,5 @@
+from lib.data import *
 from lib.checks import *
-from lib.json_data import *
 from lib import getter as get
 from lib import embeds as embed
 from lib import logging
@@ -13,11 +13,11 @@ __all__ =  [
     "logging",
     "sql",
     "types",
-    "load_data",
     "possible_discord_id",
     "assignable_role_in_database",
-    "save_data"
+    "json",
+    "file"
 ]
 
 
-get.config.data = load_data("./config.json")
+get.config.data = json.load_data("./config.json")

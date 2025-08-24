@@ -1,5 +1,5 @@
 import sqlite3
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 from lib.getter.config import log_path
 from lib.logging.base import default_logger
@@ -14,14 +14,14 @@ __all__ = [
 ]
 
 
-def guild_join(guild: "Guild", members_added: int=0, log_type: str="info") -> int:
+def guild_join(guild: "Guild", members_added: Optional[int]=None, log_type: str="info") -> int:
     log_id = default_logger("bot", "Bot joined Guild", "event", log_type)
 
     connection = sqlite3.connect(log_path())
     connection.execute("""
-    INSERT INTO guild_join (log_id, guild_id, guild_name, members_added, members_total)
+    INSERT INTO guild_join (log_id, guild_id, guild_name, members_total, members_added)
     VALUES (?, ?, ?, ?, ?)
-    """, (log_id, guild.id, guild.name, members_added, len(guild.members)))
+    """, (log_id, guild.id, guild.name, len(guild.members), members_added))
     connection.commit()
     connection.close()
 
