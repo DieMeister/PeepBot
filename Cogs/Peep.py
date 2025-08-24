@@ -13,7 +13,7 @@ import lib
 from lib import logging, get
 
 if TYPE_CHECKING:
-    from discord import Interaction
+    from discord import Interaction, Member
     from discord.ext.commands.context import Context
 
 
@@ -164,6 +164,60 @@ class Peep(commands.Cog):
            """, (interaction.guild_id, interaction.user.id)).fetchone()
         await interaction.response.send_message(f"in {tries} tries you got {peeps} peeps")
         logging.command("peep", "RankCommand sent", interaction, "member")
+
+    @app_commands.describe(
+        amount="The number of Peeps you want to transfer. 0 < amount <= your peeps",
+        recipient="The Member who gets your Peeps"
+    )
+    @app_commands.command(name="transfer_peeps", description="Gives a set amount of Peeps from you to another Member")
+    async def transfer_peeps(self, interaction: "Interaction", amount: int, recipient: "Member") -> None:
+        if amount <= 0:
+            interaction.response.send_message("You need to transfer at least 1 Peep")
+            # TODO logging
+            return
+        lib.sql.add_member(interaction.user)
+        con = sqlite3.connect(lib.get.database_path())
+        sender_peeps = con.execute("""
+        SELECT (caught_peeps)
+        FROM members
+        WHERE guild_id = ?
+        AND user_id = ?
+        """, (interaction.guild_id, interaction.user.id)).fetchone()[0]
+        if amount > sender_peeps:
+            con.close()
+            await interaction.response.send_message("You don't have that many Peeps to transfer")
+            # TODO logging
+            return
+        lib.sql.add_member(recipient)
+        receiver_peeps = con.execute("""
+        SELECT (caught_peeps)
+        FROM members
+        WHERE guild_id = ?
+        AND user_id = ?
+        """, (interaction.guild_id, recipient.id)).fetchone()[0]
+
+        # update receiving Member
+        con.execute("""
+        UPDATE members
+        SET 
+            caught_peeps = ?,
+            gotten_peeps = ?
+        WHERE guild_id = ?
+        AND user_id = ?
+        """, ((receiver_peeps + amount), amount, interaction.guild_id, recipient.id))
+        # update sending Member
+        con.execute("""
+        UPDATE members
+        SET
+            caught_peeps = ?,
+            given_peeps = ?
+        WHERE guild_id = ?
+        AND user_id = ?;
+        """, ((sender_peeps - amount), amount, interaction.guild_id, interaction.user.id))
+        con.commit()
+        con.close()
+        interaction.response.send_message(f"You transferred {amount} Peeps to <@{recipient.id}>")
+        # TODO logging
 
 
 async def setup(bot) -> None:

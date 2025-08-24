@@ -47,4 +47,3 @@ def add_member(member: "Member"):
         con.commit()
         con.close()
         logging.member_join(member)
-
