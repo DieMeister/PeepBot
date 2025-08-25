@@ -6,6 +6,7 @@ from lib.getter.config import log_path
 
 if TYPE_CHECKING:
     from discord.ext.commands.context import Context
+    from lib.logging import Module, ExecutionMethod, LogType, CommandType
 
 
 __all__ = [
@@ -13,8 +14,8 @@ __all__ = [
     "extension_error"
 ]
 
-def extension_success(log_module: str, description: str, execution_method: str, extension_name: str, ctx: Optional["Context"]=None) -> int:
-    log_id = command_possible(log_module, description, execution_method, "info", ctx, "developer")
+def extension_success(log_module: Module, description: str, execution_method: ExecutionMethod, extension_name: str, ctx: Optional["Context"]=None) -> int:
+    log_id = command_possible(log_module, description, execution_method, LogType.INFO, ctx, CommandType.DEVELOPER)
 
     connection = sqlite3.connect(log_path())
     connection.execute("""
@@ -27,8 +28,8 @@ def extension_success(log_module: str, description: str, execution_method: str, 
     return log_id
 
 
-def extension_error(description: str, execution_method: str, extension_name: str, failure_reason: str, ctx: Optional["Context"]=None, log_type: str="error", log_module: str="bot") -> int:
-    log_id = command_possible(log_module, description, execution_method, log_type, ctx, "developer")
+def extension_error(description: str, execution_method: ExecutionMethod, extension_name: str, failure_reason: str, ctx: Optional["Context"]=None, log_type: LogType=LogType.ERROR, log_module: Module=Module.BOT) -> int:
+    log_id = command_possible(log_module, description, execution_method, log_type, ctx, CommandType.DEVELOPER)
 
     connection = sqlite3.connect(log_path())
     connection.execute("""

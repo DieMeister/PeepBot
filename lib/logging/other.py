@@ -1,7 +1,7 @@
 import sqlite3
 from typing import TYPE_CHECKING, Optional, Union
 
-from lib.logging.base import command_possible, command
+from lib.logging import command_possible, command, Module, ExecutionMethod, LogType, CommandType
 from lib.getter.config import log_path
 
 if TYPE_CHECKING:
@@ -15,8 +15,8 @@ __all__ = [
 ]
 
 
-def sync_commands(execution_method: str, amount: int, ctx: Optional["Context"]=None) -> int:
-    log_id = command_possible("bot", "Commands synced", execution_method, "info", ctx, "developer")
+def sync_commands(execution_method: ExecutionMethod, amount: int, ctx: Optional["Context"]=None) -> int:
+    log_id = command_possible(Module.BOT, "Commands synced", execution_method, LogType.INFO, ctx, CommandType.DEVELOPER)
     connection = sqlite3.connect(log_path())
     connection.execute("""
     INSERT INTO commands_synced (log_id, amount)
@@ -28,8 +28,8 @@ def sync_commands(execution_method: str, amount: int, ctx: Optional["Context"]=N
     return log_id
 
 
-def help_embed(help_type: str, context: Union["Context", "Interaction"], command_type: str) -> int:
-    log_id = command("bot", "HelpEmbed sent", context, command_type)
+def help_embed(help_type: str, context: Union["Context", "Interaction"], command_type: CommandType) -> int:
+    log_id = command(Module.BOT, "HelpEmbed sent", context, command_type)
 
     con = sqlite3.connect(log_path())
     con.execute("""
@@ -42,7 +42,7 @@ def help_embed(help_type: str, context: Union["Context", "Interaction"], command
     return log_id
 
 
-def invalid_input(log_module: str, description: str, context: Union["Context", "Interaction"], command_type: str, given_input: str, log_type:str="info") -> int:
+def invalid_input(log_module: Module, description: str, context: Union["Context", "Interaction"], command_type: CommandType, given_input: str, log_type: LogType=LogType.INFO) -> int:
     log_id = command(log_module, description, context, command_type, log_type)
 
     con = sqlite3.connect(log_path())

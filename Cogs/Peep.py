@@ -11,6 +11,7 @@ from random import randint, choice
 
 import lib
 from lib import logging, get
+from lib.logging import Module, ExecutionMethod, CommandType
 
 if TYPE_CHECKING:
     from discord import Interaction, Member
@@ -20,7 +21,7 @@ if TYPE_CHECKING:
 class Peep(commands.Cog):
     def __init__(self, bot) -> None:
         self.bot = bot
-        logging.extension_success("peep", "Cog initialised", "setup", "Peep")
+        logging.extension_success(Module.PEEP, "Cog initialised", ExecutionMethod.SETUP, "Peep")
 
     @commands.command()
     async def psps(self, ctx: "Context") -> None:
@@ -126,7 +127,7 @@ class Peep(commands.Cog):
 
         if not top_10:
             await interaction.response.send_message("nobody got a peep yet")
-            logging.command("peep", "Leaderboard sent", interaction, "member")
+            logging.command(Module.PEEP, "Leaderboard sent", interaction, CommandType.MEMBER)
         else:
 
             guild = self.bot.get_guild(interaction.guild_id)
@@ -146,7 +147,7 @@ class Peep(commands.Cog):
                     inline=False
                 )
             await interaction.response.send_message(embed=embed)
-            logging.command("bot", "Leaderboard sent", interaction, "member")
+            logging.command(Module.BOT, "Leaderboard sent", interaction, CommandType.MEMBER)
 
     @app_commands.command(name="rank", description="shows your peeps and total tries")
     async def rank(self, interaction: "Interaction") -> None:
@@ -163,7 +164,7 @@ class Peep(commands.Cog):
                user_id = ?
            """, (interaction.guild_id, interaction.user.id)).fetchone()
         await interaction.response.send_message(f"in {tries} tries you got {peeps} peeps")
-        logging.command("peep", "RankCommand sent", interaction, "member")
+        logging.command(Module.PEEP, "RankCommand sent", interaction, CommandType.MEMBER)
 
     @app_commands.describe(
         amount="The number of Peeps you want to transfer. 0 < amount <= your peeps",

@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, Optional
 
 import lib
 from lib import logging, embed, possible_discord_id, assignable_role_in_database
+from lib.logging import Module, ExecutionMethod, CommandType
 
 if TYPE_CHECKING:
     from discord import Interaction
@@ -13,7 +14,7 @@ if TYPE_CHECKING:
 class Moderation(Cog):
     def __init__(self, bot):
         self.bot = bot
-        logging.extension_success("mod", "Cog initialised", "setup", "Moderation")
+        logging.extension_success(Module.MODERATION, "Cog initialised", ExecutionMethod.SETUP, "Moderation")
 
     @app_commands.command(name="add_role", description="Add a role to a member")
     @app_commands.describe(
@@ -26,7 +27,7 @@ class Moderation(Cog):
     async def add_role(self, interaction: "Interaction", role_id: str, member: Member, reason: Optional[str]) -> None:
         if not possible_discord_id(role_id):
             await interaction.response.send_message("Invalid Input")
-            logging.invalid_input("mod", "Non-Integer input given to assign Role to Member", interaction, "manager", role_id)
+            logging.invalid_input(Module.MODERATION, "Non-Integer input given to assign Role to Member", interaction, CommandType.MANAGER, role_id)
             return
         if not assignable_role_in_database(int(role_id)):
             await interaction.response.send_message("This Role is not available to assign to other Members")
@@ -57,7 +58,7 @@ class Moderation(Cog):
     async def remove_role(self, interaction: "Interaction", role_id: str, member: Member, reason: Optional[str]) -> None:
         if not possible_discord_id(role_id):
             await interaction.response.send_message("Invalid Input")
-            logging.invalid_input("mod", "Non-Integer input given to remove Role from Member", interaction, "manager", role_id)
+            logging.invalid_input(Module.MODERATION, "Non-Integer input given to remove Role from Member", interaction, CommandType.MANAGER, role_id)
             return
         if not assignable_role_in_database(int(role_id)):
             await interaction.response.send_message("This Role is not available to remove from other Members")

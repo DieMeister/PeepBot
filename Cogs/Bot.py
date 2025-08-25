@@ -2,26 +2,26 @@ from discord.ext import commands, tasks
 from discord.ext.commands import ExtensionFailed, ExtensionNotLoaded, ExtensionNotFound, NoEntryPointError, ExtensionAlreadyLoaded
 
 import datetime as dt
-from datetime import datetime, time, date
+from datetime import time, date
 
 from typing import TYPE_CHECKING
 import sqlite3
 
 import lib
-from lib import logging, get
+from lib import logging
+from lib.logging import Module, ExecutionMethod, LogType, CommandType
 
 if TYPE_CHECKING:
     from discord.ext.commands.context import Context
-    from discord import Guild, Member
 
 
 class Bot(commands.Cog):
     def __init__(self, bot) -> None:
         self.bot = bot
-        logging.extension_success("bot", "Cog initialised", "setup", "Bot")
+        logging.extension_success(Module.BOT, "Cog initialised", ExecutionMethod.SETUP, "Bot")
 
         self.database_save.start()
-        logging.default_logger("bot", "DatabaseSavingLoop started", "setup")
+        logging.default_logger(Module.BOT, "DatabaseSavingLoop started", ExecutionMethod.SETUP)
 
     @tasks.loop(time=time(1, tzinfo=dt.UTC))
     async def database_save(self) -> None:
@@ -33,7 +33,7 @@ class Bot(commands.Cog):
         backup.close()
         database.close()
 
-        logging.default_logger("bot", "Database saved", "loop")
+        logging.default_logger(Module.BOT, "Database saved", ExecutionMethod.LOOP)
 
 
     # Sync all application commands with Discord
@@ -41,7 +41,7 @@ class Bot(commands.Cog):
     async def sync(self, ctx: "Context") -> None:
         if ctx.author.id in lib.get.developer():
             synced = await self.bot.tree.sync()
-            logging.sync_commands("command", len(synced), ctx)
+            logging.sync_commands(ExecutionMethod.COMMAND, len(synced), ctx)
             await ctx.reply("Commands synced")
 
     # Reload a currently loaded extension
@@ -50,19 +50,19 @@ class Bot(commands.Cog):
         if ctx.author.id in lib.get.developer():
             try:
                 await self.bot.reload_extension(f"Cogs.{cog}")
-                logging.extension_success("bot", "Cog reloaded successfully", "command", cog, ctx)
+                logging.extension_success(Module.BOT, "Cog reloaded successfully", ExecutionMethod.COMMAND, cog, ctx)
                 await ctx.reply("Cog reloaded successfully")
             except ExtensionNotFound:
                 await ctx.reply("Cog does not exist")
-                logging.extension_error("Extension failed to reload", "command", cog, "Cog does not exist", ctx, "warn")
+                logging.extension_error("Extension failed to reload", ExecutionMethod.COMMAND, cog, "Cog does not exist", ctx, LogType.WARN)
             except ExtensionNotLoaded:
                 await ctx.reply("Cog was not loaded before, try load_cog instead")
             except NoEntryPointError:
                 await ctx.reply("Cog has no entry point")
-                logging.extension_error("Extension failed to reload", "command", cog, "Extension has no EntryPoint", ctx)
+                logging.extension_error("Extension failed to reload", ExecutionMethod.COMMAND, cog, "Extension has no EntryPoint", ctx)
             except ExtensionFailed:
                 await ctx.reply("Cog failed to load")
-                logging.extension_error("Extension failed to reload", "command", cog, "No further information", ctx)
+                logging.extension_error("Extension failed to reload", ExecutionMethod.COMMAND, cog, "No further information", ctx)
 
     # Load a currently unloaded extension
     @commands.command()
@@ -70,20 +70,20 @@ class Bot(commands.Cog):
         if ctx.author.id in lib.get.developer():
             try:
                 await self.bot.load_extension(f"Cogs.{cog}")
-                logging.extension_success("bot", "Cog loaded successfully", "command", cog, ctx)
+                logging.extension_success(Module.BOT, "Cog loaded successfully", ExecutionMethod.COMMAND, cog, ctx)
                 await ctx.reply("Cog loaded")
             except ExtensionNotFound:
                 await ctx.reply("Cog does not exist")
-                logging.extension_error("Extension failed to load", "command", cog, "Cog does not exist", ctx, "warn")
+                logging.extension_error("Extension failed to load", ExecutionMethod.COMMAND, cog, "Cog does not exist", ctx, LogType.WARN)
             except ExtensionAlreadyLoaded:
                 await ctx.reply("Cog was already loaded")
-                logging.extension_error("Extension failed to load", "command", cog, "Cog was already loaded", ctx, "warn")
+                logging.extension_error("Extension failed to load", ExecutionMethod.COMMAND, cog, "Cog was already loaded", ctx, LogType.WARN)
             except NoEntryPointError:
                 await ctx.reply("Cog has no entry point")
-                logging.extension_error("Extension failed to load", "command", cog, "Extension has no EntryPoint", ctx)
+                logging.extension_error("Extension failed to load", ExecutionMethod.COMMAND, cog, "Extension has no EntryPoint", ctx)
             except ExtensionFailed:
                 await ctx.reply("Cog failed to load")
-                logging.extension_error("Extension failed to load", "command", cog, "no further information", ctx)
+                logging.extension_error("Extension failed to load", ExecutionMethod.COMMAND, cog, "no further information", ctx)
 
     # Unload a currently loaded extension
     @commands.command()
@@ -91,14 +91,14 @@ class Bot(commands.Cog):
         if ctx.author.id in lib.get.developer():
             try:
                 await self.bot.unload_extension(f"Cogs.{cog}")
-                logging.extension_success("bot", "Extension loaded successfully", "command", cog, ctx)
+                logging.extension_success(Module.BOT, "Extension loaded successfully", ExecutionMethod.COMMAND, cog, ctx)
                 await ctx.reply("Cog unloaded")
             except ExtensionNotFound:
                 await ctx.reply("Cog does not exist")
-                logging.extension_error("Extension failed to unload", "command", cog, "Cog does not exist", ctx, "warn")
+                logging.extension_error("Extension failed to unload", ExecutionMethod.COMMAND, cog, "Cog does not exist", ctx, LogType.WARN)
             except ExtensionNotLoaded:
                 await ctx.reply("Cog was already not loaded")
-                logging.extension_error("Extension failed to unload", "command", cog, "Cog was already not loaded", ctx, "warn")
+                logging.extension_error("Extension failed to unload", ExecutionMethod.COMMAND, cog, "Cog was already not loaded", ctx, LogType.WARN)
 
     # Shut down the bot, this cannot be undone from within Discord
     @commands.command()
@@ -106,8 +106,7 @@ class Bot(commands.Cog):
         if ctx.author.id in lib.get.developer():
             await ctx.reply("Bot is shutting down")
             await self.bot.close()
-            logging.command("bot", "Bot shut down", ctx, "developer", "warn")
-
+            logging.command(Module.BOT, "Bot shut down", ctx, CommandType.DEVELOPER, LogType.WARN)
 
 
     # TODO cleanup command

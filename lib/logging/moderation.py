@@ -2,7 +2,7 @@ import sqlite3
 from typing import Optional, TYPE_CHECKING
 
 from lib.getter.config import log_path
-from lib.logging.base import command
+from lib.logging import command, Module, CommandType
 
 if TYPE_CHECKING:
     from discord import Interaction
@@ -14,7 +14,7 @@ __all__ = [
 
 
 def assigning_role(description: str, interaction: "Interaction", role_id: int, receiver_id: int, reason: Optional[str]) -> int:
-    log_id = command("mod", description, interaction, "manager")
+    log_id = command(Module.MODERATION, description, interaction, CommandType.MANAGER)
 
     con = sqlite3.connect(log_path())
     con.execute("""

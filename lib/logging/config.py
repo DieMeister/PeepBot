@@ -1,6 +1,7 @@
 import sqlite3
 from typing import  TYPE_CHECKING, Optional
 
+from lib.logging import Module, CommandType
 from lib.logging.base import command
 from lib.getter.config import log_path
 
@@ -16,8 +17,8 @@ __all__ = [
 ]
 
 
-def configure_channel(log_module: str, description: str, interaction: "Interaction", channel: "TextChannel") -> int:
-    log_id = command(log_module, description, interaction, "manager")
+def configure_channel(log_module: Module, description: str, interaction: "Interaction", channel: "TextChannel") -> int:
+    log_id = command(log_module, description, interaction, CommandType.MANAGER)
 
     connection = sqlite3.connect(log_path())
     connection.execute("""
@@ -31,7 +32,7 @@ def configure_channel(log_module: str, description: str, interaction: "Interacti
 
 
 def change_of_assignable_roles(description: str, interaction: "Interaction", role_id: int, reason: Optional[str]) -> int:
-    log_id = command("mod", description, interaction, "admin")
+    log_id = command(Module.MODERATION, description, interaction, CommandType.ADMIN)
 
     con = sqlite3.connect(log_path())
     con.execute("""
@@ -45,7 +46,7 @@ def change_of_assignable_roles(description: str, interaction: "Interaction", rol
 
 
 def set_log_channel(interaction: "Interaction", channel_id: int) -> int:
-    log_id = command("mod", "New LogChannel set", interaction, "admin")
+    log_id = command(Module.MODERATION, "New LogChannel set", interaction, CommandType.ADMIN)
     con = sqlite3.connect(log_path())
     con.execute("""
     INSERT INTO log_channel (log_id, channel_id)
@@ -55,7 +56,7 @@ def set_log_channel(interaction: "Interaction", channel_id: int) -> int:
 
 
 def change_peep_message(interaction: "Interaction", message_type: str, old_message: str, new_message: str) -> int:
-    log_id = command("config", "PeepMessage changed", interaction, "manager")
+    log_id = command(Module.CONFIG, "PeepMessage changed", interaction, CommandType.MANAGER)
 
     connection = sqlite3.connect(log_path())
     connection.execute("""

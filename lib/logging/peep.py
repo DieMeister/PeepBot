@@ -1,7 +1,7 @@
 import sqlite3
 from typing import TYPE_CHECKING
 
-from lib.logging.base import command
+from lib.logging import command, Module, CommandType
 from lib.getter.config import log_path
 
 if TYPE_CHECKING:
@@ -17,7 +17,7 @@ __all__ = [
 
 
 def catch_peep(description: str, ctx: "Context", peep_amount: int, random_integer: int) -> int:
-    log_id = command("peep", description, ctx, "member")
+    log_id = command(Module.PEEP, description, ctx, CommandType.MEMBER)
 
     connection = sqlite3.connect(log_path())
     connection.execute("""
@@ -31,7 +31,7 @@ def catch_peep(description: str, ctx: "Context", peep_amount: int, random_intege
 
 
 def psps_denied(ctx: "Context", reason: str) -> int:
-    log_id = command("peep", "psps denied", ctx, "member")
+    log_id = command(Module.PEEP, "psps denied", ctx, CommandType.MEMBER)
 
     connection = sqlite3.connect(log_path())
     connection.execute("""
@@ -45,7 +45,7 @@ def psps_denied(ctx: "Context", reason: str) -> int:
 
 
 def steal_peep(context: "Context", mod: str, emote: str) -> int:
-    log_id = command("peep", "Peep got stolen", context, "member")
+    log_id = command(Module.PEEP, "Peep got stolen", context, CommandType.MEMBER)
 
     con = sqlite3.connect(log_path())
     con.execute("""
