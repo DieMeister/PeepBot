@@ -32,6 +32,11 @@ def use_peep() -> Embed:
         "value": "Shows the 10 members with the most Peeps. If two members have the same amount, the lower user_id is picked first",
         "inline": True
     }
+    transfer_peeps: "types.Field" = {
+        "name": "/transfer_peeps <amount> <recipient>",
+        "value": "Transfers some or all of your peeps to another member\n`amount`: The number of peeps you want to transfer\n`recipient`: The member who gets you peeps",
+        "inline": True
+    }
     embed: "types.Embed" = {
         "type": "rich",
         "title": "Peep Usage",
@@ -44,7 +49,8 @@ def use_peep() -> Embed:
         "fields": [
             psps,
             rank,
-            leaderboard
+            leaderboard,
+            transfer_peeps
         ]
     }
     return Embed.from_dict(embed)
