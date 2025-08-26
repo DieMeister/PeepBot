@@ -1,5 +1,6 @@
 import sqlite3
 from typing import TYPE_CHECKING, Optional, Union
+from enum import Enum
 
 from lib.logging import command_possible, command, Module, ExecutionMethod, LogType, CommandType
 from lib.getter.config import log_path
@@ -9,10 +10,24 @@ if TYPE_CHECKING:
     from discord.ext.commands.context import Context
 
 __all__ = [
+    "HelpType",
+    "HelpCategory",
     "sync_commands",
     "help_embed",
     "invalid_input"
 ]
+
+
+class HelpType(Enum):
+    DEVELOPER = "dev"
+    CONFIG = "config"
+    USAGE = "usage"
+
+
+class HelpCategory(Enum):
+    PEEP = "peep",
+    ASSIGNABLE_ROLES = "assignable_roles"
+    ALL = "all"
 
 
 def sync_commands(execution_method: ExecutionMethod, amount: int, ctx: Optional["Context"]=None) -> int:
@@ -28,14 +43,14 @@ def sync_commands(execution_method: ExecutionMethod, amount: int, ctx: Optional[
     return log_id
 
 
-def help_embed(help_type: str, context: Union["Context", "Interaction"], command_type: CommandType) -> int:
+def help_embed(help_type: HelpType, help_category: HelpCategory, context: Union["Context", "Interaction"], command_type: CommandType) -> int:
     log_id = command(Module.BOT, "HelpEmbed sent", context, command_type)
 
     con = sqlite3.connect(log_path())
     con.execute("""
-    INSERT INTO help (log_id, type)
-    VALUES (?, ?)
-    """, (log_id, help_type))
+    INSERT INTO help (log_id, type, category)
+    VALUES (?, ?, ?)
+    """, (log_id, help_type.value, help_category.value))
     con.commit()
     con.close()
 

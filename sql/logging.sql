@@ -78,7 +78,8 @@ CREATE TABLE steal_peep(
 
 CREATE TABLE help (
     log_id INTEGER PRIMARY KEY REFERENCES logs(log_id),
-    type TEXT NOT NULL
+    type TEXT NOT NULL,
+    category TEXT NOT NULL
 );
 
 CREATE TABLE adding_role_to_list (
