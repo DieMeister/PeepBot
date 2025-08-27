@@ -202,7 +202,7 @@ class Peep(commands.Cog):
         UPDATE members
         SET 
             caught_peeps = ?,
-            gotten_peeps = ?
+            received_peeps = ?
         WHERE guild_id = ?
         AND user_id = ?
         """, ((receiver_peeps + amount), amount, interaction.guild_id, recipient.id))
@@ -211,7 +211,7 @@ class Peep(commands.Cog):
         UPDATE members
         SET
             caught_peeps = ?,
-            given_peeps = ?
+            sent_peeps = ?
         WHERE guild_id = ?
         AND user_id = ?;
         """, ((sender_peeps - amount), amount, interaction.guild_id, interaction.user.id))

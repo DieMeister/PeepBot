@@ -15,7 +15,7 @@ CREATE TABLE members (
     last_peep VARCHAR(19),
     caught_peeps INTEGER DEFAULT(0),
     tries INTEGER DEFAULT(0),
-    snt_peeps INTEGER DEFAULT(0),
+    sent_peeps INTEGER DEFAULT(0),
     received_peeps INTEGER DEFAULT(0),
     PRIMARY KEY (user_id, guild_id)
 )
