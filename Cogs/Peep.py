@@ -174,7 +174,7 @@ class Peep(commands.Cog):
     async def transfer_peeps(self, interaction: "Interaction", amount: int, recipient: "Member") -> None:
         if amount <= 0:
             interaction.response.send_message("You need to transfer at least 1 Peep")
-            # TODO logging
+            logging.peep_transfer("Member tried to transfer < 1 Peeps", interaction, amount, recipient.id)
             return
         lib.sql.add_member(interaction.user)
         con = sqlite3.connect(lib.get.database_path())
@@ -187,7 +187,7 @@ class Peep(commands.Cog):
         if amount > sender_peeps:
             con.close()
             await interaction.response.send_message("You don't have that many Peeps to transfer")
-            # TODO logging
+            logging.peep_transfer("Member tried to transfer more Peeps than they have", interaction, amount, recipient.id, sender_peeps)
             return
         lib.sql.add_member(recipient)
         receiver_peeps = con.execute("""
@@ -218,7 +218,7 @@ class Peep(commands.Cog):
         con.commit()
         con.close()
         interaction.response.send_message(f"You transferred {amount} Peeps to <@{recipient.id}>")
-        # TODO logging
+        logging.peep_transfer("Member transferred Peeps to another Member", interaction, amount, recipient.id, sender_peeps, receiver_peeps)
 
 
 async def setup(bot) -> None:

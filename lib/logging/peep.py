@@ -1,17 +1,19 @@
 import sqlite3
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 from lib.logging import command, Module, CommandType
 from lib.getter.config import log_path
 
 if TYPE_CHECKING:
+    from discord import Interaction
     from discord.ext.commands.context import Context
 
 
 __all__ = [
     "catch_peep",
     "psps_denied",
-    "steal_peep"
+    "steal_peep",
+    "peep_transfer"
 ]
 
 
@@ -52,6 +54,20 @@ def steal_peep(context: "Context", mod: str, emote: str) -> int:
     INSERT INTO steal_peep (log_id, mod, emote)
     VALUES (?, ?, ?)
     """, (log_id, mod, emote))
+    con.commit()
+    con.close()
+
+    return log_id
+
+
+def peep_transfer(description: str, interaction: "Interaction", amount: int, recipient_id: int, sender_peeps: Optional[int]=None, receiver_peeps: Optional[int]=None) -> int:
+    log_id = command(Module.PEEP, description, interaction, CommandType.MEMBER)
+
+    con = sqlite3.connect(log_path())
+    con.execute("""
+    INSERT INTO peep_transfer (log_id, peep_amount, recipient_id, sender_peeps, receiver_peeps)
+    VALUES (?, ?, ?, ?, ?)
+    """, (log_id, amount, recipient_id, sender_peeps, receiver_peeps))
     con.commit()
     con.close()
 

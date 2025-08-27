@@ -104,3 +104,11 @@ CREATE TABLE log_channel (
     log_id INTEGER PRIMARY KEY REFERENCES logs(log_id),
     channel_id INTEGER NOT NULL
 );
+
+CREATE TABLE peep_transfer(
+    log_id INTEGER PRIMARY KEY REFERENCES logs(log_id),
+    peep_amount INTEGER NOT NULL,
+    recipient_id INTEGER NOT NULL,
+    sender_peeps INTEGER,
+    receiver_peeps INTEGER
+);
