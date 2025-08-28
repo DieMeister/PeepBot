@@ -11,7 +11,7 @@ __all__ = [
     "database_path",
     "database_backup_path",
     "log_path",
-    "datetime_format",
+    "dt_format",
     "discord_dt_format",
     "date_format",
     "database_query",

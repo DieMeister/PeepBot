@@ -9,7 +9,7 @@ from typing import Optional, Union
 from discord import Interaction
 from discord.ext.commands.context import Context
 
-from lib.getter.config import log_path, datetime_format
+from lib.getter.config import log_path, dt_format
 
 
 __all__ = [
@@ -56,7 +56,7 @@ class CommandType(Enum):
 
 def default_logger(log_module: Module, description: str, execution_method: ExecutionMethod, log_type: LogType=LogType.INFO) -> int:
     timestamp = datetime.now(dt.UTC)
-    database_time = timestamp.strftime(datetime_format())
+    database_time = timestamp.strftime(dt_format())
     console_time = timestamp.strftime("%Y-%m-%d %H:%M:%S")
 
     connection = sqlite3.connect(log_path())

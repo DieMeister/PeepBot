@@ -12,6 +12,26 @@ def vup() -> list:
     return data["people"]["vup"]
 
 
+def thieves() -> dict:
+    return data["emotes"]["thieves"]
+
+
+def gifted_emote() -> str:
+    return data["emotes"]["leaderboard"]["gifted"]
+
+
+def peeps_emote() -> str:
+    return data["emotes"]["leaderboard"]["peeps"]
+
+
+def received_emote() -> str:
+    return data["emotes"]["leaderboard"]["received"]
+
+
+def tries_emote() -> str:
+    return data["emotes"]["leaderboard"]["tries"]
+
+
 def embed_color() -> int:
     return data["embed_color"]
 
@@ -28,7 +48,7 @@ def log_path() -> str:
     return data["file_paths"]["logs"]
 
 
-def datetime_format() -> str:
+def dt_format() -> str:
     return data["datetime_formats"]["datetime"]
 
 
@@ -46,10 +66,6 @@ def database_query() -> str:
 
 def log_query() -> str:
     return data["sql_table_queries"]["logs"]
-
-
-def thieves() -> dict:
-    return data["people"]["thieves"]
 
 
 def log_channel_missing() -> str:
