@@ -7,11 +7,8 @@
 *.avif
 *.db
 
-Logs/
+archive/
 .venv/
 
 intents.txt
-test.py
-migration_tools/test_data.json
-
 tokens.py

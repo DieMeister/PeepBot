@@ -8,7 +8,7 @@ guild_db: list[tuple[int, str, str, str, str]] = []
 channel_db: list[tuple[int, int]] = []
 member_db: list[tuple[int, int, str, int]] = []
 
-data = lib.load_data("../data.json")
+data = lib.load_data("./data.json")
 for guild in data["guilds"]:
     guild_entry = (
         guild["guild_id"],
