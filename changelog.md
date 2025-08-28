@@ -1,3 +1,26 @@
+# 0.3.0
+# Fixes
+
+- Updates both HelpCommands to be correct again
+- Adds Guilds  and Members only when necessary
+  - Makes sure they exist then
+  - Reduces unnecessary DatabaseEntries
+
+# Features
+
+- Adds a Command to transfer own Peeps to another Member of the same Guild
+- Funne can be a Thief too now
+
+# Changes
+
+- Moves `possible_role_id()` and `role_in_database()` from `Cogs/Moderation.py` to `lib/checks.py`
+- Renames `role_in_database()` to `assignable_role_in_database()` in `lib/checks.py`
+- Moves `Cogs/Moderation.Moderation.autocomplete()` to `lib/autocomplete/moderation.autocomplete()`
+- Moves `Cogs/Moderation.Moderation.add_assignable_role()` to `Cogs/Config.Config.add_assignable_role()`
+- Moves `Cogs/Moderation.Moderation.remove_assignable_role()` to `Cogs/Config.Config.remove_assignable_role()`
+- Moves `Cogs/Moderation.Moderation.set_log_channel()` to `Cogs/Config.Config.set_log_channel()`
+- Change to Enums to configure LoggingCategories
+
 # 0.2.0
 ## Changes
 
