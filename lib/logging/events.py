@@ -2,7 +2,7 @@ import sqlite3
 from typing import TYPE_CHECKING, Optional
 
 from lib.getter.config import log_path
-from lib.logging.base import default_logger
+from lib.logging.base import default_logger, Module, ExecutionMethod, LogType
 
 if TYPE_CHECKING:
     from discord import Guild, Member
@@ -14,8 +14,8 @@ __all__ = [
 ]
 
 
-def guild_join(guild: "Guild", members_added: Optional[int]=None, log_type: str="info") -> int:
-    log_id = default_logger("bot", "Bot joined Guild", "event", log_type)
+def guild_join(guild: "Guild", members_added: Optional[int]=None, log_type: LogType=LogType.INFO) -> int:
+    log_id = default_logger(Module.BOT, "Bot joined Guild", ExecutionMethod.EVENT, log_type)
 
     connection = sqlite3.connect(log_path())
     connection.execute("""
@@ -28,8 +28,8 @@ def guild_join(guild: "Guild", members_added: Optional[int]=None, log_type: str=
     return log_id
 
 
-def member_join(member: "Member", log_type: str="info") -> int:
-    log_id = default_logger("bot", "Member joined Guild", "event", log_type)
+def member_join(member: "Member", log_type: LogType=LogType.INFO) -> int:
+    log_id = default_logger(Module.BOT, "Member joined Guild", ExecutionMethod.EVENT, log_type)
 
     connection = sqlite3.connect(log_path())
     connection.execute("""

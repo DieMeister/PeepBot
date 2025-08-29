@@ -39,18 +39,18 @@ class ExecutionMethod(Enum):
 
 
 class Module(Enum):
-    BOT = "bot"
-    PEEP = "peep"
-    CONFIG = "config"
-    EASTER_EGG = "eastregg",
-    MODERATION = "mod",
-    HELP = "help"
+    BOT = "BOT"
+    PEEP = "PEEP"
+    CONFIG = "CONFIG"
+    EASTER_EGG = "EASTREGG"
+    MODERATION = "MOD"
+    HELP = "HELP"
 
 
 class CommandType(Enum):
     DEVELOPER = "developer"
-    ADMIN = "admin",
-    MANAGER = "manager",
+    ADMIN = "admin"
+    MANAGER = "manager"
     MEMBER = "member"
 
 
@@ -81,7 +81,7 @@ def default_logger(log_module: Module, description: str, execution_method: Execu
         case LogType.DEBUG:
             color = Fore.BLUE
 
-    print(f"{color}[{console_time}] [{log_type.value.upper():5}] [{log_module:8}] {description}{Fore.RESET}")
+    print(f"{color}[{console_time}] [{log_type.value.upper():5}] [{log_module.value:8}] {description}{Fore.RESET}")
 
     return log_id
 

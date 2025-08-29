@@ -25,7 +25,7 @@ def add_guild(guild: "Guild") -> None:
         con.execute("""
         INSERT INTO guilds (guild_id, last_peep)
         VALUES (?, ?)
-        """, (guild.id, datetime.now(dt.UTC)))
+        """, (guild.id, dt_string(datetime.now(dt.UTC))))
         con.commit()
         con.close()
         logging.guild_join(guild)

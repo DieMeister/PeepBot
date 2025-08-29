@@ -22,31 +22,10 @@ class Help(commands.Cog):
     @commands.command()
     async def devhelp(self, ctx: "Context") -> None:
         if ctx.author.id in lib.get.developer():
-            await ctx.reply(embed=embed.devhelp())
+            await ctx.reply(embed=embed.help.dev())
             logging.help_embed(HelpType.DEVELOPER, HelpCategory.ALL, ctx, CommandType.DEVELOPER)
         else:
             await ctx.reply("This bot supports application (/) commands, please use `/help`")
-
-    @app_commands.command(name="help", description="provides help for usage and setup of the bot")
-    @app_commands.describe(
-        problem="The problem you need help with"
-    )
-    @app_commands.choices(
-        problem=[
-            app_commands.Choice(name="Configuration", value="config"),
-            app_commands.Choice(name="Usage", value="usage")
-        ]
-    )
-    async def help(self, interaction: "Interaction", problem: app_commands.Choice[str]) -> None:
-        match problem.value:
-            case "config":
-                help_embed = embed.help_config()
-            case "usage":
-                help_embed = embed.help_config()
-
-        logging.help_embed(problem.value, interaction, CommandType.MEMBER)
-        await interaction.response.send_message(embed=help_embed)
-
 
     @help_commands.command(name="config", description="provides help configuring the bot")
     @app_commands.choices(

@@ -2,7 +2,7 @@ import datetime
 from datetime import datetime as dt, timedelta
 
 import discord
-from discord import app_commands
+from discord import app_commands, Member
 from discord.ext import commands
 
 import sqlite3
@@ -14,7 +14,7 @@ from lib import logging, get
 from lib.logging import Module, ExecutionMethod, CommandType
 
 if TYPE_CHECKING:
-    from discord import Interaction, Member
+    from discord import Interaction
     from discord.ext.commands.context import Context
 
 
@@ -171,9 +171,9 @@ class Peep(commands.Cog):
         recipient="The Member who gets your Peeps"
     )
     @app_commands.command(name="transfer_peeps", description="Gives a set amount of Peeps from you to another Member")
-    async def transfer_peeps(self, interaction: "Interaction", amount: int, recipient: "Member") -> None:
+    async def transfer_peeps(self, interaction: "Interaction", amount: int, recipient: Member) -> None:
         if amount <= 0:
-            interaction.response.send_message("You need to transfer at least 1 Peep")
+            await interaction.response.send_message("You need to transfer at least 1 Peep")
             logging.peep_transfer("Member tried to transfer < 1 Peeps", interaction, amount, recipient.id)
             return
         lib.sql.add_member(interaction.user)
@@ -217,7 +217,7 @@ class Peep(commands.Cog):
         """, ((sender_peeps - amount), amount, interaction.guild_id, interaction.user.id))
         con.commit()
         con.close()
-        interaction.response.send_message(f"You transferred {amount} Peeps to <@{recipient.id}>")
+        await interaction.response.send_message(f"You transferred {amount} Peeps to <@{recipient.id}>")
         logging.peep_transfer("Member transferred Peeps to another Member", interaction, amount, recipient.id, sender_peeps, receiver_peeps)
 
 

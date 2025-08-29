@@ -25,7 +25,7 @@ class HelpType(Enum):
 
 
 class HelpCategory(Enum):
-    PEEP = "peep",
+    PEEP = "peep"
     ASSIGNABLE_ROLES = "assignable_roles"
     ALL = "all"
 
