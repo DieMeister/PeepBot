@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING
 from random import randint, choice
 
 import lib
-from lib import logging, get
+from lib import logging, get, embed
 from lib.logging import Module, ExecutionMethod, CommandType
 
 if TYPE_CHECKING:
@@ -152,10 +152,12 @@ class Peep(commands.Cog):
     @app_commands.command(name="rank", description="shows your peeps and total tries")
     async def rank(self, interaction: "Interaction") -> None:
         connection = sqlite3.connect(lib.get.database_path())
-        peeps, tries = connection.execute("""
+        peeps, tries, sent, received = connection.execute("""
            SELECT
                caught_peeps,
-               tries
+               tries,
+               sent_peeps,
+               received_peeps
            FROM
                members
            WHERE
@@ -163,7 +165,7 @@ class Peep(commands.Cog):
            AND
                user_id = ?
            """, (interaction.guild_id, interaction.user.id)).fetchone()
-        await interaction.response.send_message(f"in {tries} tries you got {peeps} peeps")
+        await interaction.response.send_message(embed=embed.rank(interaction.user, str(tries), str(peeps), str(sent), str(received)))
         logging.command(Module.PEEP, "RankCommand sent", interaction, CommandType.MEMBER)
 
     @app_commands.describe(

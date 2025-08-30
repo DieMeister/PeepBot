@@ -46,7 +46,11 @@ def config_peep() -> Embed:
             add_psps_channel,
             remove_psps_channel,
             change_psps_message
-        ]
+        ],
+        "url": None,
+        "image": None,
+        "thumbnail": None,
+        "author": None
     }
     return Embed.from_dict(embed)
 
@@ -80,6 +84,10 @@ def config_assignable_role() -> Embed:
             add_assignable_role,
             remove_assignable_role,
             set_log_channel
-        ]
+        ],
+        "url": None,
+        "image": None,
+        "thumbnail": None,
+        "author": None
     }
     return Embed.from_dict(embed)

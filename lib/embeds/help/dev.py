@@ -125,6 +125,10 @@ def dev() -> "Embed":
             cog_peep,
             divider_info,
             info_loop
-        ]
+        ],
+        "url": None,
+        "image": None,
+        "thumbnail": None,
+        "author": None
     }
     return Embed.from_dict(embed)

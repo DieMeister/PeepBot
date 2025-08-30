@@ -51,7 +51,11 @@ def use_peep() -> Embed:
             rank,
             leaderboard,
             transfer_peeps
-        ]
+        ],
+        "url": None,
+        "image": None,
+        "thumbnail": None,
+        "author": None
     }
     return Embed.from_dict(embed)
 
@@ -79,6 +83,10 @@ def use_assignable_roles() -> Embed:
         "fields": [
             add_role,
             remove_role
-        ]
+        ],
+        "url": None,
+        "image": None,
+        "thumbnail": None,
+        "author": None
     }
     return Embed.from_dict(embed)

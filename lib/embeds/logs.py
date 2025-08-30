@@ -27,7 +27,11 @@ def default_log(log_id: str, action: str, fields: Optional[list["types.Field"]])
         "footer": {
             "text": f"LogId: {log_id}",
         },
-        "fields": fields
+        "fields": fields,
+        "url": None,
+        "image": None,
+        "thumbnail": None,
+        "author": None
     }
     return Embed.from_dict(embed)
 
