@@ -10,11 +10,12 @@ from lib.getter.date_time import discord_dt_string
 
 if TYPE_CHECKING:
     from lib import types
-    from discord import Member
+    from discord import Member, Guild
 
 
 __all__ = [
-    "rank"
+    "rank",
+    "leaderboard"
 ]
 
 
@@ -36,5 +37,32 @@ def rank(member: "Member", tries: str, total: str, gifted: str, received: str) -
         "thumbnail": None,
         "author": author,
         "fields": None
+    }
+    return Embed.from_dict(embed)
+
+
+def leaderboard(guild: "Guild", leaders: list[tuple[int, int, int, int, int]]) -> Embed:
+    fields: list["types.Field"] = []
+    for leader in leaders:
+        user_id, total, tries, sent, received = leader
+        member = guild.get_member(user_id)
+        field: "types.Field" = {
+            "name": member.display_name,
+            "value": f"{tries_emote()} {tries} | {peeps_emote()} {total} | {gifted_emote()} {sent} | {received_emote()} {received}",
+            "inline": False
+        }
+        fields.append(field)
+    embed: "types.Embed" = {
+        "title": "Leaderboard",
+        "type": "rich",
+        "description": None,
+        "url": None,
+        "timestamp": discord_dt_string(datetime.now(dt.UTC)),
+        "color": embed_color(),
+        "footer": None,
+        "image": None,
+        "thumbnail": None,
+        "author": None,
+        "fields": fields
     }
     return Embed.from_dict(embed)

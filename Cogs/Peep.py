@@ -112,7 +112,9 @@ class Peep(commands.Cog):
            SELECT
                user_id,
                caught_peeps,
-               tries
+               tries,
+               sent_peeps,
+               received_peeps
            FROM
                members
            WHERE
@@ -125,28 +127,11 @@ class Peep(commands.Cog):
            LIMIT 10
            """, (interaction.guild_id,)).fetchall()
 
-        if not top_10:
+        if len(top_10) == 0:
             await interaction.response.send_message("nobody got a peep yet")
             logging.command(Module.PEEP, "Leaderboard sent", interaction, CommandType.MEMBER)
         else:
-
-            guild = self.bot.get_guild(interaction.guild_id)
-            embed = discord.Embed(
-                color=lib.get.embed_color(),
-                timestamp=dt.now(datetime.UTC)
-            )
-            for i in top_10:
-                member = guild.get_member(i[0])
-                if member.nick:
-                   name = member.nick
-                else:
-                    name = member.name
-                embed.add_field(
-                    name=name,
-                    value=f"Peeps: {i[1]}\nTries: {i[2]}",
-                    inline=False
-                )
-            await interaction.response.send_message(embed=embed)
+            await interaction.response.send_message(embed=embed.leaderboard(interaction.guild, top_10))
             logging.command(Module.BOT, "Leaderboard sent", interaction, CommandType.MEMBER)
 
     @app_commands.command(name="rank", description="shows your peeps and total tries")

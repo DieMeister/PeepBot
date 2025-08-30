@@ -6,5 +6,7 @@ from lib.embeds import help
 __all__ = [
     "role_log",
     "channel_log",
+    "rank",
+    "leaderboard",
     "help"
 ]
