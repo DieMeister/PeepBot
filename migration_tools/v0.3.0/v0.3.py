@@ -1,16 +1,16 @@
 import sqlite3
-
 import lib
 
 
 # add columns to members table
 database = sqlite3.connect(lib.get.database_path())
-database.execute("""
+database.executescript("""
 ALTER TABLE members
-ADD (
-    sent_peeps INTEGER DEFAULT(0),
-    received_peeps INTEGER DEFAULT (0)
-)
+ADD received_peeps INTEGER DEFAULT (0);
+
+ALTER TABLE members
+ADD sent_peeps INTEGER DEFAULT(0);
+
 """)
 database.commit()
 database.close()
