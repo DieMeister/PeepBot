@@ -26,7 +26,7 @@ class Bot(commands.Cog):
     @tasks.loop(time=time(1, tzinfo=dt.UTC))
     async def database_save(self) -> None:
         database = sqlite3.connect(lib.get.database_path())
-        backup = sqlite3.connect(f"{lib.get.database_backup_path()}{date.today().strftime(lib.get.date_format())}.json")
+        backup = sqlite3.connect(f"{lib.get.database_backup_path()}{date.today().strftime(lib.get.date_format())}.db")
         database.backup(backup)
 
         backup.commit()

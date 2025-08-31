@@ -9,6 +9,7 @@
 # Features
 
 - Adds a Command to transfer own Peeps to another Member of the same Guild
+  - adds received and sent peeps to `/rank` and `/leaderboard` messages
 - Funne can be a Thief too now
 
 # Changes
