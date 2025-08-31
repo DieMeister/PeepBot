@@ -1,3 +1,8 @@
+# 0.3.1
+# Fixes
+
+- Sent and received peeps are now tracked correctly and don't show only the last amount someone sent, got
+
 # 0.3.0
 # Fixes
 
