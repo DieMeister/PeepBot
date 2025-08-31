@@ -178,7 +178,7 @@ class Peep(commands.Cog):
             return
         lib.sql.add_member(recipient)
         receiver_total_peeps, receiver_received_peeps = con.execute("""
-        SELECT (caught_peeps, received_peeps)
+        SELECT caught_peeps, received_peeps
         FROM members
         WHERE guild_id = ?
         AND user_id = ?
