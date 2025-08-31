@@ -166,11 +166,13 @@ class Peep(commands.Cog):
         lib.sql.add_member(interaction.user)
         con = sqlite3.connect(lib.get.database_path())
         sender_total_peeps, sender_sent_peeps = con.execute("""
-        SELECT caught_peeps, sent_peeps
+        SELECT
+            caught_peeps,
+            sent_peeps
         FROM members
         WHERE guild_id = ?
         AND user_id = ?
-        """, (interaction.guild_id, interaction.user.id)).fetchone()[0]
+        """, (interaction.guild_id, interaction.user.id)).fetchone()
         if amount > sender_total_peeps:
             con.close()
             await interaction.response.send_message("You don't have that many Peeps to transfer")
@@ -182,7 +184,7 @@ class Peep(commands.Cog):
         FROM members
         WHERE guild_id = ?
         AND user_id = ?
-        """, (interaction.guild_id, recipient.id)).fetchone()[0]
+        """, (interaction.guild_id, recipient.id)).fetchone()
 
         # update receiving Member
         con.execute("""
