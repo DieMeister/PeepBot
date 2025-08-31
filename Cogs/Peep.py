@@ -166,7 +166,7 @@ class Peep(commands.Cog):
         lib.sql.add_member(interaction.user)
         con = sqlite3.connect(lib.get.database_path())
         sender_total_peeps, sender_sent_peeps = con.execute("""
-        SELECT (caught_peeps, sent_peeps)
+        SELECT caught_peeps, sent_peeps
         FROM members
         WHERE guild_id = ?
         AND user_id = ?
