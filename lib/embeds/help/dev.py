@@ -95,7 +95,7 @@ def dev() -> "Embed":
     }
     info_loop: "types.Field" = {
         "name": "Loops",
-        "value": f"Everyday at {discord.utils.format_dt(datetime(2007, 6, 6, 1, 0, tzinfo=dt.UTC), style="t")} (01:00 UTC)",
+        "value": f"Everyday at {discord.utils.format_dt(datetime(2007, 6, 6, 1, 0, tzinfo=dt.UTC), style='t')} (01:00 UTC)",
         "inline": True
     }
 
