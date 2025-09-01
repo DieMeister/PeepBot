@@ -1,28 +1,32 @@
 # 0.4.0
-# Fixes
+## Fixes
 
 - Adds missing letter in help message
 
+## Changes
+
+- Doesn't sync commands everytime the bot starts
+
 # 0.3.1
-# Fixes
+## Fixes
 
 - Sent and received peeps are now tracked correctly and don't show only the last amount someone sent, got
 
 # 0.3.0
-# Fixes
+## Fixes
 
 - Updates both HelpCommands to be correct again
 - Adds Guilds  and Members only when necessary
   - Makes sure they exist then
   - Reduces unnecessary DatabaseEntries
 
-# Features
+## Features
 
 - Adds a Command to transfer own Peeps to another Member of the same Guild
   - adds received and sent peeps to `/rank` and `/leaderboard` messages
 - Funne can be a Thief too now
 
-# Changes
+## Changes
 
 - Moves `possible_role_id()` and `role_in_database()` from `Cogs/Moderation.py` to `lib/checks.py`
 - Renames `role_in_database()` to `assignable_role_in_database()` in `lib/checks.py`
