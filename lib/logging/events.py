@@ -9,9 +9,24 @@ if TYPE_CHECKING:
 
 
 __all__ = [
+    "user_join",
     "guild_join",
     "member_join"
 ]
+
+
+def user_join(user_id: int) -> int:
+    log_id = default_logger(Module.BOT, "User added to Database", ExecutionMethod.EVENT, LogType.INFO)
+
+    log_db = sqlite3.connect(log_path())
+    log_db.execute("""
+    INSERT INTO user_join (log_id, user_id)
+    VALUES (?, ?)
+    """, (log_id, user_id))
+    log_db.commit()
+    log_db.close()
+
+    return log_id
 
 
 def guild_join(guild: "Guild", members_added: Optional[int]=None, log_type: LogType=LogType.INFO) -> int:
@@ -29,7 +44,7 @@ def guild_join(guild: "Guild", members_added: Optional[int]=None, log_type: LogT
 
 
 def member_join(member: "Member", log_type: LogType=LogType.INFO) -> int:
-    log_id = default_logger(Module.BOT, "Member joined Guild", ExecutionMethod.EVENT, log_type)
+    log_id = default_logger(Module.BOT, "Member added to Database", ExecutionMethod.EVENT, log_type)
 
     connection = sqlite3.connect(log_path())
     connection.execute("""

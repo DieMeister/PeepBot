@@ -69,10 +69,25 @@ class Peep(commands.Cog):
             steal_number = randint(1, 100)
             # steal peep
             if steal_number == 1:
-                thieves = lib.get.thieves()
-                mod, emote = choice(list(thieves.items()))
+                mod = choice(lib.get.thieves())
+                name = mod["name"]
+                emote = mod["emote"]
+                user_id = mod["user_id"]
                 await ctx.reply(f"{emote} your peep got stolen")
-                logging.steal_peep(ctx, mod, emote)
+                logging.steal_peep(ctx, name, emote)
+                data_db = sqlite3.connect(get.database_path())
+                stolen_peeps = data_db.execute("""
+                SELECT stolen_peeps
+                FROM users
+                WHERE user_id = ?
+                """, (user_id,)).fetchone()[0]
+                data_db.execute("""
+                UPDATE users
+                SET stolen_peeps = ?
+                WHERE user_id = ?
+                """, ((stolen_peeps + 1), user_id))
+                data_db.commit()
+                data_db.close()
             # give member a peep
             else:
                 member_peeps += 1

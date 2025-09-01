@@ -6,6 +6,7 @@
 ## Changes
 
 - Doesn't sync commands everytime the bot starts
+- LogMessage when a Member is added to the database is now `Member added to Database` instead of `Member joined Guild`
 
 # 0.3.1
 ## Fixes

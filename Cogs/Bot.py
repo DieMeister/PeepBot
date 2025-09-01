@@ -109,8 +109,5 @@ class Bot(commands.Cog):
             logging.command(Module.BOT, "Bot shut down", ctx, CommandType.DEVELOPER, LogType.WARN)
 
 
-    # TODO cleanup command
-
-
 async def setup(bot) -> None:
     await bot.add_cog(Bot(bot))

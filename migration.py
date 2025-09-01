@@ -1,7 +1,8 @@
 import sqlite3
 import lib
+from lib.getter.config import database_path, log_path
 
-version = "v0.3.1"
+version = "v0.4.0"
 
 match version:
     case "v0.3.0":
@@ -76,4 +77,44 @@ match version:
             """, ((sent_peeps + amount), guild, sender))
             data_db.commit()
         data_db.close()
+        log_db.close()
+    case "v0.4.0":
+        data_db = sqlite3.connect(database_path())
+        # Create users table
+        data_db.execute("""
+        CREATE TABLE users (
+            user_id INTEGER PRIMARY KEY,
+            stolen_peeps INTEGER
+        )""")
+        data_db.commit()
+
+        # get all user ids
+        members = data_db.execute("""
+        SELECT user_id
+        FROM members
+        """).fetchall()
+        users = []
+        for i in members:
+            if i[0] not in users:
+                users.append((i[0],))
+        # add users to database
+        data_db.executemany("""
+        INSERT INTO users (user_id)
+        VALUES (?)
+        """, users)
+        data_db.commit()
+
+        # alter members table to reference users table
+        data_db.executescript(lib.file.load_data("./migration_queries/v0.4.0/reference_users.sql"))
+        data_db.commit()
+
+        # add logging table
+        log_db = sqlite3.connect(log_path())
+        log_db.executescript("""
+        CREATE TABLE user_join (
+            log_id INTEGER PRIMARY KEY REFERENCES logs(log_id),
+            user_id INTEGER NOT NULL
+        );
+        """)
+        log_db.commit()
         log_db.close()

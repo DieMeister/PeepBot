@@ -6,7 +6,7 @@ from datetime import datetime
 
 from lib.getter.config import database_path
 from lib.getter.date_time import dt_string
-from lib.sql.get import get_guild, get_member
+from lib.sql.get import get_guild, get_member, get_user
 from lib import logging
 
 if TYPE_CHECKING:
@@ -17,6 +17,18 @@ __all__ = [
     "add_member",
     "add_guild"
 ]
+
+
+def add_user(user_id: int) -> None:
+    if get_user(user_id) is None:
+        data_db = sqlite3.connect(database_path())
+        data_db.execute("""
+        INSERT INTO users (user_id)
+        VALUES (?)
+        """, (user_id,))
+        data_db.commit()
+        data_db.close()
+        logging.user_join(user_id)
 
 
 def add_guild(guild: "Guild") -> None:
@@ -33,8 +45,8 @@ def add_guild(guild: "Guild") -> None:
 
 def add_member(member: "Member"):
     if get_member(member.guild.id, member.id) is None:
-        if get_guild(member.guild.id) is None:
-            add_guild(member.guild)
+        add_guild(member.guild)
+        add_user(member.id)
         con = sqlite3.connect(database_path())
         con.execute("""
         INSERT INTO members (

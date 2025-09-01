@@ -1,3 +1,8 @@
+CREATE TABLE users (
+    user_id INTEGER PRIMARY KEY,
+    stolen_peeps INTEGER
+);
+
 CREATE TABLE guilds (
     guild_id INTEGER,
     success_message VARCHAR(2000) DEFAULT('You got a peep!'),
@@ -10,7 +15,7 @@ CREATE TABLE guilds (
 WITHOUT ROWID;
 
 CREATE TABLE members (
-    user_id INTEGER,
+    user_id INTEGER REFERENCES users(user_id),
     guild_id INTEGER REFERENCES guilds(guild_id),
     last_peep VARCHAR(19),
     caught_peeps INTEGER DEFAULT(0),

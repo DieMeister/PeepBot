@@ -46,6 +46,11 @@ CREATE TABLE member_join (
     user_name TEXT NOT NULL
 );
 
+CREATE TABLE user_join (
+    log_id INTEGER PRIMARY KEY REFERENCES logs(log_id),
+    user_id INTEGER NOT NULL
+);
+
 CREATE TABLE configure_channel (
     log_id INTEGER PRIMARY KEY REFERENCES logs(log_id),
     channel_id INTEGER NOT NULL,

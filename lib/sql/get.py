@@ -5,13 +5,27 @@ from lib.getter.config import database_path
 
 
 __all__ = [
+    "get_user",
     "get_guild",
     "get_member",
     "get_channel"
 ]
 
 
-def get_guild(guild_id: int) -> Optional[tuple[int, str, str, str, str]]:
+def get_user(user_id: int) -> Optional[tuple[int, Optional[int]]]:
+    data_db = sqlite3.connect(database_path())
+    user = data_db.execute("""
+    SELECT
+        guild_id,
+        stolen_peeps
+    FROM users
+    WHERE user_id = ?
+    """, (user_id,)).fetchone()
+    data_db.close()
+    return user
+
+
+def get_guild(guild_id: int) -> Optional[tuple[int, str, str, str, str, int]]:
     con = sqlite3.connect(database_path())
     guild = con.execute("""
         SELECT *
@@ -22,7 +36,7 @@ def get_guild(guild_id: int) -> Optional[tuple[int, str, str, str, str]]:
     return guild
 
 
-def get_member(guild_id: int, user_id: int) -> Optional[tuple[int, int, str, int, int]]:
+def get_member(guild_id: int, user_id: int) -> Optional[tuple[int, int, str, int, int, int, int]]:
     con = sqlite3.connect(database_path())
     member = con.execute("""
         SELECT *

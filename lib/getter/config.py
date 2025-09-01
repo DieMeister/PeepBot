@@ -1,18 +1,50 @@
+from typing import TypedDict
+
+
+__all__ = [
+    "data",
+    "developer",
+    "vip",
+    "vup",
+    "thieves",
+    "gifted_emote",
+    "peeps_emote",
+    "received_emote",
+    "tries_emote",
+    "embed_color",
+    "database_path",
+    "database_backup_path",
+    "log_path",
+    "dt_format",
+    "discord_dt_format",
+    "date_time",
+    "database_query",
+    "log_query",
+    "log_channel_missing"
+]
+
+
+class Thief(TypedDict):
+    name: str
+    emote: str
+    id: int
+
+
 data: dict
 
-def developer() -> list:
+def developer() -> list[int]:
     return data["people"]["developer"]
 
 
-def vip() -> list:
+def vip() -> list[int]:
     return data["people"]["vip"]
 
 
-def vup() -> list:
+def vup() -> list[int]:
     return data["people"]["vup"]
 
 
-def thieves() -> dict:
+def thieves() -> list[Thief]:
     return data["emotes"]["thieves"]
 
 
