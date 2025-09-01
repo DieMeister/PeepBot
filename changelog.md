@@ -1,3 +1,8 @@
+# 0.4.0
+# Fixes
+
+- Adds missing letter in help message
+
 # 0.3.1
 # Fixes
 

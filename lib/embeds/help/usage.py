@@ -34,7 +34,7 @@ def use_peep() -> Embed:
     }
     transfer_peeps: "types.Field" = {
         "name": "/transfer_peeps <amount> <recipient>",
-        "value": "Transfers some or all of your peeps to another member\n`amount`: The number of peeps you want to transfer\n`recipient`: The member who gets you peeps",
+        "value": "Transfers some or all of your peeps to another member\n`amount`: The number of peeps you want to transfer\n`recipient`: The member who gets your peeps",
         "inline": True
     }
     embed: "types.Embed" = {
