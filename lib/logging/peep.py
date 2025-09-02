@@ -5,7 +5,7 @@ from lib.logging import command, Module, CommandType
 from lib.getter.config import log_path
 
 if TYPE_CHECKING:
-    from discord import Interaction
+    from discord import Interaction, Member
     from discord.ext.commands.context import Context
 
 
@@ -13,7 +13,8 @@ __all__ = [
     "catch_peep",
     "psps_denied",
     "steal_peep",
-    "peep_transfer"
+    "peep_transfer",
+    "rank"
 ]
 
 
@@ -70,5 +71,19 @@ def peep_transfer(description: str, interaction: "Interaction", amount: int, rec
     """, (log_id, amount, recipient_id, sender_peeps, receiver_peeps))
     con.commit()
     con.close()
+
+    return log_id
+
+
+def rank(interaction: "Interaction", user_id: int) -> int:
+    log_id = command(Module.PEEP, "RankCommand sent", interaction, CommandType.MEMBER)
+
+    log_db = sqlite3.connect(log_path())
+    log_db.execute("""
+    INSERT INTO rank_command (log_id, rank_user_id)
+    VALUES (?, ?)
+    """, (log_id, user_id))
+    log_db.commit()
+    log_db.close()
 
     return log_id

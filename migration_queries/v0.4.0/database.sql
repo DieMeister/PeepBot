@@ -1,3 +1,4 @@
+-- create reference from members.user_id to users.user_id
 CREATE TABLE new_table (
     user_id INTEGER REFERENCES users(user_id),
     guild_id INTEGER REFERENCES guilds(guild_id),
@@ -36,6 +37,7 @@ DROP TABLE members;
 
 ALTER TABLE new_table RENAME TO members;
 
+-- delete users without any entry
 DELETE FROM users
 WHERE user_id NOT IN (
 	SELECT user_id

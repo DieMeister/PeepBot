@@ -106,7 +106,7 @@ match version:
         data_db.commit()
 
         # alter members table to reference users table
-        data_db.executescript(lib.file.load_data("./migration_queries/v0.4.0/reference_users.sql"))
+        data_db.executescript(lib.file.load_data("./migration_queries/v0.4.0/database.sql"))
         data_db.commit()
 
         # add logging table
@@ -115,6 +115,10 @@ match version:
         CREATE TABLE user_join (
             log_id INTEGER PRIMARY KEY REFERENCES logs(log_id),
             user_id INTEGER NOT NULL
+        );
+        CREATE TABLE rank_command (
+            log_id INTEGER PRIMARY KEY REFERENCES logs(log_id),
+            rank_user_id INTEGER
         );
         """)
         log_db.commit()

@@ -5,7 +5,7 @@ from discord import app_commands, Member
 from discord.ext import commands
 
 import sqlite3
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 from random import randint, choice
 
 import lib
@@ -150,10 +150,17 @@ class Peep(commands.Cog):
             await interaction.response.send_message(embed=embed.leaderboard(interaction.guild, top_10))
             logging.command(Module.BOT, "Leaderboard sent", interaction, CommandType.MEMBER)
 
+    @app_commands.describe(
+        member="The Member whose rank you want to know"
+    )
     @app_commands.command(name="rank", description="shows your peeps and total tries")
-    async def rank(self, interaction: "Interaction") -> None:
-        connection = sqlite3.connect(lib.get.database_path())
-        peeps, tries, sent, received = connection.execute("""
+    async def rank(self, interaction: "Interaction", member: Optional[Member]=None) -> None:
+        if member is None:
+            member = interaction.user
+        lib.sql.add_member(member)
+
+        data_db = sqlite3.connect(lib.get.database_path())
+        peeps, tries, sent, received = data_db.execute("""
            SELECT
                caught_peeps,
                tries,
@@ -165,9 +172,9 @@ class Peep(commands.Cog):
                guild_id = ?
            AND
                user_id = ?
-           """, (interaction.guild_id, interaction.user.id)).fetchone()
-        await interaction.response.send_message(embed=embed.rank(interaction.user, str(tries), str(peeps), str(sent), str(received)))
-        logging.command(Module.PEEP, "RankCommand sent", interaction, CommandType.MEMBER)
+           """, (interaction.guild_id, member.id)).fetchone()
+        await interaction.response.send_message(embed=embed.rank(member, str(tries), str(peeps), str(sent), str(received)))
+        logging.rank(interaction, member.id)
 
     @app_commands.describe(
         amount="The number of Peeps you want to transfer. 0 < amount <= your peeps",

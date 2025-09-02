@@ -1,4 +1,10 @@
 # 0.4.0
+## Features
+
+- Users Database
+  - Count of Peeps someone stole
+- Anyone can see other Members rank using `/rank <member>` and not just their own
+
 ## Fixes
 
 - Adds missing letter in help message

@@ -16,7 +16,7 @@ def get_user(user_id: int) -> Optional[tuple[int, Optional[int]]]:
     data_db = sqlite3.connect(database_path())
     user = data_db.execute("""
     SELECT
-        guild_id,
+        user_id,
         stolen_peeps
     FROM users
     WHERE user_id = ?

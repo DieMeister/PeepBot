@@ -117,3 +117,8 @@ CREATE TABLE peep_transfer(
     sender_peeps INTEGER,
     receiver_peeps INTEGER
 );
+
+CREATE TABLE rank_command(
+    log_id INTEGER PRIMARY KEY REFERENCES logs(log_id),
+    rank_user_id INTEGER
+)
