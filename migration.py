@@ -95,8 +95,9 @@ match version:
         """).fetchall()
         users = []
         for i in members:
-            if i[0] not in users:
-                users.append((i[0],))
+            user_id = i[0]
+            if (user_id,) not in users:
+                users.append((user_id,))
         # add users to database
         data_db.executemany("""
         INSERT INTO users (user_id)

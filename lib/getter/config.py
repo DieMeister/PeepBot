@@ -1,8 +1,10 @@
 from typing import TypedDict
 
+from lib.data import json
+
 
 __all__ = [
-    "data",
+    "load_data",
     "developer",
     "vip",
     "vup",
@@ -17,7 +19,7 @@ __all__ = [
     "log_path",
     "dt_format",
     "discord_dt_format",
-    "date_time",
+    "date_format",
     "database_query",
     "log_query",
     "log_channel_missing"
@@ -32,6 +34,12 @@ class Thief(TypedDict):
 
 data: dict
 
+
+def load_data(file_path: str) -> None:
+    global data
+    data = json.load_data(file_path)
+
+
 def developer() -> list[int]:
     return data["people"]["developer"]
 
@@ -45,7 +53,7 @@ def vup() -> list[int]:
 
 
 def thieves() -> list[Thief]:
-    return data["emotes"]["thieves"]
+    return data["people"]["thieves"]
 
 
 def gifted_emote() -> str:

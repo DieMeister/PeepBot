@@ -51,7 +51,7 @@ def steal_peep(context: "Context", mod: str, emote: str) -> int:
 
     con = sqlite3.connect(log_path())
     con.execute("""
-    INSERT INTO steal_peep (log_id, mod, emote)
+    INSERT INTO steal_peep (log_id, moderator, emote)
     VALUES (?, ?, ?)
     """, (log_id, mod, emote))
     con.commit()

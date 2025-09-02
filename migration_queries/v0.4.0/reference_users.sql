@@ -27,11 +27,17 @@ SELECT
     sent_peeps,
     received_peeps
 FROM members
-WHERE caught_peeps = 0
-    AND tries = 0
-    AND sent_peeps = 0
-    AND received_peeps = 0;
+WHERE caught_peeps <> 0
+    OR tries <> 0
+    OR sent_peeps <> 0
+    OR received_peeps <> 0;
 
 DROP TABLE members;
 
 ALTER TABLE new_table RENAME TO members;
+
+DELETE FROM users
+WHERE user_id NOT IN (
+	SELECT user_id
+	FROM members
+);

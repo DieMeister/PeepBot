@@ -1,7 +1,6 @@
 import datetime
 from datetime import datetime as dt, timedelta
 
-import discord
 from discord import app_commands, Member
 from discord.ext import commands
 
@@ -72,15 +71,16 @@ class Peep(commands.Cog):
                 mod = choice(lib.get.thieves())
                 name = mod["name"]
                 emote = mod["emote"]
-                user_id = mod["user_id"]
+                user_id = mod["id"]
                 await ctx.reply(f"{emote} your peep got stolen")
-                logging.steal_peep(ctx, name, emote)
                 data_db = sqlite3.connect(get.database_path())
                 stolen_peeps = data_db.execute("""
                 SELECT stolen_peeps
                 FROM users
                 WHERE user_id = ?
                 """, (user_id,)).fetchone()[0]
+                if stolen_peeps is None:
+                    stolen_peeps = 0
                 data_db.execute("""
                 UPDATE users
                 SET stolen_peeps = ?
@@ -88,6 +88,7 @@ class Peep(commands.Cog):
                 """, ((stolen_peeps + 1), user_id))
                 data_db.commit()
                 data_db.close()
+                logging.steal_peep(ctx, name, emote)
             # give member a peep
             else:
                 member_peeps += 1

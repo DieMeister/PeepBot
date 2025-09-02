@@ -20,4 +20,4 @@ __all__ =  [
 ]
 
 
-get.config.data = json.load_data("./config.json")
+get.load_data("./config.json")
