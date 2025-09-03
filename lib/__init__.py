@@ -1,3 +1,5 @@
+"""A library for all external functions of this discord bot."""
+
 from lib.data import *
 from lib.checks import *
 from lib import getter as get
