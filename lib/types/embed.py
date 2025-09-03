@@ -129,7 +129,6 @@ class Embed(TypedDict):
         The fields of the embed.
         Can only be up to 25 fields.
     """
-
     title: Optional[str]
     type: str
     description: Optional[str]

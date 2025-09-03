@@ -1,7 +1,3 @@
-from lib.types.embed import *
+"""Add custom types for better type checking."""
 
-__all__ = [
-    "Field",
-    "Footer",
-    "Embed"
-]
+from lib.types.embed import *
