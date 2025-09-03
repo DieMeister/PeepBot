@@ -32,6 +32,13 @@ def add_user(user_id: int) -> None:
 
 
 def add_guild(guild: "Guild") -> None:
+    """Add guild to database if it is not in it already.
+
+    Parameters
+    -----------
+    guild: :class:`Guild`
+        the guild that is being added.
+    """
     if get_guild(guild.id) is None:
         con = sqlite3.connect(database_path())
         con.execute("""
@@ -44,6 +51,13 @@ def add_guild(guild: "Guild") -> None:
 
 
 def add_member(member: "Member"):
+    """Add member to database if they are not in it already.
+
+    Parameters
+    -----------
+    member: :class:`Member`
+        The member that is being added.
+    """
     if get_member(member.guild.id, member.id) is None:
         add_guild(member.guild)
         add_user(member.id)
