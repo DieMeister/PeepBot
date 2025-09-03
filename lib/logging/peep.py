@@ -20,6 +20,23 @@ __all__ = [
 
 
 def catch_peep(description: str, ctx: "Context", peep_amount: int, random_integer: int) -> int:
+    """Log when a member tries to get a peep.
+
+    This function is only invoked when the member has the right to catch a peep at the moment.
+    This function is invoked regardless of the outcome of the try.
+    Return the log_id.
+
+    Parameters
+    -----------
+    description: :class:`str`
+        Short description of what happened.
+    ctx: :class:`Context`
+        The context of the psps command.
+    peep_amount: :class:`int`
+        The number of peeps the member has after executing the command.
+    random_integer: :class:`int`
+        The randomly selected integer that decided if the member got a peep.
+    """
     log_id = command(Module.PEEP, description, ctx, CommandType.MEMBER)
 
     connection = sqlite3.connect(log_path())
@@ -34,6 +51,17 @@ def catch_peep(description: str, ctx: "Context", peep_amount: int, random_intege
 
 
 def psps_denied(ctx: "Context", reason: str) -> int:
+    """Log when member tries to get a peep without permission.
+
+    Return the log_id.
+
+    Parameters
+    -----------
+    ctx: :class:`Context`
+        The context of the psps command.
+    reason: :class:`str`
+        The reason why the member does not have permission to execute the command.
+    """
     log_id = command(Module.PEEP, "psps denied", ctx, CommandType.MEMBER)
 
     connection = sqlite3.connect(log_path())
@@ -48,6 +76,19 @@ def psps_denied(ctx: "Context", reason: str) -> int:
 
 
 def steal_peep(context: "Context", mod: str, emote: str) -> int:
+    """Log when a peep gets stolen.
+
+    Return log_id.
+
+    Parameters
+    -----------
+    context: :class:`Context`
+        The context of the command.
+    mod: :class:`str`
+        The moderator that stole the peep.
+    emote: :class:`str`
+        The emote of the moderator.
+    """
     log_id = command(Module.PEEP, "Peep got stolen", context, CommandType.MEMBER)
 
     con = sqlite3.connect(log_path())
@@ -62,6 +103,25 @@ def steal_peep(context: "Context", mod: str, emote: str) -> int:
 
 
 def peep_transfer(description: str, interaction: "Interaction", amount: int, recipient_id: int, sender_peeps: Optional[int]=None, receiver_peeps: Optional[int]=None) -> int:
+    """Log the transfer of peeps and its attempts.
+
+    Return log_id.
+
+    Parameters
+    -----------
+    description: :class:`str`
+        A short description of what happened.
+    interaction: :class:`Interaction`
+        The interaction of the command.
+    amount: :class:`int`
+        The amount of peeps that a member wants to transfer.
+    recipient_id: :class:`int`
+        The discord id of the member who receives the peeps if the transfer is successful.
+    sender_peeps: :class:`int`
+        The amount of peeps the member who transfers their peeps had before executing the command.
+    receiver_peeps: :class:`int`
+        The amount of peeps the member who gets the peeps had before the execution of the command.
+    """
     log_id = command(Module.PEEP, description, interaction, CommandType.MEMBER)
 
     con = sqlite3.connect(log_path())
@@ -76,6 +136,17 @@ def peep_transfer(description: str, interaction: "Interaction", amount: int, rec
 
 
 def rank(interaction: "Interaction", user_id: int) -> int:
+    """Log the execution of /rank
+
+    Return the log_id.
+
+    Parameters
+    -----------
+    interaction: :class:`Interaction`
+        The interaction of the command.
+    user_id: :class:`int`
+        The discord id of the member whose rank was requested.
+    """
     log_id = command(Module.PEEP, "RankCommand sent", interaction, CommandType.MEMBER)
 
     log_db = sqlite3.connect(log_path())
