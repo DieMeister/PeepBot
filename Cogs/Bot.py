@@ -113,28 +113,38 @@ class Bot(commands.Cog):
         # Check if all values can be converted to the correct type.
         try:
             amount = int(amount)
+        except ValueError:
+            logging.invalid_input(Module.PEEP, "Amount of given peeps is not a number", ctx, CommandType.DEVELOPER, amount)
+            await ctx.reply("Amount of peeps is not a number")
+            return
+        try:
             user_id = int(user_id)
+        except ValueError:
+            logging.invalid_input(Module.PEEP, "user_id of member to give peeps to is not a number", ctx, CommandType.DEVELOPER, user_id)
+            await ctx.reply("Amount of peeps is not a number")
+            return
+        try:
             guild_id = int(guild_id)
         except ValueError:
-            # TODO logging
-            await ctx.reply("The amount, user_id, and/or guild_id is not a number")
+            logging.invalid_input(Module.PEEP, "guild_id of member to give peeps to is not a number", ctx, CommandType.DEVELOPER, guild_id)
+            await ctx.reply("Amount of peeps is not a number")
             return
 
         # check if values are valid
         if amount <= 0:
             await ctx.reply("You need to give at least one peep")
-            # TODO logging
+            logging.invalid_input(Module.PEEP, "Given peeps <= 0", ctx, CommandType.DEVELOPER, amount)
 
         # Check if the member exists.
         guild = self.bot.get_guild(guild_id)
         if guild is None:
             await ctx.reply("Bot is not in provided guild")
-            # TODO logging
+            logging.invalid_input(Module.PEEP, "bot not in guild of member to give peeps to", ctx, CommandType.DEVELOPER, guild_id)
             return
         member = guild.get_member(user_id)
         if member is None:
             await ctx.reply("Member is not in provided guild")
-            # TODO logging
+            logging.invalid_input(Module.PEEP, "member to give peeps to not in provided guild", ctx, CommandType.DEVELOPER, user_id)
             return
 
         # add peeps to the member
@@ -154,7 +164,7 @@ class Bot(commands.Cog):
         data_db.commit()
         data_db.close()
         await ctx.reply("Peeps given to member")
-        # TODO logging
+        logging.give_peeps(amount, guild_id, user_id, ctx)
 
 
 async def setup(bot) -> None:
