@@ -5,7 +5,7 @@ from lib.logging import command, Module, CommandType
 from lib.getter.config import log_path
 
 if TYPE_CHECKING:
-    from discord import Interaction, Member
+    from discord import Interaction
     from discord.ext.commands.context import Context
 
 
@@ -14,7 +14,8 @@ __all__ = [
     "psps_denied",
     "steal_peep",
     "peep_transfer",
-    "rank"
+    "rank",
+    "give_peeps"
 ]
 
 
@@ -154,6 +155,40 @@ def rank(interaction: "Interaction", user_id: int) -> int:
     INSERT INTO rank_command (log_id, rank_user_id)
     VALUES (?, ?)
     """, (log_id, user_id))
+    log_db.commit()
+    log_db.close()
+
+    return log_id
+
+
+def give_peeps(given_peeps: int, guild_id: int, user_id: int, context: "Context", ) -> int:
+    """Log when peeps are given to a member.
+
+    Return the log_id.
+
+    Parameters
+    -----------
+    given_peeps: :class:`int`
+        The amount of peeps the member should get.
+    guild_id: :class:`int`
+        The id of the member's guild.
+    user_id: :class:`int`
+        The user_id of the member.
+    context: :class:`Context`
+        The context of the command.
+    """
+    log_id = command(Module.PEEP, "peeps given to a member", context, CommandType.DEVELOPER)
+
+    log_db = sqlite3.connect(log_path())
+    log_db.execute("""
+    INSERT INTO give_peeps (
+        log_id,
+        amount,
+        member_guild_id,
+        member_user_id
+    )
+    VALUES (?, ?, ?, ?)
+    """, (log_id, given_peeps, guild_id, user_id))
     log_db.commit()
     log_db.close()
 

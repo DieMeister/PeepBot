@@ -100,9 +100,14 @@ CREATE TABLE assigning_role (
     reason TEXT
 );
 
-CREATE TABLE invalid_input (
+CREATE TABLE invalid_str_input (
     log_id INTEGER PRIMARY KEY REFERENCES logs(log_id),
     input TEXT NOT NULL
+);
+
+CREATE TABLE invalid_int_input (
+    log_id INTEGER PRIMARY KEY REFERENCES logs(log_id),
+    input INTEGER NOT NULL
 );
 
 CREATE TABLE log_channel (
@@ -121,4 +126,11 @@ CREATE TABLE peep_transfer(
 CREATE TABLE rank_command(
     log_id INTEGER PRIMARY KEY REFERENCES logs(log_id),
     rank_user_id INTEGER
-)
+);
+
+CREATE TABLE give_peeps (
+    log_id INTEGER PRIMARY KEY REFERENCES logs(log_id),
+    amount INTEGER NOT NULL,
+    member_guild_id INTEGER NOT NULL,
+    member_user_id INTEGER NOT NULL
+);

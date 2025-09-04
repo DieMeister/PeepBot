@@ -86,7 +86,7 @@ def help_embed(help_type: HelpType, help_category: HelpCategory, context: Union[
     return log_id
 
 
-def invalid_input(log_module: Module, description: str, context: Union["Context", "Interaction"], command_type: CommandType, given_input: str, log_type: LogType=LogType.INFO) -> int:
+def invalid_input(log_module: Module, description: str, context: Union["Context", "Interaction"], command_type: CommandType, given_input: Union[str, int], log_type: LogType=LogType.INFO) -> int:
     """Log when a given input is invalid.
 
     Return the log_id.
@@ -101,7 +101,7 @@ def invalid_input(log_module: Module, description: str, context: Union["Context"
         The context or interaction of the command where the inout comes from.
     command_type: :class:`CommandType`
         The type of the command that caused the invalid input.
-    given_input: :class:`str`
+    given_input: Union[:class:`str`, :class:`int`]
         The invalid input.
     log_type: :class:`LogType`=`LogType.INFO`
         The type of log this is.
@@ -109,10 +109,20 @@ def invalid_input(log_module: Module, description: str, context: Union["Context"
     log_id = command(log_module, description, context, command_type, log_type)
 
     con = sqlite3.connect(log_path())
-    con.execute("""
-    INSERT INTO invalid_input (log_id, input)
-    VALUE (?, ?)
-    """, (log_id, given_input))
+
+    if isinstance(given_input, str):
+        con.execute("""
+        INSERT INTO invalid_str_input (log_id, input)
+        VALUE (?, ?)
+        """, (log_id, given_input))
+    elif isinstance(given_input, int):
+        con.execute("""
+        INSERT INTO invalid_int_input (log_id, input)
+        VALUE (?, ?)
+        """, (log_id, given_input))
+    else:
+        raise ValueError("given_input not of type str or int")
+
     con.commit()
     con.close()
     return log_id
