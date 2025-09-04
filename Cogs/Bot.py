@@ -108,6 +108,54 @@ class Bot(commands.Cog):
             await self.bot.close()
             logging.command(Module.BOT, "Bot shut down", ctx, CommandType.DEVELOPER, LogType.WARN)
 
+    @commands.command()
+    async def give_peeps(self, ctx: "Context", amount: str, user_id: str, guild_id: str) -> None:
+        # Check if all values can be converted to the correct type.
+        try:
+            amount = int(amount)
+            user_id = int(user_id)
+            guild_id = int(guild_id)
+        except ValueError:
+            # TODO logging
+            await ctx.reply("The amount, user_id, and/or guild_id is not a number")
+            return
+
+        # check if values are valid
+        if amount <= 0:
+            await ctx.reply("You need to give at least one peep")
+            # TODO logging
+
+        # Check if the member exists.
+        guild = self.bot.get_guild(guild_id)
+        if guild is None:
+            await ctx.reply("Bot is not in provided guild")
+            # TODO logging
+            return
+        member = guild.get_member(user_id)
+        if member is None:
+            await ctx.reply("Member is not in provided guild")
+            # TODO logging
+            return
+
+        # add peeps to the member
+        lib.sql.add_member(member)
+        member_db = lib.sql.get_member(int(guild_id), int(user_id))
+        total_peeps = member_db[3]
+        received_peeps = member_db[7]
+        data_db = sqlite3.connect(lib.get.database_path())
+        data_db.execute("""
+        UPDATE members
+        SET 
+            caught_peeps = ?,
+            received_peeps = ?
+        WHERE guild_id = ?
+        AND user_id = ?
+        """, ((total_peeps + amount), (received_peeps + amount), guild_id, user_id))
+        data_db.commit()
+        data_db.close()
+        await ctx.reply("Peeps given to member")
+        # TODO logging
+
 
 async def setup(bot) -> None:
     await bot.add_cog(Bot(bot))
