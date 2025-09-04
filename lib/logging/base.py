@@ -55,6 +55,21 @@ class CommandType(Enum):
 
 
 def default_logger(log_module: Module, description: str, execution_method: ExecutionMethod, log_type: LogType=LogType.INFO) -> int:
+    """Default logger, is called by every other logger function.
+
+    Return the log_id.
+
+    Parameters
+    -----------
+    log_module: :class:`Module`
+        The module that called a log function.
+    description: :class:`str`
+        A short description of what happened.
+    execution_method: :class:`ExecutionMethod`
+        The way the event was triggered.
+    log_type: :class:`LogType`
+        The severity of the event.
+    """
     timestamp = datetime.now(dt.UTC)
     database_time = timestamp.strftime(dt_format())
     console_time = timestamp.strftime("%Y-%m-%d %H:%M:%S")
@@ -87,6 +102,23 @@ def default_logger(log_module: Module, description: str, execution_method: Execu
 
 
 def command(log_module: Module, description: str, context: Union[Context, Interaction], command_type: CommandType, log_type: LogType=LogType.INFO) -> int:
+    """Base logger for all commands. This is called whenever a command is involved.
+
+    Return the log_id.
+
+    Parameters
+    -----------
+    log_module: :class:`Module`
+        The module that called a log function.
+    description: :class:`str`
+        A short description of what happened.
+    context: Union[:class:`Context`, :class:`Interaction`]
+        The context or interaction of the command.
+    command_type: :class:`CommandType`
+        Who is allowed to use the command.
+    log_type: :class:`LogType`
+        The severity of the event.
+    """
     log_id = default_logger(log_module, description, ExecutionMethod.COMMAND, log_type)
 
     guild_id = context.guild.id
@@ -110,6 +142,27 @@ def command(log_module: Module, description: str, context: Union[Context, Intera
 
 
 def command_possible(log_module: Module, description: str, execution_method: ExecutionMethod, log_type: LogType, ctx: Optional[Context], command_type: Optional[CommandType]) -> int:
+    """Log when a command is a possible trigger but not necessary.
+
+    This function calls either :func:`base_logger` or :func:`command` depending on if a command is involved.
+    Return the log_id.
+
+    Parameters
+    -----------
+    log_module: :class:`Module`
+        The module that called a log function.
+    description: :class:`str`
+        A short description of what happened.
+    execution_method: :class:`ExecutionMethod`
+        The trigger of the event. If a command is involved this is ExecutionMethod.COMMAND
+    ctx: :class:`Context`
+        The context or interaction of the command.
+    log_type: :class:`LogType`
+        The severity of the event.
+    command_type: :class:`CommandType`
+        Who is allowed to use the command.
+    """
+
     if execution_method== ExecutionMethod.COMMAND:
         if ctx is None:
             raise ValueError("Missing Argument: ctx")
