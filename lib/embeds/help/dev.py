@@ -1,3 +1,5 @@
+from traceback import format_tb
+
 import discord
 from discord import Embed
 
@@ -53,6 +55,11 @@ def dev() -> "Embed":
         "value": "Shows this message.\nIf this leaves unanswered questions feel free to dm `@diemeister`",
         "inline": True
     }
+    command_give_peep: "types.Field" = {
+        "name": "give_peeps <amount> <user_id> <guild_id>",
+        "value": "Gives a set amount of peeps to a member.\n`amount`: The amount of peeps the member gets. Must be at least 1.\n`user_id`: The user_id of the member.\n`guild_id`: The id of the member's guild.",
+        "inline": True
+    }
     cog_divider: "types.Field" = {
         "name": "List of Cogs and a description",
         "value": "\u200b",
@@ -98,6 +105,10 @@ def dev() -> "Embed":
         "value": f"Everyday at {discord.utils.format_dt(datetime(2007, 6, 6, 1, 0, tzinfo=dt.UTC), style='t')} (01:00 UTC)",
         "inline": True
     }
+    footer: "types.Footer" = {
+        "text": "Help",
+        "icon_url": None
+    }
 
     embed: "types.Embed" = {
         "type": "rich",
@@ -105,9 +116,7 @@ def dev() -> "Embed":
         "description": "Explains every DeveloperCommand",
         "color": embed_color(),
         "timestamp": dt_string(datetime(2025, 8, 22, 22, 50, tzinfo=dt.UTC)),
-        "footer": {
-            "text": "Help"
-        },
+        "footer": footer,
         "fields": [
             divider_commands,
             command_reload_cog,
@@ -116,6 +125,7 @@ def dev() -> "Embed":
             command_sync,
             command_shutdown,
             command_help,
+            command_give_peep,
             cog_divider,
             cog_bot,
             cog_config,
