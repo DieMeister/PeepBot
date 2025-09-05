@@ -13,6 +13,16 @@ __all__ = [
 
 
 def log_channel(guild: "Guild") -> Optional[Union["TextChannel", "StageChannel", "ForumChannel", "VoiceChannel", "CategoryChannel"]]:
+    """
+    Return the log channel of a guild.
+
+    If the guild has no channel set or the channel does not exist anymore, None is returned.
+
+    Parameters
+    -----------
+    guild: :class:`Guild`
+        The guild whose log channel is got.
+    """
     con = sqlite3.connect(database_path())
     guild_data = con.execute("""
     SELECT log_channel_id

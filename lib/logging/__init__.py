@@ -1,3 +1,4 @@
+"""A package to log all events connected to the PeepBot"""
 from lib.logging.base import *
 from lib.logging.config import *
 from lib.logging.events import *
