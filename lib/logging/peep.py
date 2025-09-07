@@ -15,7 +15,8 @@ __all__ = [
     "steal_peep",
     "peep_transfer",
     "rank",
-    "give_peeps"
+    "give_peeps",
+    "remove_peeps"
 ]
 
 
@@ -189,6 +190,45 @@ def give_peeps(given_peeps: int, guild_id: int, user_id: int, context: "Context"
     )
     VALUES (?, ?, ?, ?)
     """, (log_id, given_peeps, guild_id, user_id))
+    log_db.commit()
+    log_db.close()
+
+    return log_id
+
+
+def remove_peeps(old_total: int, amount_removed: int, guild_id: int, user_id: int, context: "Context") -> int:
+    """
+    Log when peeps are removed from a member.
+
+    If `amount_removed` > `old_total` the new total is 0, not a negative number.
+    Return the log id.
+
+    Parameters
+    -----------
+    old_total: :class:`int`
+        The amount of peeps the member had before.
+    amount_removed: :class:`int`
+        The amount of peeps the member now has less than before.
+    guild_id: :class:`int`
+        The member's guild_id.
+    user_id: :class:`int`
+        The member's user_id.
+    context: :class:`Context`
+        The context of the command.
+    """
+    log_id = command(Module.PEEP, "peeps removed from member", context, CommandType.DEVELOPER)
+
+    log_db = sqlite3.connect(log_path())
+    log_db.execute("""
+    INSERT INTO remove_peeps (
+        log_id,
+        old_total,
+        amount_removed,
+        member_guild_id,
+        member_user_id
+    )
+    VALUES (?, ?, ?, ?, ?)
+    """, (log_id, old_total, amount_removed, guild_id, user_id))
     log_db.commit()
     log_db.close()
 

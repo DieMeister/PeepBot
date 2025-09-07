@@ -135,3 +135,11 @@ CREATE TABLE give_peeps (
     member_guild_id INTEGER NOT NULL,
     member_user_id INTEGER NOT NULL
 );
+
+CREATE TABLE remove_peeps (
+    log_id INTEGER PRIMARY KEY REFERENCES logs(log_id),
+    old_total INTEGER NOT NULL,
+    amount_removed INTEGER NOT NULL,
+    member_guild_id INTEGER NOT NULL,
+    member_user_id INTEGER NOT NULL
+)
