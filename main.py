@@ -51,6 +51,3 @@ if __name__ == "__main__":
 
     bot = PeepBot(command_prefix="!", intents=intents, help_command=None)
     bot.run(BOTTOKEN)
-
-
-lib.get.developer()
