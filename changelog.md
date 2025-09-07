@@ -4,6 +4,8 @@
 - Users Database
   - Count of Peeps someone stole
 - Anyone can see other Members rank using `/rank <member>` and not just their own
+- Log when bot is ready
+- `?` and `!pb!` are now supported prefixes too
 
 ## Fixes
 

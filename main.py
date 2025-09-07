@@ -49,5 +49,5 @@ if __name__ == "__main__":
     intents.guilds = True
     intents.members = True
 
-    bot = PeepBot(command_prefix="!", intents=intents, help_command=None)
+    bot = PeepBot(command_prefix=("!pb!", "?", "!"), intents=intents, help_command=None)
     bot.run(BOTTOKEN)
