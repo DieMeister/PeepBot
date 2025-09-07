@@ -99,6 +99,11 @@ def dev() -> "Embed":
         "value": "\u200b",
         "inline": False
     }
+    prefixes: "types.Field" = {
+        "name": "Prefixes",
+        "value": "The bot supports `!pb!`, `!`, and `?` as prefixes.\nThis is only important for the commands listed above.",
+        "inline": True
+    }
     info_loop: "types.Field" = {
         "name": "Loops",
         "value": f"Everyday at {discord.utils.format_dt(datetime(2007, 6, 6, 1, 0, tzinfo=dt.UTC), style='t')} (01:00 UTC)",
@@ -133,6 +138,7 @@ def dev() -> "Embed":
             cog_moderation,
             cog_peep,
             divider_info,
+            prefixes,
             info_loop
         ],
         "url": None,
