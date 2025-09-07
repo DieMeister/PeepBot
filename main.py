@@ -18,6 +18,9 @@ class PeepBot(commands.Bot):
                 await self.load_extension(f"Cogs.{file[:-3]}")
                 logging.extension_success(Module.BOT, "Extension loaded", ExecutionMethod.SETUP, file)
 
+    async def on_ready(self) -> None:
+        logging.default_logger(Module.BOT, "Bot is ready", ExecutionMethod.SETUP)
+
 
 if __name__ == "__main__":
     if not os.path.isfile(lib.get.log_path()):
