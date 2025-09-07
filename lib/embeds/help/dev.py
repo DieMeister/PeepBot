@@ -18,6 +18,7 @@ __all__ = [
 
 
 def dev() -> "Embed":
+    # FIXME add add and remove peeps commands
     divider_commands: "types.Field" = {
         "name": "Commands",
         "value": "\u200b",
@@ -98,6 +99,10 @@ def dev() -> "Embed":
         "value": f"Everyday at {discord.utils.format_dt(datetime(2007, 6, 6, 1, 0, tzinfo=dt.UTC), style='t')} (01:00 UTC)",
         "inline": True
     }
+    footer: "types.Footer" = {
+        "text": "Help",
+        "icon_url": None
+    }
 
     embed: "types.Embed" = {
         "type": "rich",
@@ -105,9 +110,7 @@ def dev() -> "Embed":
         "description": "Explains every DeveloperCommand",
         "color": embed_color(),
         "timestamp": dt_string(datetime(2025, 8, 22, 22, 50, tzinfo=dt.UTC)),
-        "footer": {
-            "text": "Help"
-        },
+        "footer": footer,
         "fields": [
             divider_commands,
             command_reload_cog,
