@@ -1,5 +1,3 @@
-from traceback import format_tb
-
 import discord
 from discord import Embed
 
@@ -20,6 +18,7 @@ __all__ = [
 
 
 def dev() -> "Embed":
+    """Return a discord embed that contains information for developers."""
     divider_commands: "types.Field" = {
         "name": "Commands",
         "value": "\u200b",

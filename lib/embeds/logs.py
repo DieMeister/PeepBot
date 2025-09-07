@@ -17,16 +17,31 @@ __all__ = [
 ]
 
 
-def default_log(log_id: str, action: str, fields: Optional[list["types.Field"]]) -> Embed:
+def _default_log(log_id: str, action: str, fields: Optional[list["types.Field"]]) -> Embed:
+    """
+    A blueprint for discord embed logs.
+
+    Parameters
+    -----------
+    log_id: :class:`str`
+        The id the event is saved in the log database of the bot.
+    action: :class:`str`
+        A short description of what happened.
+    fields: Optional[:class:`list[:class:`dict`]`
+        The fields to add to the embed.
+        Can be a maximum of 25 fields.
+    """
+    footer: "types.Footer" = {
+            "text": f"LogId: {log_id}",
+            "icon_url": None
+        }
     embed: "types.Embed" = {
         "type": "rich",
         "title": action,
         "description": None,
         "color": embed_color(),
         "timestamp": discord_dt_string(datetime.now(dt.UTC)),
-        "footer": {
-            "text": f"LogId: {log_id}",
-        },
+        "footer": footer,
         "fields": fields,
         "url": None,
         "image": None,
@@ -37,6 +52,24 @@ def default_log(log_id: str, action: str, fields: Optional[list["types.Field"]])
 
 
 def role_log(log_id: str, action: str, role_id: str, moderator_id: str, reason: Optional[str], receiver_id: Optional[str]=None) -> Embed:
+    """
+    Return a discord embed that acts as log for actions about AssignableRoles.
+
+    Parameters
+    -----------
+    log_id: :class:`str`
+        The log_id used in the bot's log database.
+    action: :class:`str`
+        A short description of the actions.
+    role_id: :class:`str`
+        The discord id of the role.
+    moderator_id: :class:`str`
+        the discord id of the moderator responsible for the action.
+    reason: Optional8:class:`str`]
+        The reason why the moderator executed the action.
+    receiver_id: Optional[:class:`str`]=None
+        The discord id of the receiver if a receiver exists.
+    """
     fields: list["types.Field"] = [
         {
             "name": "Role",
@@ -61,7 +94,7 @@ def role_log(log_id: str, action: str, role_id: str, moderator_id: str, reason: 
             "value": reason,
             "inline": True
         })
-    return default_log(log_id, action, fields)
+    return _default_log(log_id, action, fields)
 
 
 def channel_log(log_id: str, action: str, channel_id: str, moderator_id: str) -> Embed:
@@ -77,4 +110,4 @@ def channel_log(log_id: str, action: str, channel_id: str, moderator_id: str) ->
             "inline": True
         }
     ]
-    return default_log(log_id, action, fields)
+    return _default_log(log_id, action, fields)
