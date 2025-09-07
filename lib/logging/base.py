@@ -125,16 +125,18 @@ def command(log_module: Module, description: str, context: Union[Context, Intera
     channel_id = context.channel.id
     if isinstance(context, Context):
         user_id = context.author.id
+        prefix = context.prefix
     elif isinstance(context, Interaction):
         user_id = context.user.id
+        prefix = None
     else:
         raise ValueError("command context not of type Context or Interaction")
 
     connection = sqlite3.connect(log_path())
     connection.execute("""
-    INSERT INTO commands (log_id, guild_id, channel_id, user_id, type)
-    VALUES (?, ?, ?, ?, ?)
-    """, (log_id, guild_id, channel_id, user_id, command_type.value))
+    INSERT INTO commands (log_id, guild_id, channel_id, user_id, type, prefix)
+    VALUES (?, ?, ?, ?, ?, ?)
+    """, (log_id, guild_id, channel_id, user_id, command_type.value, prefix))
     connection.commit()
     connection.close()
 

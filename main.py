@@ -18,25 +18,28 @@ class PeepBot(commands.Bot):
                 await self.load_extension(f"Cogs.{file[:-3]}")
                 logging.extension_success(Module.BOT, "Extension loaded", ExecutionMethod.SETUP, file)
 
+    async def on_ready(self) -> None:
+        logging.default_logger(Module.BOT, "Bot is ready", ExecutionMethod.SETUP)
+
 
 if __name__ == "__main__":
     if not os.path.isfile(lib.get.log_path()):
-        connection = sqlite3.connect(lib.get.log_path())
         with open(lib.get.log_query()) as f:
             script = f.read()
-        connection.executescript(script)
-        connection.commit()
-        connection.close()
+        log_db = sqlite3.connect(lib.get.log_path())
+        log_db.executescript(script)
+        log_db.commit()
+        log_db.close()
 
         logging.default_logger(Module.BOT, "Logging Database created", ExecutionMethod.SETUP, LogType.WARN)
 
     if not os.path.isfile(lib.get.database_path()):
-        connection = sqlite3.connect(lib.get.database_path())
         with open(lib.get.database_query()) as f:
             script = f.read()
-        connection.executescript(script)
-        connection.commit()
-        connection.close()
+        data_db = sqlite3.connect(lib.get.database_path())
+        data_db.executescript(script)
+        data_db.commit()
+        data_db.close()
 
         logging.default_logger(Module.BOT, "Bot Database created", ExecutionMethod.SETUP, LogType.WARN)
 
@@ -46,8 +49,5 @@ if __name__ == "__main__":
     intents.guilds = True
     intents.members = True
 
-    bot = PeepBot(command_prefix="!", intents=intents, help_command=None)
+    bot = PeepBot(command_prefix=("!pb!", "?", "!"), intents=intents, help_command=None)
     bot.run(BOTTOKEN)
-
-
-lib.get.developer()

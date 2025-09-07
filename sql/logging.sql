@@ -12,7 +12,8 @@ CREATE TABLE commands (
     guild_id INTEGER NOT NULL,
     channel_id INTEGER NOT NULL,
     user_id INTEGER NOT NULL,
-    type VARCHAR(9) NOT NULL
+    type VARCHAR(9) NOT NULL,
+    prefix VARCHAR(4)
 );
 
 CREATE TABLE extension_success (

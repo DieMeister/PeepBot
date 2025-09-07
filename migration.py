@@ -131,6 +131,8 @@ match version:
             log_id INTEGER PRIMARY KEY REFERENCES logs(log_id),
             input INTEGER NOT NUL
         );
+        ALTER TABLE commands
+        ADD COLUMN prefix VARCHAR(4);
         """)
         log_db.commit()
         log_db.close()
