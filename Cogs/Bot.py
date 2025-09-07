@@ -20,25 +20,25 @@ class Bot(commands.Cog):
         self.bot = bot
         logging.extension_success(Module.BOT, "Cog initialised", ExecutionMethod.SETUP, "Bot")
 
-        self.database_save.start()
+        self._data_db_save.start()
         logging.default_logger(Module.BOT, "DatabaseSavingLoop started", ExecutionMethod.SETUP)
 
     @tasks.loop(time=time(1, tzinfo=dt.UTC))
-    async def database_save(self) -> None:
-        database = sqlite3.connect(lib.get.database_path())
-        backup = sqlite3.connect(f"{lib.get.database_backup_path()}{date.today().strftime(lib.get.date_format())}.db")
-        database.backup(backup)
+    async def _data_db_save(self) -> None:
+        """Save the database every day at 1am UTC."""
+        data_db = sqlite3.connect(lib.get.database_path())
+        backup_db = sqlite3.connect(f"{lib.get.database_backup_path()}{date.today().strftime(lib.get.date_format())}.db")
+        data_db.backup(backup_db)
 
-        backup.commit()
-        backup.close()
-        database.close()
+        backup_db.commit()
+        backup_db.close()
+        data_db.close()
 
         logging.default_logger(Module.BOT, "Database saved", ExecutionMethod.LOOP)
 
-
-    # Sync all application commands with Discord
     @commands.command()
     async def sync(self, ctx: "Context") -> None:
+        """Sync the bot's application commands with discord."""
         if ctx.author.id in lib.get.developer():
             synced = await self.bot.tree.sync()
             logging.sync_commands(ExecutionMethod.COMMAND, len(synced), ctx)
@@ -47,6 +47,7 @@ class Bot(commands.Cog):
     # Reload a currently loaded extension
     @commands.command()
     async def reload_cog(self, ctx: "Context", cog: str) -> None:
+        """Reload one of the bot's cogs. The cog must be loaded before."""
         if ctx.author.id in lib.get.developer():
             try:
                 await self.bot.reload_extension(f"Cogs.{cog}")
@@ -67,6 +68,7 @@ class Bot(commands.Cog):
     # Load a currently unloaded extension
     @commands.command()
     async def load_cog(self, ctx: "Context", cog: str) -> None:
+        """Load one of the bot's cogs. The cog must be unloaded before."""
         if ctx.author.id in lib.get.developer():
             try:
                 await self.bot.load_extension(f"Cogs.{cog}")
@@ -88,6 +90,7 @@ class Bot(commands.Cog):
     # Unload a currently loaded extension
     @commands.command()
     async def unload_cog(self, ctx: "Context", cog: str) -> None:
+        """Unload one of the bot's cogs. The cog must be loaded before."""
         if ctx.author.id in lib.get.developer():
             try:
                 await self.bot.unload_extension(f"Cogs.{cog}")
@@ -100,9 +103,9 @@ class Bot(commands.Cog):
                 await ctx.reply("Cog was already not loaded")
                 logging.extension_error("Extension failed to unload", ExecutionMethod.COMMAND, cog, "Cog was already not loaded", ctx, LogType.WARN)
 
-    # Shut down the bot, this cannot be undone from within Discord
     @commands.command()
     async def shutdown(self, ctx: "Context") -> None:
+        """# Shut down the bot, this cannot be undone from within Discord"""
         if ctx.author.id in lib.get.developer():
             await ctx.reply("Bot is shutting down")
             await self.bot.close()
@@ -110,6 +113,7 @@ class Bot(commands.Cog):
 
     @commands.command()
     async def give_peeps(self, ctx: "Context", amount: str, user_id: str, guild_id: str) -> None:
+        """Give peeps to a member effectively bypassing the set probability or cooldowns."""
         # Check if all values can be converted to the correct type.
         try:
             amount = int(amount)
@@ -152,17 +156,9 @@ class Bot(commands.Cog):
         member_db = lib.sql.get_member(int(guild_id), int(user_id))
         total_peeps = member_db[3]
         received_peeps = member_db[7]
-        data_db = sqlite3.connect(lib.get.database_path())
-        data_db.execute("""
-        UPDATE members
-        SET 
-            caught_peeps = ?,
-            received_peeps = ?
-        WHERE guild_id = ?
-        AND user_id = ?
-        """, ((total_peeps + amount), (received_peeps + amount), guild_id, user_id))
-        data_db.commit()
-        data_db.close()
+
+        lib.sql.get_peeps((total_peeps + amount), (received_peeps + amount), guild_id, user_id)
+
         await ctx.reply("Peeps given to member")
         logging.give_peeps(amount, guild_id, user_id, ctx)
 
