@@ -6,6 +6,8 @@
 - Anyone can see other Members rank using `/rank <member>` and not just their own
 - Log when bot is ready
 - `?` and `!pb!` are now supported prefixes too
+- DeveloperCommand to give peeps to a member
+- DeveloperCommand to remove peeps from a member
 
 ## Fixes
 
