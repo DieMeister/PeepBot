@@ -3,8 +3,8 @@
   "embed_color": 13421823,
   "file_paths": {
     "databases": {
-      "data": "./Databases/database.db",
-      "log": "./Databases/logs.db"
+      "data": "./Databases/data.db",
+      "log": "./Databases/log.db"
     },
     "backups": {
       "data_db": "./DatabaseSaves/"
