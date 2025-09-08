@@ -136,6 +136,7 @@ class Bot(commands.Cog):
             if amount <= 0:
                 await ctx.reply("You need to give at least one peep")
                 logging.invalid_input(Module.PEEP, "Given peeps <= 0", ctx, CommandType.DEVELOPER, amount)
+                return
 
             # Check if the member exists.
             guild = self.bot.get_guild(guild_id)
@@ -153,7 +154,7 @@ class Bot(commands.Cog):
             lib.sql.add_member(member)
             member_db = lib.sql.get_member(int(guild_id), int(user_id))
             total_peeps = member_db[3]
-            received_peeps = member_db[7]
+            received_peeps = member_db[6]
             data_db = sqlite3.connect(lib.get.database_path())
             data_db.execute("""
             UPDATE members
@@ -210,7 +211,7 @@ class Bot(commands.Cog):
                 return
 
             lib.sql.add_member(member)
-            member_db = lib.sql.get_member(member.guild_id, user_id)
+            member_db = lib.sql.get_member(guild_id, user_id)
             total_peeps = member_db[3]
             # check if member has enough peeps to remove the given amount.
             if (total_peeps - amount) < 0:
