@@ -26,9 +26,10 @@ CREATE TABLE members (
 )
 WITHOUT ROWID;
 
+-- TODO rename to psps_channel
 CREATE TABLE allowed_channels (
     channel_id INTEGER,
-    guild_id INTEGER REFERENCES guilds(guild_id),
+    guild_id INTEGER REFERENCES guilds(guild_id), -- TODO make NOT NULL
     PRIMARY KEY (channel_id)
 )
 WITHOUT ROWID;

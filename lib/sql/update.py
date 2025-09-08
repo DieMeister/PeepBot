@@ -1,5 +1,4 @@
 import sqlite3
-
 from typing import TYPE_CHECKING
 
 from lib.getter.config import database_path
@@ -7,12 +6,14 @@ from lib.getter.config import database_path
 if TYPE_CHECKING:
     from lib import types
 
+
 __all__ = [
     "get_peeps",
     "remove_peeps"
 ]
 
 
+# TODO maybe calculate the new values here and only get the amount it changes
 def get_peeps(new_caught_peeps: int, new_received_peeps: int, guild_id: int, user_id: int) -> "types.sql.Member":
     """
     Update the bot's database when a member gets peeps gifted and return the member's data.

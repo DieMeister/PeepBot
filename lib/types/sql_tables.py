@@ -1,11 +1,13 @@
 __all__ = [
     "User",
     "Guild",
-    "Member"
+    "Member",
+    "PspsChannel"
 ]
 
 
 type CaughtPeeps = int | None
+type ChannelId = int
 type GuildId  = int
 type LastPeep = str
 type LogChannelId = int | None
@@ -38,4 +40,8 @@ type Member = tuple[
     Tries,
     SentPeeps,
     ReceivedPeeps
+]
+type PspsChannel = tuple[
+    ChannelId,
+    GuildId
 ]

@@ -32,7 +32,7 @@ class Peep(commands.Cog):
         guild_last_try = get.dt_object(guild[4])
 
         # check if the used channel is valid
-        channel = lib.sql.get_channel(ctx.channel.id)
+        channel = lib.sql.get_psps_channel(ctx.channel.id)
         if not channel:
             logging.psps_denied(ctx, "Outside of allowed Channel")
             return

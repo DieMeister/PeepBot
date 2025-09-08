@@ -6,7 +6,8 @@ from lib.getter import config as get
 __all__ = [
     "dt_object",
     "dt_string",
-    "discord_dt_string"
+    "discord_dt_string",
+    "now"
 ]
 
 
@@ -44,3 +45,8 @@ def discord_dt_string(datetime_object: datetime):
         The datetime object to convert.
     """
     return datetime_object.strftime(get.discord_dt_format())
+
+
+def now() -> datetime:
+    """Return an aware datetime object of the current time."""
+    return datetime.now(dt.UTC)
