@@ -20,6 +20,22 @@ __all__ = [
 
 
 def rank(member: "Member", tries: str, total: str, gifted: str, received: str) -> Embed:
+    """
+    Return the discord embed to send after executing /rank
+
+    Parameters
+    -----------
+    member: :class:`Member`
+        The discord member the stats are about.
+    tries: :class:`str`
+        The amount the member tried to get a peep.
+    total: :class:`str`
+        The peeps a the member has in total.
+    gifted: :class:`str`
+        The amount of peeps the member gifted to other members.
+    received: :class:`str`
+        The amount of peeps the member got gifted from other members or  given by a developer
+    """
     author: "types.Author" = {
         "name": member.display_name,
         "icon_url": member.avatar.url,
@@ -42,6 +58,18 @@ def rank(member: "Member", tries: str, total: str, gifted: str, received: str) -
 
 
 def leaderboard(guild: "Guild", leaders: list[tuple[int, int, int, int, int]]) -> Embed:
+    """
+    Return a discord embed of the ten members of a guild with the most peeps.
+
+    Parameters
+    -----------
+    guild: :class:`Guild`
+        The guild the leaderboard belongs to.
+    leaders: :class:`list[:class:`tuple[:class:`int`, :class:`int`, :class:`int`, :class:`int`, :class:`int`]`]`
+        The list of the ten members.
+        The length of the list is always between 0 and 10.
+        Each entry is a tuple of the user_id, total peeps, tries, sent peeps, and received peeps.
+    """
     fields: list["types.Field"] = []
     for leader in leaders:
         user_id, total, tries, sent, received = leader

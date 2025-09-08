@@ -44,7 +44,6 @@ class Bot(commands.Cog):
             logging.sync_commands(ExecutionMethod.COMMAND, len(synced), ctx)
             await ctx.reply("Commands synced")
 
-    # Reload a currently loaded extension
     @commands.command()
     async def reload_cog(self, ctx: "Context", cog: str) -> None:
         """Reload one of the bot's cogs. The cog must be loaded before."""
@@ -65,7 +64,6 @@ class Bot(commands.Cog):
                 await ctx.reply("Cog failed to load")
                 logging.extension_error("Extension failed to reload", ExecutionMethod.COMMAND, cog, "No further information", ctx)
 
-    # Load a currently unloaded extension
     @commands.command()
     async def load_cog(self, ctx: "Context", cog: str) -> None:
         """Load one of the bot's cogs. The cog must be unloaded before."""
@@ -87,7 +85,6 @@ class Bot(commands.Cog):
                 await ctx.reply("Cog failed to load")
                 logging.extension_error("Extension failed to load", ExecutionMethod.COMMAND, cog, "no further information", ctx)
 
-    # Unload a currently loaded extension
     @commands.command()
     async def unload_cog(self, ctx: "Context", cog: str) -> None:
         """Unload one of the bot's cogs. The cog must be loaded before."""
@@ -114,53 +111,111 @@ class Bot(commands.Cog):
     @commands.command()
     async def give_peeps(self, ctx: "Context", amount: str, user_id: str, guild_id: str) -> None:
         """Give peeps to a member effectively bypassing the set probability or cooldowns."""
-        # Check if all values can be converted to the correct type.
-        try:
-            amount = int(amount)
-        except ValueError:
-            logging.invalid_input(Module.PEEP, "Amount of given peeps is not a number", ctx, CommandType.DEVELOPER, amount)
-            await ctx.reply("Amount of peeps is not a number")
-            return
-        try:
-            user_id = int(user_id)
-        except ValueError:
-            logging.invalid_input(Module.PEEP, "user_id of member to give peeps to is not a number", ctx, CommandType.DEVELOPER, user_id)
-            await ctx.reply("Amount of peeps is not a number")
-            return
-        try:
-            guild_id = int(guild_id)
-        except ValueError:
-            logging.invalid_input(Module.PEEP, "guild_id of member to give peeps to is not a number", ctx, CommandType.DEVELOPER, guild_id)
-            await ctx.reply("Amount of peeps is not a number")
-            return
+        # check if command is executed by a developer
+        if ctx.author.id in lib.get.developer():
+            # Check if all values can be converted to the correct type.
+            try:
+                amount = int(amount)
+            except ValueError:
+                logging.invalid_input(Module.PEEP, "Amount of given peeps is not a number", ctx, CommandType.DEVELOPER, amount)
+                await ctx.reply("Amount of peeps is not a number")
+                return
+            try:
+                user_id = int(user_id)
+            except ValueError:
+                logging.invalid_input(Module.PEEP, "user_id of member to give peeps to is not a number", ctx, CommandType.DEVELOPER, user_id)
+                await ctx.reply("user_id is not a number")
+                return
+            try:
+                guild_id = int(guild_id)
+            except ValueError:
+                logging.invalid_input(Module.PEEP, "guild_id of member to give peeps to is not a number", ctx, CommandType.DEVELOPER, guild_id)
+                await ctx.reply("guild_id is not a number")
+                return
 
-        # check if values are valid
-        if amount <= 0:
-            await ctx.reply("You need to give at least one peep")
-            logging.invalid_input(Module.PEEP, "Given peeps <= 0", ctx, CommandType.DEVELOPER, amount)
+            # check if values are valid
+            if amount <= 0:
+                await ctx.reply("You need to give at least one peep")
+                logging.invalid_input(Module.PEEP, "Given peeps <= 0", ctx, CommandType.DEVELOPER, amount)
+                return
 
-        # Check if the member exists.
-        guild = self.bot.get_guild(guild_id)
-        if guild is None:
-            await ctx.reply("Bot is not in provided guild")
-            logging.invalid_input(Module.PEEP, "bot not in guild of member to give peeps to", ctx, CommandType.DEVELOPER, guild_id)
-            return
-        member = guild.get_member(user_id)
-        if member is None:
-            await ctx.reply("Member is not in provided guild")
-            logging.invalid_input(Module.PEEP, "member to give peeps to not in provided guild", ctx, CommandType.DEVELOPER, user_id)
-            return
+            # Check if the member exists.
+            guild = self.bot.get_guild(guild_id)
+            if guild is None:
+                await ctx.reply("Bot is not in provided guild")
+                logging.invalid_input(Module.PEEP, "bot not in guild of member to give peeps to", ctx, CommandType.DEVELOPER, guild_id)
+                return
+            member = guild.get_member(user_id)
+            if member is None:
+                await ctx.reply("Member is not in provided guild")
+                logging.invalid_input(Module.PEEP, "member to give peeps to not in provided guild", ctx, CommandType.DEVELOPER, user_id)
+                return
 
-        # add peeps to the member
-        lib.sql.add_member(member)
-        member_db = lib.sql.get_member(int(guild_id), int(user_id))
-        total_peeps = member_db[3]
-        received_peeps = member_db[7]
+            # add peeps to the member
+            lib.sql.add_member(member)
+            member_db = lib.sql.get_member(int(guild_id), int(user_id))
+            total_peeps = member_db[3]
+            received_peeps = member_db[6]
 
-        lib.sql.get_peeps((total_peeps + amount), (received_peeps + amount), guild_id, user_id)
+            lib.sql.get_peeps((total_peeps + amount), (received_peeps + amount), guild_id, user_id)
 
-        await ctx.reply("Peeps given to member")
-        logging.give_peeps(amount, guild_id, user_id, ctx)
+            await ctx.reply("Peeps given to member")
+            logging.give_peeps(amount, guild_id, user_id, ctx)
+
+    @commands.command()
+    async def remove_peeps(self, ctx: "Context", amount: str, user_id: str, guild_id: str) -> None:
+        """Remove peeps from a member."""
+        if ctx.author.id in lib.get.developer():
+            # Check if all values can be converted to the correct type.
+            try:
+                amount = int(amount)
+            except ValueError:
+                logging.invalid_input(Module.PEEP, "Amount of given removed is not a number", ctx, CommandType.DEVELOPER, amount)
+                await ctx.reply("Amount of peeps is not a number")
+                return
+            try:
+                user_id = int(user_id)
+            except ValueError:
+                logging.invalid_input(Module.PEEP, "user_id of member to remove peeps from is not a number", ctx, CommandType.DEVELOPER, user_id)
+                await ctx.reply("user_id is not a number")
+                return
+            try:
+                guild_id = int(guild_id)
+            except ValueError:
+                logging.invalid_input(Module.PEEP, "guild_id of member to remove peeps from is not a number", ctx, CommandType.DEVELOPER, guild_id)
+                await ctx.reply("guild_id is not a number")
+                return
+
+            # check if values are valid
+            if amount <= 0:
+                await ctx.reply("You need to remove at least one peep")
+                logging.invalid_input(Module.PEEP, "Removed peeps <= 0", ctx, CommandType.DEVELOPER, amount)
+
+            # Check if the member exists.
+            guild = self.bot.get_guild(guild_id)
+            if guild is None:
+                await ctx.reply("Bot is not in provided guild")
+                logging.invalid_input(Module.PEEP, "bot not in guild of member to give peeps to", ctx, CommandType.DEVELOPER, guild_id)
+                return
+            member = guild.get_member(user_id)
+            if member is None:
+                await ctx.reply("Member is not in provided guild")
+                logging.invalid_input(Module.PEEP, "member to give peeps to not in provided guild", ctx, CommandType.DEVELOPER, user_id)
+                return
+
+            lib.sql.add_member(member)
+            member_db = lib.sql.get_member(guild_id, user_id)
+            total_peeps = member_db[3]
+            # check if member has enough peeps to remove the given amount.
+            if (total_peeps - amount) < 0:
+                new_peeps = 0
+                await ctx.reply("Member has less peeps than the provided amount, they are set to 0 instead.")
+            else:
+                new_peeps = total_peeps - amount
+                await ctx.reply("Peeps removed from member.")
+            # remove peeps from member
+            lib.sql.remove_peeps(new_peeps, guild_id, user_id)
+            logging.remove_peeps(total_peeps, amount, guild_id, user_id, ctx)
 
 
 async def setup(bot) -> None:

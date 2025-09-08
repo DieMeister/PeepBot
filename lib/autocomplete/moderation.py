@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 
 from lib.getter import database_path
 from Cogs.Moderation import Moderation
+from Cogs.Config import Config
 
 if TYPE_CHECKING:
     from discord import Interaction
@@ -14,10 +15,11 @@ __all__ = [
 ]
 
 
-@Moderation.remove_assignable_role.autocomplete("role_id")
+@Config.remove_assignable_role.autocomplete("role_id")
 @Moderation.add_role.autocomplete("role_id")
 @Moderation.remove_role.autocomplete("role_id")
 async def autocomplete(interaction: "Interaction", current: str) -> list[Choice[int]]:
+    """Return every assignable role that contains the given input."""
     con = sqlite3.connect(database_path())
     roles = con.execute("""
     SELECT role_id

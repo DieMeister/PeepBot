@@ -4,8 +4,12 @@
 - Users Database
   - Count of Peeps someone stole
 - Anyone can see other Members rank using `/rank <member>` and not just their own
+- DeveloperCommand to give peeps to a member
+- `lib.logging.invalid_input()` supports invalid integers
 - Log when bot is ready
 - `?` and `!pb!` are now supported prefixes too
+- DeveloperCommand to give peeps to a member
+- DeveloperCommand to remove peeps from a member
 
 ## Fixes
 
@@ -15,6 +19,7 @@
 
 - Doesn't sync commands everytime the bot starts
 - LogMessage when a Member is added to the database is now `Member added to Database` instead of `Member joined Guild`
+- rename logging table `invalid_input` to `invalid_str_input`
 
 # 0.3.1
 ## Fixes
