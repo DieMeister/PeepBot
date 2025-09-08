@@ -11,8 +11,8 @@
     },
     "sql_queries": {
       "table_creation": {
-        "data": "./sql/tables.sql",
-        "log": "./sql/logging.sql"
+        "data": "./sql/data_db.sql",
+        "log": "./sql/log_db.sql"
       }
     }
   },
