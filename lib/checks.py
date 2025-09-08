@@ -1,4 +1,5 @@
 import sqlite3
+from typing import Union
 
 from lib.getter.config import database_path
 
@@ -8,22 +9,25 @@ __all__ = [
 ]
 
 
-def possible_discord_id(role_id: str) -> bool:
-    """Return whether a :class:`str` can be converted into a discord id.
+def possible_discord_id(discord_id: Union[str, int]) -> bool:
+    """Return whether something could be a discord id.
 
     Parameters
     -----------
-    role_id: :class:`str`
+    discord_id: :class:`str`
         the role id that is being checked
     """
     try:
-        int(role_id)
+        discord_id = int(discord_id)
     except ValueError:
-        return False
+        pass
     else:
-        return True
+        if discord_id > 10000000000000000:  # 10^16
+            return True
+    return False
 
 
+# TODO move to lib.sql
 def assignable_role_in_database(role_id: int) -> bool:
     """Return whether a role is an assignable ole.
 
