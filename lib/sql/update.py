@@ -13,7 +13,7 @@ __all__ = [
 ]
 
 
-def get_peeps(new_caught_peeps: int, new_received_peeps: int, guild_id: int, user_id: int) -> "types.Member":
+def get_peeps(new_caught_peeps: int, new_received_peeps: int, guild_id: int, user_id: int) -> "types.sql.Member":
     """
     Update the bot's database when a member gets peeps gifted and return the member's data.
 
@@ -29,7 +29,7 @@ def get_peeps(new_caught_peeps: int, new_received_peeps: int, guild_id: int, use
         The member's user id
     """
     data_db = sqlite3.connect(database_path())
-    member_data: "types.Member" = data_db.execute("""
+    member_data: "types.sql.Member" = data_db.execute("""
     UPDATE TABLE members
     SET
         caught_peeps = ?,

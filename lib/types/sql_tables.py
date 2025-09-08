@@ -1,6 +1,3 @@
-from typing import Optional
-
-
 __all__ = [
     "User",
     "Guild",
@@ -8,6 +5,37 @@ __all__ = [
 ]
 
 
-type User = tuple[int, Optional[int]]
-type Guild = tuple[int, str, str, str, str, int]
-type Member = tuple[int, int, str, int, int, int ,int]
+type CaughtPeeps = int | None
+type GuildId  = int
+type LastPeep = str
+type LogChannelId = int | None
+type NoPeepMessage = str
+type ReceivedPeeps = int
+type ScratchMessage = str
+type SentPeeps = int
+type StolenPeeps = int | None
+type SuccessMessage = str
+type Tries = int
+type UserId = int
+
+type User = tuple[
+    UserId,
+    StolenPeeps
+]
+type Guild = tuple[
+    GuildId,
+    SuccessMessage,
+    ScratchMessage,
+    NoPeepMessage,
+    LastPeep,
+    LogChannelId
+]
+type Member = tuple[
+    UserId,
+    GuildId,
+    LastPeep,
+    CaughtPeeps,
+    Tries,
+    SentPeeps,
+    ReceivedPeeps
+]
