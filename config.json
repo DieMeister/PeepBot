@@ -1,5 +1,37 @@
 {
-  "version": "0.3.1",
+  "version": "0.4.0",
+  "embed_color": 13421823,
+  "file_paths": {
+    "databases": {
+      "data": "./Databases/database.db",
+      "log": "./Databases/logs.db"
+    },
+    "backups": {
+      "data_db": "./DatabaseSaves/"
+    },
+    "sql_queries": {
+      "table_creation": {
+        "data": "./sql/tables.sql",
+        "log": "./sql/logging.sql"
+      }
+    }
+  },
+  "datetime_formats": {
+    "datetime": "%Y-%m-%dT%H:%M:%S",
+    "date": "%Y-%m-%d",
+    "discord": "%Y-%m-%dT%H:%M:%S.%f%z"
+  },
+  "emotes": {
+    "leaderboard": {
+      "gifted": "<:gifted:1410564494869925999>",
+      "peeps": "<:peeps:1410564594094702593>",
+      "received": "<:received:1410564653863403580>",
+      "tries": "<:tries:1410564740052418560>"
+    }
+  },
+  "messages": {
+    "log_channel_missing": "- **!!You have no logging channel specified!!**"
+  },
   "people": {
     "developer": [
       729671721975545978,
@@ -43,31 +75,5 @@
         "id": 688022689994113047
       }
     ]
-  },
-  "emotes": {
-    "leaderboard": {
-      "gifted": "<:gifted:1410564494869925999>",
-      "peeps": "<:peeps:1410564594094702593>",
-      "received": "<:received:1410564653863403580>",
-      "tries": "<:tries:1410564740052418560>"
-    }
-  },
-  "embed_color": 13421823,
-  "file_paths": {
-    "database": "./Databases/database.db",
-    "database_saves": "./DatabaseSaves/",
-    "logs": "./Databases/logs.db"
-  },
-  "datetime_formats": {
-    "datetime": "%Y-%m-%dT%H:%M:%S",
-    "date": "%Y-%m-%d",
-    "discord": "%Y-%m-%dT%H:%M:%S.%f%z"
-  },
-  "sql_table_queries":  {
-   "database": "./sql/tables.sql",
-    "logs": "./sql/logging.sql"
-  },
-  "messages": {
-    "log_channel_missing": "- **!!You have no logging channel specified!!**"
   }
 }

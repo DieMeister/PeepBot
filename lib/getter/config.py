@@ -88,17 +88,17 @@ def embed_color() -> int:
 
 def database_path() -> str:
     """Return the filepath of the bot's database."""
-    return data["file_paths"]["database"]
+    return data["file_paths"]["databases"]["data"]
 
 
 def database_backup_path() -> str:
     """Return the filepath of the folder to save database backups."""
-    return data["file_paths"]["database_saves"]
+    return data["file_paths"]["backups"]["data_db"]
 
 
 def log_path() -> str:
     """Return the filepath of the bot's logging database."""
-    return data["file_paths"]["logs"]
+    return data["file_paths"]["databases"]["log"]
 
 
 def dt_format() -> str:
@@ -117,12 +117,12 @@ def date_format() -> str:
 
 def database_query() -> str:
     """Return the query to create the bot's database."""
-    return data["sql_table_queries"]["database"]
+    return data["file_paths"]["sql_queries"]["data"]
 
 
 def log_query() -> str:
     """Return the sql query to create the bot's logging database."""
-    return data["sql_table_queries"]["logs"]
+    return data["file_paths"]["sql_queries"]["log"]
 
 
 def log_channel_missing() -> str:
