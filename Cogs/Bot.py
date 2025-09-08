@@ -110,7 +110,7 @@ class Bot(commands.Cog):
 
     @commands.command()
     async def give_peeps(self, ctx: "Context", amount: str, user_id: str, guild_id: str) -> None:
-        # FIXME check if command is executed by a developer
+        # check if command is executed by a developer
         if ctx.author.id in lib.get.developer():
             # Check if all values can be converted to the correct type.
             try:

@@ -54,6 +54,16 @@ def dev() -> "Embed":
         "value": "Shows this message.\nIf this leaves unanswered questions feel free to dm `@diemeister`",
         "inline": True
     }
+    command_add_peeps: "types.Field" = {
+        "name": "add_peeps <amount> <user_id> <guild_id>",
+        "value": "Gives a provided member a provided amount of peeps.\nThe command need not be executed in the guild of the member.\nPeeps received this way count as received peeps, the same as peeps given using `/transfer_peeps`\n`amount`: The amount of peeps the member gets.\nMust be at least 1.\n`user_id`: The member's user_id.\n`guild_id`: The member's guild_id.",
+        "inline": True
+    }
+    command_remove_peeps: "types.Field" = {
+        "name": "remove_peeps <amount> <user_id> <guild_id>",
+        "value": "Removes a provided amount of peeps from a provided member.\nThe command need not be executed in the member's guild.\n`amount`: The number of peeps that is taken away from the member.\nMust be at least 1\nIf the member has less peeps than this number their total peeps is set to 0.\n`user_id`: The member's user_id.\n`guild_id`:The member's guild_id.",
+        "inline": True
+    }
     cog_divider: "types.Field" = {
         "name": "List of Cogs and a description",
         "value": "\u200b",
@@ -119,6 +129,8 @@ def dev() -> "Embed":
             command_sync,
             command_shutdown,
             command_help,
+            command_add_peeps,
+            command_remove_peeps,
             cog_divider,
             cog_bot,
             cog_config,
