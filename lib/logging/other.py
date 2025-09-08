@@ -113,12 +113,12 @@ def invalid_input(log_module: Module, description: str, context: Union["Context"
     if isinstance(given_input, str):
         con.execute("""
         INSERT INTO invalid_str_input (log_id, input)
-        VALUE (?, ?)
+        VALUES (?, ?)
         """, (log_id, given_input))
     elif isinstance(given_input, int):
         con.execute("""
         INSERT INTO invalid_int_input (log_id, input)
-        VALUE (?, ?)
+        VALUES (?, ?)
         """, (log_id, given_input))
     else:
         raise ValueError("given_input not of type str or int")

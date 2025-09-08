@@ -8,6 +8,8 @@
 - `lib.logging.invalid_input()` supports invalid integers
 - Log when bot is ready
 - `?` and `!pb!` are now supported prefixes too
+- DeveloperCommand to give peeps to a member
+- DeveloperCommand to remove peeps from a member
 
 ## Fixes
 

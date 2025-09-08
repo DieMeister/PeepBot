@@ -59,6 +59,11 @@ def dev() -> "Embed":
         "value": "Gives a set amount of peeps to a member.\n`amount`: The amount of peeps the member gets. Must be at least 1.\n`user_id`: The user_id of the member.\n`guild_id`: The id of the member's guild.",
         "inline": True
     }
+    command_remove_peeps: "types.Field" = {
+        "name": "remove_peeps <amount> <user_id> <guild_id>",
+        "value": "Removes a provided amount of peeps from a provided member.\nThe command need not be executed in the member's guild.\n`amount`: The number of peeps that is taken away from the member.\nMust be at least 1\nIf the member has less peeps than this number their total peeps is set to 0.\n`user_id`: The member's user_id.\n`guild_id`:The member's guild_id.",
+        "inline": False
+    }
     cog_divider: "types.Field" = {
         "name": "List of Cogs and a description",
         "value": "\u200b",
@@ -119,7 +124,7 @@ def dev() -> "Embed":
         "title": "Developer Help",
         "description": "Explains every DeveloperCommand",
         "color": embed_color(),
-        "timestamp": dt_string(datetime(2025, 8, 22, 22, 50, tzinfo=dt.UTC)),
+        "timestamp": dt_string(datetime(2025, 9, 8, 10, 45, tzinfo=dt.UTC)),
         "footer": footer,
         "fields": [
             divider_commands,
@@ -130,6 +135,7 @@ def dev() -> "Embed":
             command_shutdown,
             command_help,
             command_give_peep,
+            command_remove_peeps,
             cog_divider,
             cog_bot,
             cog_config,
