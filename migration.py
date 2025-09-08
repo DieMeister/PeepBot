@@ -106,40 +106,11 @@ match version:
         data_db.commit()
 
         # alter members table to reference users table
-        data_db.executescript(lib.file.load_data("./migration_queries/v0.4.0/database.sql"))
+        data_db.executescript(lib.file.load_data("./migration_queries/v0.4.0/data_db.sql"))
         data_db.commit()
 
         # add logging table
         log_db = sqlite3.connect(log_path())
-        log_db.executescript("""
-        CREATE TABLE user_join (
-            log_id INTEGER PRIMARY KEY REFERENCES logs(log_id),
-            user_id INTEGER NOT NULL
-        );
-        CREATE TABLE rank_command (
-            log_id INTEGER PRIMARY KEY REFERENCES logs(log_id),
-            rank_user_id INTEGER
-        );
-        CREATE TABLE give_peeps (
-            log_id INTEGER PRIMARY KEY REFERENCES logs(log_id),
-            amount INTEGER NOT NULL,
-            member_guild_id INTEGER NOT NULL,
-            member_user_id INTEGER NOT NULL
-        );
-        ALTER TABLE invalid_input RENAME TO invalid_str_input;
-        CREATE TABLE invalid_int_input (
-            log_id INTEGER PRIMARY KEY REFERENCES logs(log_id),
-            input INTEGER NOT NUL
-        );
-        ALTER TABLE commands
-        ADD COLUMN prefix VARCHAR(4);
-        CREATE TABLE remove_peeps (
-            log_id INTEGER PRIMARY KEY REFERENCES logs(log_id),
-            old_total INTEGER NOT NULL,
-            amount_removed INTEGER NOT NULL,
-            member_guild_id INTEGER NOT NULL,
-            member_user_id INTEGER NOT NULL
-        );
-        """)
+        log_db.executescript(lib.file.load_data("./migration_queries/v0.4.0/log_db.sql"))
         log_db.commit()
         log_db.close()
