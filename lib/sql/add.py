@@ -20,7 +20,7 @@ __all__ = [
 
 
 # TODO return lib.types.sql.User
-def add_user(user_id: int) -> None:
+def _add_user(user_id: int) -> None:
     if get_user(user_id) is None:
         data_db = sqlite3.connect(database_path())
         data_db.execute("""
@@ -63,7 +63,7 @@ def add_member(member: "Member"):
     """
     if get_member(member.guild.id, member.id) is None:
         add_guild(member.guild)
-        add_user(member.id)
+        _add_user(member.id)
         con = sqlite3.connect(database_path())
         con.execute("""
         INSERT INTO members (
