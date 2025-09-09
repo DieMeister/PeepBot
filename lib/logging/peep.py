@@ -1,7 +1,7 @@
 import sqlite3
 from typing import TYPE_CHECKING, Optional
 
-from lib.logging import command, Module, CommandType
+from lib.logging import command
 from lib.getter.config import log_path
 
 if TYPE_CHECKING:
@@ -39,15 +39,15 @@ def catch_peep(description: str, ctx: "Context", peep_amount: int, random_intege
     random_integer: :class:`int`
         The randomly selected integer that decided if the member got a peep.
     """
-    log_id = command(Module.PEEP, description, ctx, CommandType.MEMBER)
+    log_id = command("peep", description, ctx, "member")
 
-    connection = sqlite3.connect(log_path())
-    connection.execute("""
+    log_db = sqlite3.connect(log_path())
+    log_db.execute("""
     INSERT INTO catch_peep (log_id, peep_amount, random_integer)
     VALUES (?, ?, ?)
     """, (log_id, peep_amount, random_integer))
-    connection.commit()
-    connection.close()
+    log_db.commit()
+    log_db.close()
 
     return log_id
 
@@ -64,15 +64,15 @@ def psps_denied(ctx: "Context", reason: str) -> int:
     reason: :class:`str`
         The reason why the member does not have permission to execute the command.
     """
-    log_id = command(Module.PEEP, "psps denied", ctx, CommandType.MEMBER)
+    log_id = command("peep", "psps denied", ctx, "member")
 
-    connection = sqlite3.connect(log_path())
-    connection.execute("""
+    log_db = sqlite3.connect(log_path())
+    log_db.execute("""
     INSERT INTO psps_denied (log_id, reason)
     VALUES (?, ?)
     """, (log_id, reason))
-    connection.commit()
-    connection.close()
+    log_db.commit()
+    log_db.close()
 
     return log_id
 
@@ -91,15 +91,15 @@ def steal_peep(context: "Context", mod: str, emote: str) -> int:
     emote: :class:`str`
         The emote of the moderator.
     """
-    log_id = command(Module.PEEP, "Peep got stolen", context, CommandType.MEMBER)
+    log_id = command("peep", "Peep got stolen", context, "member")
 
-    con = sqlite3.connect(log_path())
-    con.execute("""
+    log_db = sqlite3.connect(log_path())
+    log_db.execute("""
     INSERT INTO steal_peep (log_id, moderator, emote)
     VALUES (?, ?, ?)
     """, (log_id, mod, emote))
-    con.commit()
-    con.close()
+    log_db.commit()
+    log_db.close()
 
     return log_id
 
@@ -124,15 +124,15 @@ def peep_transfer(description: str, interaction: "Interaction", amount: int, rec
     receiver_peeps: :class:`int`
         The amount of peeps the member who gets the peeps had before the execution of the command.
     """
-    log_id = command(Module.PEEP, description, interaction, CommandType.MEMBER)
+    log_id = command("peep", description, interaction, "member")
 
-    con = sqlite3.connect(log_path())
-    con.execute("""
+    log_db = sqlite3.connect(log_path())
+    log_db.execute("""
     INSERT INTO peep_transfer (log_id, peep_amount, recipient_id, sender_peeps, receiver_peeps)
     VALUES (?, ?, ?, ?, ?)
     """, (log_id, amount, recipient_id, sender_peeps, receiver_peeps))
-    con.commit()
-    con.close()
+    log_db.commit()
+    log_db.close()
 
     return log_id
 
@@ -149,7 +149,7 @@ def rank(interaction: "Interaction", user_id: int) -> int:
     user_id: :class:`int`
         The discord id of the member whose rank was requested.
     """
-    log_id = command(Module.PEEP, "RankCommand sent", interaction, CommandType.MEMBER)
+    log_id = command("peep", "RankCommand sent", interaction, "member")
 
     log_db = sqlite3.connect(log_path())
     log_db.execute("""
@@ -178,7 +178,7 @@ def give_peeps(given_peeps: int, guild_id: int, user_id: int, context: "Context"
     context: :class:`Context`
         The context of the command.
     """
-    log_id = command(Module.PEEP, "peeps given to a member", context, CommandType.DEVELOPER)
+    log_id = command("peep", "peeps given to a member", context, "developer")
 
     log_db = sqlite3.connect(log_path())
     log_db.execute("""
@@ -216,7 +216,7 @@ def remove_peeps(old_total: int, amount_removed: int, guild_id: int, user_id: in
     context: :class:`Context`
         The context of the command.
     """
-    log_id = command(Module.PEEP, "peeps removed from member", context, CommandType.DEVELOPER)
+    log_id = command("peep", "peeps removed from member", context, "developer")
 
     log_db = sqlite3.connect(log_path())
     log_db.execute("""

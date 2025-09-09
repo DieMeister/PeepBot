@@ -6,7 +6,6 @@ from typing import TYPE_CHECKING
 
 import lib
 from lib import logging, embed
-from lib.logging import Module, ExecutionMethod, CommandType, HelpType, HelpCategory
 
 if TYPE_CHECKING:
     from discord import Interaction
@@ -17,13 +16,13 @@ class Help(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
-        logging.extension_success(Module.HELP, "Cog initialised", ExecutionMethod.SETUP, "Help")
+        logging.extension_success("help", "Cog initialised", "setup", "Help")
 
     @commands.command()
     async def devhelp(self, ctx: "Context") -> None:
         if ctx.author.id in lib.get.developer():
             await ctx.reply(embed=embed.help.dev())
-            logging.help_embed(HelpType.DEVELOPER, HelpCategory.ALL, ctx, CommandType.DEVELOPER)
+            logging.help_embed("dev", None, ctx, "developer")
         else:
             await ctx.reply("This bot supports application (/) commands, please use `/help`")
 
@@ -38,10 +37,10 @@ class Help(commands.Cog):
         match problem.value:
             case "peep":
                 help_embed = embed.help.config_peep()
-                logging.help_embed(HelpType.CONFIG, HelpCategory.PEEP, interaction, CommandType.MEMBER)
+                logging.help_embed("config", "peep", interaction, "member")
             case "assignable_roles":
                 help_embed = embed.help.config_assignable_role()
-                logging.help_embed(HelpType.CONFIG, HelpCategory.ASSIGNABLE_ROLES, interaction, CommandType.MEMBER)
+                logging.help_embed("config", "assignable_roles", interaction, "member")
         await interaction.response.send_message(embed=help_embed)
 
     @help_commands.command(name="usage", description="provides help on how to use the Bot")
@@ -55,10 +54,10 @@ class Help(commands.Cog):
         match problem.value:
             case "peep":
                 help_embed =  embed.help.use_peep()
-                logging.help_embed(HelpType.USAGE, HelpCategory.PEEP, interaction, CommandType.MEMBER)
+                logging.help_embed("usage", "peep", interaction, "member")
             case "assignable_roles":
                 help_embed = embed.help.use_assignable_roles()
-                logging.help_embed(HelpType.USAGE, HelpCategory.ASSIGNABLE_ROLES, interaction, CommandType.MEMBER)
+                logging.help_embed("usage", "assignable_roles", interaction, "member")
         await interaction.response.send_message(embed=help_embed)
 
 

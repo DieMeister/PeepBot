@@ -3,123 +3,90 @@ from datetime import datetime
 
 from colorama import Fore
 import sqlite3
-from enum import Enum
-from typing import Optional, Union
+from typing import Optional, Union, TYPE_CHECKING
 
 from discord import Interaction
 from discord.ext.commands.context import Context
 
 from lib.getter.config import log_path, dt_format
 
+if TYPE_CHECKING:
+    from lib.types import LogType, EventTrigger, LogModule, CommandType
 
 __all__ = [
-    "LogType",
-    "ExecutionMethod",
-    "Module",
-    "CommandType",
     "default_logger",
     "command",
     "command_possible"
 ]
 
 
-class LogType(Enum):
-    INFO = "info"
-    WARN = "warn"
-    ERROR = "error"
-    FATAL = "fatal"
-    DEBUG = "debug"
-
-
-class ExecutionMethod(Enum):
-    SETUP = "setup"
-    LOOP = "loop"
-    EVENT = "event"
-    COMMAND = "command"
-
-
-class Module(Enum):
-    BOT = "BOT"
-    PEEP = "PEEP"
-    CONFIG = "CONFIG"
-    EASTER_EGG = "EASTREGG"
-    MODERATION = "MOD"
-    HELP = "HELP"
-
-
-class CommandType(Enum):
-    DEVELOPER = "developer"
-    ADMIN = "admin"
-    MANAGER = "manager"
-    MEMBER = "member"
-
-
-def default_logger(log_module: Module, description: str, execution_method: ExecutionMethod, log_type: LogType=LogType.INFO) -> int:
+def default_logger(log_module: "LogModule", description: str, event_trigger: "EventTrigger", log_type: LogType= "info") -> int:
     """Default logger, is called by every other logger function.
 
     Return the log_id.
 
     Parameters
     -----------
-    log_module: :class:`Module`
+    log_module: :class:`str`
         The module that called a log function.
     description: :class:`str`
         A short description of what happened.
-    execution_method: :class:`ExecutionMethod`
+    event_trigger: :class:`str`
         The way the event was triggered.
-    log_type: :class:`LogType`
+    log_type: :class:`str`
         The severity of the event.
     """
     timestamp = datetime.now(dt.UTC)
     database_time = timestamp.strftime(dt_format())
     console_time = timestamp.strftime("%Y-%m-%d %H:%M:%S")
 
-    connection = sqlite3.connect(log_path())
-    log_id = connection.execute("""
+    log_db = sqlite3.connect(log_path())
+    log_id = log_db.execute("""
     INSERT INTO logs (timestamp, type, log_module, description, execution_method)
     VALUES (?, ?, ?, ?, ?)
     RETURNING log_id
-    """, (database_time, log_type.value, log_module.value, description, execution_method.value)).fetchone()[0]
-    connection.commit()
-    connection.close()
+    """, (database_time, log_type, log_module, description, event_trigger)).fetchone()[0]
+    log_db.commit()
+    log_db.close()
 
-    color = Fore.CYAN
     match log_type:
-        case LogType.INFO:
+        case "info":
             color = Fore.LIGHTWHITE_EX
-        case LogType.WARN:
+        case "warn":
             color = Fore.MAGENTA
-        case LogType.ERROR:
+        case "error":
             color = Fore.YELLOW
-        case LogType.FATAL:
+        case "fatal":
             color = Fore.RED
-        case LogType.DEBUG:
+        case "debug":
             color = Fore.BLUE
+        case _:
+            color = Fore.CYAN
 
-    print(f"{color}[{console_time}] [{log_type.value.upper():5}] [{log_module.value:8}] {description}{Fore.RESET}")
+    print(f"{color}[{console_time}] [{log_type.upper():5}] [{log_module.upper():8}] {description}{Fore.RESET}")
 
     return log_id
 
 
-def command(log_module: Module, description: str, context: Union[Context, Interaction], command_type: CommandType, log_type: LogType=LogType.INFO) -> int:
+def command(log_module: "LogModule", description: str, context: Union[Context, Interaction], command_type: "CommandType", log_type: "LogType"="info") -> int:
     """Base logger for all commands. This is called whenever a command is involved.
 
     Return the log_id.
 
     Parameters
     -----------
-    log_module: :class:`Module`
+    log_module: :class:`str`
         The module that called a log function.
     description: :class:`str`
         A short description of what happened.
     context: Union[:class:`Context`, :class:`Interaction`]
         The context or interaction of the command.
-    command_type: :class:`CommandType`
+    command_type: :class:`str`
         Who is allowed to use the command.
-    log_type: :class:`LogType`
+    log_type: :class:`str`
         The severity of the event.
     """
-    log_id = default_logger(log_module, description, ExecutionMethod.COMMAND, log_type)
+    log_id = default_logger(log_module, description, "command", log_type)
 
     guild_id = context.guild.id
     channel_id = context.channel.id
@@ -132,18 +99,18 @@ def command(log_module: Module, description: str, context: Union[Context, Intera
     else:
         raise ValueError("command context not of type Context or Interaction")
 
-    connection = sqlite3.connect(log_path())
-    connection.execute("""
+    log_db = sqlite3.connect(log_path())
+    log_db.execute("""
     INSERT INTO commands (log_id, guild_id, channel_id, user_id, type, prefix)
     VALUES (?, ?, ?, ?, ?, ?)
-    """, (log_id, guild_id, channel_id, user_id, command_type.value, prefix))
-    connection.commit()
-    connection.close()
+    """, (log_id, guild_id, channel_id, user_id, command_type, prefix))
+    log_db.commit()
+    log_db.close()
 
     return log_id
 
 
-def command_possible(log_module: Module, description: str, execution_method: ExecutionMethod, log_type: LogType, ctx: Optional[Context], command_type: Optional[CommandType]) -> int:
+def command_possible(log_module: "LogModule", description: str, event_trigger: "EventTrigger", log_type: "LogType", ctx: Optional[Context], command_type: Optional["CommandType"]) -> int:
     """Log when a command is a possible trigger but not necessary.
 
     This function calls either :func:`base_logger` or :func:`command` depending on if a command is involved.
@@ -151,27 +118,27 @@ def command_possible(log_module: Module, description: str, execution_method: Exe
 
     Parameters
     -----------
-    log_module: :class:`Module`
+    log_module: :class:`str`
         The module that called a log function.
     description: :class:`str`
         A short description of what happened.
-    execution_method: :class:`ExecutionMethod`
+    event_trigger: :class:`str`
         The trigger of the event. If a command is involved this is ExecutionMethod.COMMAND
     ctx: :class:`Context`
         The context or interaction of the command.
-    log_type: :class:`LogType`
+    log_type: :class:`str`
         The severity of the event.
-    command_type: :class:`CommandType`
+    command_type: :class:`str`
         Who is allowed to use the command.
     """
 
-    if execution_method== ExecutionMethod.COMMAND:
+    if event_trigger == "command":
         if ctx is None:
             raise ValueError("Missing Argument: ctx")
         if command_type is None:
             raise ValueError("Missing Argument: command_type")
         log_id = command(log_module, description, ctx, command_type, log_type)
     else:
-        log_id = default_logger(log_module, description, execution_method, log_type)
+        log_id = default_logger(log_module, description, event_trigger, log_type)
 
     return log_id

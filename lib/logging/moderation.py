@@ -2,7 +2,7 @@ import sqlite3
 from typing import Optional, TYPE_CHECKING
 
 from lib.getter.config import log_path
-from lib.logging import command, Module, CommandType
+from lib.logging import command
 
 if TYPE_CHECKING:
     from discord import Interaction
@@ -31,14 +31,14 @@ def assigning_role(description: str, interaction: "Interaction", role_id: int, r
     reason: Optional[:class:`str`]
         The reason why the member gets or loses the role.
     """
-    log_id = command(Module.MODERATION, description, interaction, CommandType.MANAGER)
+    log_id = command("mod", description, interaction, "manager")
 
-    con = sqlite3.connect(log_path())
-    con.execute("""
+    log_db = sqlite3.connect(log_path())
+    log_db.execute("""
     INSERT INTO assigning_role (role_id, role_id, receiver_id, reason)
     Values (?, ?, ?, ?)
     """, (log_id, role_id, receiver_id, reason))
-    con.commit()
-    con.close()
+    log_db.commit()
+    log_db.close()
 
     return log_id

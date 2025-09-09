@@ -19,7 +19,7 @@
 
 - Doesn't sync commands everytime the bot starts
 - LogMessage when a Member is added to the database is now `Member added to Database` instead of `Member joined Guild`
-- rename logging table `invalid_input` to `invalid_str_input`
+- LogModules are saved in lower case in the logs
 
 # 0.3.1
 ## Fixes

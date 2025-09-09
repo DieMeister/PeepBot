@@ -3,7 +3,6 @@ from discord.ext import commands
 
 import lib
 from lib import logging
-from lib.logging import Module, ExecutionMethod, LogType
 
 import os
 import sqlite3
@@ -16,11 +15,11 @@ class PeepBot(commands.Bot):
         for file in os.listdir("./Cogs"):
             if file.endswith(".py"):
                 await self.load_extension(f"Cogs.{file[:-3]}")
-                logging.extension_success(Module.BOT, "Extension loaded", ExecutionMethod.SETUP, file)
+                logging.extension_success("bot", "Extension loaded", "setup", file)
 
     @staticmethod
     async def on_ready() -> None:
-        logging.default_logger(Module.BOT, "Bot is ready", ExecutionMethod.SETUP)
+        logging.default_logger("bot", "Bot is ready", "setup")
 
 
 if __name__ == "__main__":
@@ -32,7 +31,7 @@ if __name__ == "__main__":
         log_db.commit()
         log_db.close()
 
-        logging.default_logger(Module.BOT, "Logging Database created", ExecutionMethod.SETUP, LogType.WARN)
+        logging.default_logger("bot", "Logging Database created", "setup", "warn")
 
     if not os.path.isfile(lib.get.database_path()):
         with open(lib.get.database_query()) as f:
@@ -42,7 +41,7 @@ if __name__ == "__main__":
         data_db.commit()
         data_db.close()
 
-        logging.default_logger(Module.BOT, "Bot Database created", ExecutionMethod.SETUP, LogType.WARN)
+        logging.default_logger("bot", "Bot Database created", "setup", "warn")
 
     intents = discord.Intents.none()
     intents.guild_messages = True

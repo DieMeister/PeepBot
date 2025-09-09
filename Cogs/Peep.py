@@ -10,7 +10,6 @@ from random import randint, choice
 
 import lib
 from lib import logging, get, embed
-from lib.logging import Module, ExecutionMethod, CommandType
 
 if TYPE_CHECKING:
     from discord import Interaction
@@ -20,7 +19,7 @@ if TYPE_CHECKING:
 class Peep(commands.Cog):
     def __init__(self, bot) -> None:
         self.bot = bot
-        logging.extension_success(Module.PEEP, "Cog initialised", ExecutionMethod.SETUP, "Peep")
+        logging.extension_success("peep", "Cog initialised", "setup", "Peep")
 
     @commands.command()
     async def psps(self, ctx: "Context") -> None:
@@ -145,10 +144,10 @@ class Peep(commands.Cog):
 
         if len(top_10) == 0:
             await interaction.response.send_message("nobody got a peep yet")
-            logging.command(Module.PEEP, "Leaderboard sent", interaction, CommandType.MEMBER)
+            logging.command("peep", "Leaderboard sent", interaction, "member")
         else:
             await interaction.response.send_message(embed=embed.leaderboard(interaction.guild, top_10))
-            logging.command(Module.BOT, "Leaderboard sent", interaction, CommandType.MEMBER)
+            logging.command("bot", "Leaderboard sent", interaction, "member")
 
     @app_commands.describe(
         member="The Member whose rank you want to know"

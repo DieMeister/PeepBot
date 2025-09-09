@@ -1,12 +1,12 @@
 import sqlite3
 from typing import  TYPE_CHECKING, Optional
 
-from lib.logging import Module, CommandType
 from lib.logging.base import command
 from lib.getter.config import log_path
 
 if TYPE_CHECKING:
     from discord import Interaction, TextChannel
+    from lib.types import LogModule
 
 
 __all__ = [
@@ -17,14 +17,14 @@ __all__ = [
 ]
 
 
-def configure_channel(log_module: Module, description: str, interaction: "Interaction", channel: "TextChannel") -> int:
+def configure_channel(log_module: "LogModule", description: str, interaction: "Interaction", channel: "TextChannel") -> int:
     """Log when psps channel are added or removed.
 
     Return the log_id.
 
     Parameters
     -----------
-    log_module: :class:`Module`
+    log_module: :class:`str`
         The module that called this function.
     description: :class:`str`
         A short description of what happened.
@@ -33,7 +33,7 @@ def configure_channel(log_module: Module, description: str, interaction: "Intera
     channel: :class:`TextChannel`
         The discord channel that is being configured.
     """
-    log_id = command(log_module, description, interaction, CommandType.MANAGER)
+    log_id = command(log_module, description, interaction, "manager")
 
     connection = sqlite3.connect(log_path())
     connection.execute("""
@@ -62,7 +62,7 @@ def change_of_assignable_roles(description: str, interaction: "Interaction", rol
     reason: Optional[:class:`str`]
         The reason why the role was added or removed.
     """
-    log_id = command(Module.MODERATION, description, interaction, CommandType.ADMIN)
+    log_id = command("mod", description, interaction, "admin")
 
     con = sqlite3.connect(log_path())
     con.execute("""
@@ -87,7 +87,7 @@ def set_log_channel(interaction: "Interaction", channel_id: int) -> int:
     channel_id: :class:`int`
         The discord id of the set channel.
     """
-    log_id = command(Module.MODERATION, "New LogChannel set", interaction, CommandType.ADMIN)
+    log_id = command("mod", "New LogChannel set", interaction, "admin")
     con = sqlite3.connect(log_path())
     con.execute("""
     INSERT INTO log_channel (log_id, channel_id)
@@ -112,7 +112,7 @@ def change_peep_message(interaction: "Interaction", message_type: str, old_messa
     new_message: :class:`str`
         The conetent of the new message.
     """
-    log_id = command(Module.CONFIG, "PeepMessage changed", interaction, CommandType.MANAGER)
+    log_id = command("config", "PeepMessage changed", interaction, "manager")
 
     connection = sqlite3.connect(log_path())
     connection.execute("""

@@ -9,7 +9,6 @@ import sqlite3
 
 import lib
 from lib import logging
-from lib.logging import Module, ExecutionMethod, LogType, CommandType
 
 if TYPE_CHECKING:
     from discord.ext.commands.context import Context
@@ -18,10 +17,10 @@ if TYPE_CHECKING:
 class Bot(commands.Cog):
     def __init__(self, bot) -> None:
         self.bot = bot
-        logging.extension_success(Module.BOT, "Cog initialised", ExecutionMethod.SETUP, "Bot")
+        logging.extension_success("bot", "Cog initialised", "setup", "Bot")
 
         self._data_db_save.start()
-        logging.default_logger(Module.BOT, "DatabaseSavingLoop started", ExecutionMethod.SETUP)
+        logging.default_logger("bot", "DatabaseSavingLoop started", "setup")
 
     @tasks.loop(time=time(1, tzinfo=dt.UTC))
     async def _data_db_save(self) -> None:
@@ -34,14 +33,14 @@ class Bot(commands.Cog):
         backup_db.close()
         data_db.close()
 
-        logging.default_logger(Module.BOT, "Database saved", ExecutionMethod.LOOP)
+        logging.default_logger("bot", "Database saved", "loop")
 
     @commands.command()
     async def sync(self, ctx: "Context") -> None:
         """Sync the bot's application commands with discord."""
         if ctx.author.id in lib.get.developer():
             synced = await self.bot.tree.sync()
-            logging.sync_commands(ExecutionMethod.COMMAND, len(synced), ctx)
+            logging.sync_commands("command", len(synced), ctx)
             await ctx.reply("Commands synced")
 
     @commands.command()
@@ -50,19 +49,19 @@ class Bot(commands.Cog):
         if ctx.author.id in lib.get.developer():
             try:
                 await self.bot.reload_extension(f"Cogs.{cog}")
-                logging.extension_success(Module.BOT, "Cog reloaded successfully", ExecutionMethod.COMMAND, cog, ctx)
+                logging.extension_success("bot", "Cog reloaded successfully", "command", cog, ctx)
                 await ctx.reply("Cog reloaded successfully")
             except ExtensionNotFound:
                 await ctx.reply("Cog does not exist")
-                logging.extension_error("Extension failed to reload", ExecutionMethod.COMMAND, cog, "Cog does not exist", ctx, LogType.WARN)
+                logging.extension_error("Extension failed to reload", "command", cog, "Cog does not exist", ctx, "warn")
             except ExtensionNotLoaded:
                 await ctx.reply("Cog was not loaded before, try load_cog instead")
             except NoEntryPointError:
                 await ctx.reply("Cog has no entry point")
-                logging.extension_error("Extension failed to reload", ExecutionMethod.COMMAND, cog, "Extension has no EntryPoint", ctx)
+                logging.extension_error("Extension failed to reload", "command", cog, "Extension has no EntryPoint", ctx)
             except ExtensionFailed:
                 await ctx.reply("Cog failed to load")
-                logging.extension_error("Extension failed to reload", ExecutionMethod.COMMAND, cog, "No further information", ctx)
+                logging.extension_error("Extension failed to reload", "command", cog, "No further information", ctx)
 
     @commands.command()
     async def load_cog(self, ctx: "Context", cog: str) -> None:
@@ -70,20 +69,20 @@ class Bot(commands.Cog):
         if ctx.author.id in lib.get.developer():
             try:
                 await self.bot.load_extension(f"Cogs.{cog}")
-                logging.extension_success(Module.BOT, "Cog loaded successfully", ExecutionMethod.COMMAND, cog, ctx)
+                logging.extension_success("bot", "Cog loaded successfully", "command", cog, ctx)
                 await ctx.reply("Cog loaded")
             except ExtensionNotFound:
                 await ctx.reply("Cog does not exist")
-                logging.extension_error("Extension failed to load", ExecutionMethod.COMMAND, cog, "Cog does not exist", ctx, LogType.WARN)
+                logging.extension_error("Extension failed to load", "command", cog, "Cog does not exist", ctx, "warn")
             except ExtensionAlreadyLoaded:
                 await ctx.reply("Cog was already loaded")
-                logging.extension_error("Extension failed to load", ExecutionMethod.COMMAND, cog, "Cog was already loaded", ctx, LogType.WARN)
+                logging.extension_error("Extension failed to load", "command", cog, "Cog was already loaded", ctx, "warn")
             except NoEntryPointError:
                 await ctx.reply("Cog has no entry point")
-                logging.extension_error("Extension failed to load", ExecutionMethod.COMMAND, cog, "Extension has no EntryPoint", ctx)
+                logging.extension_error("Extension failed to load", "command", cog, "Extension has no EntryPoint", ctx)
             except ExtensionFailed:
                 await ctx.reply("Cog failed to load")
-                logging.extension_error("Extension failed to load", ExecutionMethod.COMMAND, cog, "no further information", ctx)
+                logging.extension_error("Extension failed to load", "command", cog, "no further information", ctx)
 
     @commands.command()
     async def unload_cog(self, ctx: "Context", cog: str) -> None:
@@ -91,14 +90,14 @@ class Bot(commands.Cog):
         if ctx.author.id in lib.get.developer():
             try:
                 await self.bot.unload_extension(f"Cogs.{cog}")
-                logging.extension_success(Module.BOT, "Extension loaded successfully", ExecutionMethod.COMMAND, cog, ctx)
+                logging.extension_success("bot", "Extension loaded successfully", "command", cog, ctx)
                 await ctx.reply("Cog unloaded")
             except ExtensionNotFound:
                 await ctx.reply("Cog does not exist")
-                logging.extension_error("Extension failed to unload", ExecutionMethod.COMMAND, cog, "Cog does not exist", ctx, LogType.WARN)
+                logging.extension_error("Extension failed to unload", "command", cog, "Cog does not exist", ctx, "warn")
             except ExtensionNotLoaded:
                 await ctx.reply("Cog was already not loaded")
-                logging.extension_error("Extension failed to unload", ExecutionMethod.COMMAND, cog, "Cog was already not loaded", ctx, LogType.WARN)
+                logging.extension_error("Extension failed to unload", "command", cog, "Cog was already not loaded", ctx, "warn")
 
     @commands.command()
     async def shutdown(self, ctx: "Context") -> None:
@@ -106,7 +105,7 @@ class Bot(commands.Cog):
         if ctx.author.id in lib.get.developer():
             await ctx.reply("Bot is shutting down")
             await self.bot.close()
-            logging.command(Module.BOT, "Bot shut down", ctx, CommandType.DEVELOPER, LogType.WARN)
+            logging.command("bot", "Bot shut down", ctx, "developer", "warn")
 
     @commands.command()
     async def give_peeps(self, ctx: "Context", amount: str, user_id: str, guild_id: str) -> None:
@@ -117,38 +116,38 @@ class Bot(commands.Cog):
             try:
                 amount = int(amount)
             except ValueError:
-                logging.invalid_input(Module.PEEP, "Amount of given peeps is not a number", ctx, CommandType.DEVELOPER, amount)
+                logging.invalid_input("peep", "Amount of given peeps is not a number", ctx, "developer", amount)
                 await ctx.reply("Amount of peeps is not a number")
                 return
             try:
                 user_id = int(user_id)
             except ValueError:
-                logging.invalid_input(Module.PEEP, "user_id of member to give peeps to is not a number", ctx, CommandType.DEVELOPER, user_id)
+                logging.invalid_input("peep", "user_id of member to give peeps to is not a number", ctx, "developer", user_id)
                 await ctx.reply("user_id is not a number")
                 return
             try:
                 guild_id = int(guild_id)
             except ValueError:
-                logging.invalid_input(Module.PEEP, "guild_id of member to give peeps to is not a number", ctx, CommandType.DEVELOPER, guild_id)
+                logging.invalid_input("peep", "guild_id of member to give peeps to is not a number", ctx, "developer", guild_id)
                 await ctx.reply("guild_id is not a number")
                 return
 
             # check if values are valid
             if amount <= 0:
                 await ctx.reply("You need to give at least one peep")
-                logging.invalid_input(Module.PEEP, "Given peeps <= 0", ctx, CommandType.DEVELOPER, amount)
+                logging.invalid_input("peep", "Given peeps <= 0", ctx, "developer", amount)
                 return
 
             # Check if the member exists.
             guild = self.bot.get_guild(guild_id)
             if guild is None:
                 await ctx.reply("Bot is not in provided guild")
-                logging.invalid_input(Module.PEEP, "bot not in guild of member to give peeps to", ctx, CommandType.DEVELOPER, guild_id)
+                logging.invalid_input("peep", "bot not in guild of member to give peeps to", ctx, "developer", guild_id)
                 return
             member = guild.get_member(user_id)
             if member is None:
                 await ctx.reply("Member is not in provided guild")
-                logging.invalid_input(Module.PEEP, "member to give peeps to not in provided guild", ctx, CommandType.DEVELOPER, user_id)
+                logging.invalid_input("peep", "member to give peeps to not in provided guild", ctx, "developer", user_id)
                 return
 
             # add peeps to the member
@@ -170,37 +169,37 @@ class Bot(commands.Cog):
             try:
                 amount = int(amount)
             except ValueError:
-                logging.invalid_input(Module.PEEP, "Amount of given removed is not a number", ctx, CommandType.DEVELOPER, amount)
+                logging.invalid_input("peep", "Amount of given removed is not a number", ctx, "developer", amount)
                 await ctx.reply("Amount of peeps is not a number")
                 return
             try:
                 user_id = int(user_id)
             except ValueError:
-                logging.invalid_input(Module.PEEP, "user_id of member to remove peeps from is not a number", ctx, CommandType.DEVELOPER, user_id)
+                logging.invalid_input("peep", "user_id of member to remove peeps from is not a number", ctx, "developer", user_id)
                 await ctx.reply("user_id is not a number")
                 return
             try:
                 guild_id = int(guild_id)
             except ValueError:
-                logging.invalid_input(Module.PEEP, "guild_id of member to remove peeps from is not a number", ctx, CommandType.DEVELOPER, guild_id)
+                logging.invalid_input("peep", "guild_id of member to remove peeps from is not a number", ctx, "developer", guild_id)
                 await ctx.reply("guild_id is not a number")
                 return
 
             # check if values are valid
             if amount <= 0:
                 await ctx.reply("You need to remove at least one peep")
-                logging.invalid_input(Module.PEEP, "Removed peeps <= 0", ctx, CommandType.DEVELOPER, amount)
+                logging.invalid_input("peep", "Removed peeps <= 0", ctx, "developer", amount)
 
             # Check if the member exists.
             guild = self.bot.get_guild(guild_id)
             if guild is None:
                 await ctx.reply("Bot is not in provided guild")
-                logging.invalid_input(Module.PEEP, "bot not in guild of member to give peeps to", ctx, CommandType.DEVELOPER, guild_id)
+                logging.invalid_input("peep", "bot not in guild of member to give peeps to", ctx, "developer", guild_id)
                 return
             member = guild.get_member(user_id)
             if member is None:
                 await ctx.reply("Member is not in provided guild")
-                logging.invalid_input(Module.PEEP, "member to give peeps to not in provided guild", ctx, CommandType.DEVELOPER, user_id)
+                logging.invalid_input("peep", "member to give peeps to not in provided guild", ctx, "developer", user_id)
                 return
 
             lib.sql.add_member(member)

@@ -7,7 +7,6 @@ import sqlite3
 
 import lib
 from lib import logging, embed, possible_discord_id
-from lib.logging import Module, ExecutionMethod, CommandType
 from lib.sql import assignable_role_in_database
 
 if TYPE_CHECKING:
@@ -17,7 +16,7 @@ if TYPE_CHECKING:
 class Config(commands.Cog):
     def __init__(self, bot) -> None:
         self.bot = bot
-        logging.extension_success(Module.CONFIG, "Cog initialised", ExecutionMethod.SETUP, "Config")
+        logging.extension_success("config", "Cog initialised", "setup", "Config")
 
     @app_commands.command(name="change_peep_message", description="changes the response a member gets when using !psps")
     @app_commands.describe(
@@ -75,7 +74,7 @@ class Config(commands.Cog):
             connection.commit()
 
             await interaction.response.send_message(f"Channel <#{channel.id}> added as allowed command channel")
-            logging.configure_channel(Module.CONFIG, "Channel added", interaction, channel)
+            logging.configure_channel("config", "Channel added", interaction, channel)
         connection.close()
 
 
@@ -96,7 +95,7 @@ class Config(commands.Cog):
             connection.commit()
 
             await interaction.response.send_message(f"Channel <#{channel.id}> removed as allowed command channel")
-            logging.configure_channel(Module.CONFIG, "Channel removed", interaction, channel)
+            logging.configure_channel("config", "Channel removed", interaction, channel)
         connection.close()
 
     @app_commands.command(name="add_assignable_role", description="add a role others can add to or remove from a user using /add_role or /remove_role")
@@ -131,7 +130,7 @@ class Config(commands.Cog):
     async def remove_assignable_role(self, interaction: "Interaction", role_id: str, reason: Optional[str]) -> None:
         if not possible_discord_id(role_id):
             await interaction.response.send_message("Invalid Input")
-            logging.invalid_input(Module.MODERATION, "Non-Integer input given to remove AssignableRole from List", interaction, CommandType.ADMIN, role_id)
+            logging.invalid_input("mod", "Non-Integer input given to remove AssignableRole from List", interaction, "admin", role_id)
             return
 
         if assignable_role_in_database(int(role_id)):
