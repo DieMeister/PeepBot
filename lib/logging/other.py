@@ -63,7 +63,7 @@ def help_embed(help_type: "HelpType", sub_type: Optional["HelpSubType"], context
 
     log_db = sqlite3.connect(log_path())
     log_db.execute("""
-    INSERT INTO help (log_id, type, category)
+    INSERT INTO help (log_id, type, sub_type)
     VALUES (?, ?, ?)
     """, (log_id, help_type, sub_type))
     log_db.commit()

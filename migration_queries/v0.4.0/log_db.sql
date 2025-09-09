@@ -33,3 +33,22 @@ CREATE TABLE remove_peeps (
     member_guild_id INTEGER NOT NULL,
     member_user_id INTEGER NOT NULL
 );
+
+-- change category to sub_type and make it NULL
+CREATE TABLE new_table (
+    log_id INTEGER PRIMARY KEY REFERENCES logs(log_id),
+    type TEXT NOT NULL,
+    sub_type TEXT
+);
+INSERT INTO new_table (
+    log_id,
+    type,
+    sub_type
+)
+SELECT
+    log_id,
+    type,
+    category
+FROM help;
+DROP TABLE help;
+ALTER TABLE new_table RENAME TO help;
