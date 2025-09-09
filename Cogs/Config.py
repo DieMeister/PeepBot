@@ -6,8 +6,9 @@ from typing import TYPE_CHECKING, Optional
 import sqlite3
 
 import lib
-from lib import logging, embed, assignable_role_in_database, possible_discord_id
+from lib import logging, embed, possible_discord_id
 from lib.logging import Module, ExecutionMethod, CommandType
+from lib.sql import assignable_role_in_database
 
 if TYPE_CHECKING:
     from discord import Interaction

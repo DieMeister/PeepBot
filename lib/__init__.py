@@ -16,7 +16,6 @@ __all__ =  [
     "sql",
     "types",
     "possible_discord_id",
-    "assignable_role_in_database",
     "json",
     "file"
 ]
