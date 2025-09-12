@@ -22,12 +22,16 @@
     "discord": "%Y-%m-%dT%H:%M:%S.%f%z"
   },
   "emotes": {
-    "leaderboard": {
-      "gifted": "<:gifted:1410564494869925999>",
-      "peeps": "<:peeps:1410564594094702593>",
-      "received": "<:received:1410564653863403580>",
-      "tries": "<:tries:1410564740052418560>"
-    }
+    "gifted": "<:gifted:1410564494869925999>",
+    "peeps": "<:peeps:1410564594094702593>",
+    "received": "<:received:1410564653863403580>",
+    "tries": "<:tries:1410564740052418560>",
+    "funne": "<:funne:1410555163252363284>",
+    "moonie": "<:moonie:1402790093353390210>",
+    "wass": "<:wass:1402701975367188581>",
+    "creed": "<:creed:1402701947512946789>",
+    "jas": "<:jas:1401671986626695178>",
+    "raccoon": "<a:raccoon:1401667590316757145>"
   },
   "messages": {
     "log_channel_missing": "- **!!You have no logging channel specified!!**"

@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Optional
 import sqlite3
 
 import lib
-from lib import logging, embed, possible_discord_id
+from lib import logging, embed, possible_discord_id, config
 from lib.sql import assignable_role_in_database
 
 if TYPE_CHECKING:
@@ -34,7 +34,7 @@ class Config(commands.Cog):
     async def change_peep_message(self, interaction: "Interaction", message_type: app_commands.Choice[str], message: str) -> None:
         lib.sql.add_guild(interaction.guild)
 
-        con = sqlite3.connect(lib.get.database_path())
+        con = sqlite3.connect(config.data_db_path())
         old_message = con.execute("""
         SELECT ?
         FROM guilds
@@ -57,7 +57,7 @@ class Config(commands.Cog):
     @app_commands.default_permissions(manage_guild=True)
     async def add_psps_channel(self, interaction: "Interaction", channel: TextChannel) -> None:
         lib.sql.add_guild(interaction.guild)
-        connection = sqlite3.connect(lib.get.database_path())
+        connection = sqlite3.connect(config.data_db_path())
 
         known_channel = connection.execute("""
         SELECT *
@@ -83,7 +83,7 @@ class Config(commands.Cog):
     @app_commands.default_permissions(manage_guild=True)
     async def remove_psps_channel(self, interaction: "Interaction", channel: TextChannel) -> None:
         lib.sql.add_guild(interaction.guild)
-        connection = sqlite3.connect(lib.get.database_path())
+        connection = sqlite3.connect(config.data_db_path())
 
         if not connection.execute(f"SELECT * FROM allowed_channels WHERE channel_id = {channel.id}"):
             await interaction.response.send_message("Channel already not in list")
@@ -106,7 +106,7 @@ class Config(commands.Cog):
             await interaction.response.send_message("This role is already added")
             logging.change_of_assignable_roles("Tried to add already existing AssignableRole to List", interaction, role.id, reason)
         else:
-            con = sqlite3.connect(lib.get.database_path())
+            con = sqlite3.connect(config.data_db_path())
             con.execute("""
             INSERT INTO role_assigning (role_id, guild_id)
             VALUES (?, ?)
@@ -116,7 +116,7 @@ class Config(commands.Cog):
             log_channel = lib.get.log_channel(interaction.guild)
             log_id =  logging.change_of_assignable_roles("AssignableRole added to List", interaction, role.id, reason)
             if log_channel is None:
-                await interaction.response.send_message(f"Role added {lib.get.log_channel_missing()}")
+                await interaction.response.send_message(f"Role added {config.log_channel_missing_msg()}")
             else:
                 await interaction.response.send_message("Role added")
                 await log_channel.send(embed=embed.role_log(str(log_id), "AssignableRole added to List", str(role.id), str(interaction.user.id), reason))
@@ -134,7 +134,7 @@ class Config(commands.Cog):
             return
 
         if assignable_role_in_database(int(role_id)):
-            con = sqlite3.connect(lib.get.database_path())
+            con = sqlite3.connect(config.data_db_path())
             con.execute("""
             DELETE FROM role_assigning
             WHERE role_id = ?
@@ -145,7 +145,7 @@ class Config(commands.Cog):
             log_id = logging.change_of_assignable_roles("AssignableRole removed from List", interaction, int(role_id), reason)
             log_channel = lib.get.log_channel(interaction.guild)
             if log_channel is None:
-                await interaction.response.send_message(f"Role removed {lib.get.log_channel_missing()}")
+                await interaction.response.send_message(f"Role removed {config.log_channel_missing_msg()}")
             else:
                 await interaction.response.send_message("Role removed")
                 await log_channel.send(embed=embed.role_log(str(log_id), "AssignableRole removed from List", role_id, str(interaction.user.id), reason))
@@ -158,7 +158,7 @@ class Config(commands.Cog):
     @app_commands.default_permissions(administrator=True)
     async def set_log_channel(self, interaction: "Interaction", channel: TextChannel) -> None:
         lib.sql.add_guild(interaction.guild)
-        con = sqlite3.connect(lib.get.database_path())
+        con = sqlite3.connect(config.data_db_path())
         con.execute("""
         UPDATE guilds
         SET log_channel_id = ?

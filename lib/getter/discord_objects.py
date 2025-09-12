@@ -1,7 +1,6 @@
 import sqlite3
 from typing import TYPE_CHECKING, Optional, Union
-
-from lib.getter.config import database_path
+from lib import config
 
 if TYPE_CHECKING:
     from discord import Guild, TextChannel, StageChannel, ForumChannel, VoiceChannel, CategoryChannel
@@ -23,7 +22,7 @@ def log_channel(guild: "Guild") -> Optional[Union["TextChannel", "StageChannel",
     guild: :class:`Guild`
         The guild whose log channel is got.
     """
-    con = sqlite3.connect(database_path())
+    con = sqlite3.connect(config.data_db_path())
     guild_data = con.execute("""
     SELECT log_channel_id
     FROM guilds

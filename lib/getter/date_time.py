@@ -1,6 +1,7 @@
 import datetime as dt
 from datetime import datetime
 
+from lib import config
 from lib.getter import config as get
 
 __all__ = [
@@ -20,7 +21,7 @@ def dt_object(datetime_string: str) -> dt:
     datetime_string: :class:`str`
         The datetime in string representation.
     """
-    return datetime.strptime(datetime_string, get.dt_format()).replace(tzinfo=dt.UTC)
+    return datetime.strptime(datetime_string, config.bot_dt_format()).replace(tzinfo=dt.UTC)
 
 
 def dt_string(datetime_object: datetime) -> str:
@@ -32,7 +33,7 @@ def dt_string(datetime_object: datetime) -> str:
     datetime_object: :class:`dt`
         The datetime object to convert.
     """
-    return datetime_object.strftime(get.dt_format())
+    return datetime_object.strftime(config.bot_dt_format())
 
 
 def discord_dt_string(datetime_object: datetime):
@@ -44,7 +45,7 @@ def discord_dt_string(datetime_object: datetime):
     datetime_object: :class:`dt`
         The datetime object to convert.
     """
-    return datetime_object.strftime(get.discord_dt_format())
+    return datetime_object.strftime(config.discord_dt_format())
 
 
 def now() -> datetime:

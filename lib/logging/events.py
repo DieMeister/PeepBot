@@ -1,7 +1,7 @@
 import sqlite3
 from typing import TYPE_CHECKING, Optional
 
-from lib.getter.config import log_path
+from lib import config
 from lib.logging.base import default_logger
 
 if TYPE_CHECKING:
@@ -28,7 +28,7 @@ def user_join(user_id: int) -> int:
     """
     log_id = default_logger("bot", "User added to Database", "event", "info")
 
-    log_db = sqlite3.connect(log_path())
+    log_db = sqlite3.connect(config.log_db_path())
     log_db.execute("""
     INSERT INTO user_join (log_id, user_id)
     VALUES (?, ?)
@@ -56,7 +56,7 @@ def guild_join(guild: "Guild", members_added: Optional[int]=None, log_type: "Log
     """
     log_id = default_logger("bot", "Bot joined Guild", "event", log_type)
 
-    log_db = sqlite3.connect(log_path())
+    log_db = sqlite3.connect(config.log_db_path())
     log_db.execute("""
     INSERT INTO guild_join (log_id, guild_id, guild_name, members_total, members_added)
     VALUES (?, ?, ?, ?, ?)
@@ -81,7 +81,7 @@ def member_join(member: "Member", log_type: "LogType"="info") -> int:
     """
     log_id = default_logger("bot", "Member added to Database", "event", log_type)
 
-    log_db = sqlite3.connect(log_path())
+    log_db = sqlite3.connect(config.log_db_path())
     log_db.execute("""
     INSERT INTO member_join (log_id, guild_id, user_id, user_name)
     VALUES (?, ?, ?, ?)

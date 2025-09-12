@@ -1,12 +1,13 @@
 import sqlite3
+
 import lib
-from lib.getter.config import database_path, log_path
+from lib import config
 
 version = "v0.4.0"
 
 match version:
     case "v0.3.0":
-        log_db = sqlite3.connect(lib.get.database_path())
+        log_db = sqlite3.connect(config.data_db_path())
         log_db.executescript(lib.file.load_data(f"./migration_queries/{version}/database.sql"))
         log_db.commit()
         log_db.close()
@@ -17,7 +18,7 @@ match version:
         logging.close()
     case "v0.3.1":
         log_db = sqlite3.connect(lib.get.log_path())
-        data_db = sqlite3.connect(lib.get.database_path())
+        data_db = sqlite3.connect(config.data_db_path())
         data_db.execute("""
         UPDATE members
         SET
@@ -79,7 +80,7 @@ match version:
         data_db.close()
         log_db.close()
     case "v0.4.0":
-        data_db = sqlite3.connect(database_path())
+        data_db = sqlite3.connect(config.data_db_path())
         # Create users table
         data_db.execute("""
         CREATE TABLE users (
@@ -110,7 +111,7 @@ match version:
         data_db.commit()
 
         # add logging table
-        log_db = sqlite3.connect(log_path())
+        log_db = sqlite3.connect(config.log_db_path())
         log_db.executescript(lib.file.load_data("./migration_queries/v0.4.0/log_db.sql"))
         log_db.commit()
         log_db.close()

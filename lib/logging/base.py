@@ -8,7 +8,8 @@ from typing import Optional, Union, TYPE_CHECKING
 from discord import Interaction
 from discord.ext.commands.context import Context
 
-from lib.getter.config import log_path, dt_format
+from lib import config
+from lib.getter.config import dt_format
 
 if TYPE_CHECKING:
     from lib.types import LogType, EventTrigger, LogModule, CommandType
@@ -37,10 +38,10 @@ def default_logger(log_module: "LogModule", description: str, event_trigger: "Ev
         The severity of the event.
     """
     timestamp = datetime.now(dt.UTC)
-    database_time = timestamp.strftime(dt_format())
+    database_time = timestamp.strftime(config.discord_dt_format())
     console_time = timestamp.strftime("%Y-%m-%d %H:%M:%S")
 
-    log_db = sqlite3.connect(log_path())
+    log_db = sqlite3.connect(config.log_db_path())
     log_id = log_db.execute("""
     INSERT INTO logs (timestamp, type, log_module, description, execution_method)
     VALUES (?, ?, ?, ?, ?)
@@ -99,7 +100,7 @@ def command(log_module: "LogModule", description: str, context: Union[Context, I
     else:
         raise ValueError("command context not of type Context or Interaction")
 
-    log_db = sqlite3.connect(log_path())
+    log_db = sqlite3.connect(config.log_db_path())
     log_db.execute("""
     INSERT INTO commands (log_id, guild_id, channel_id, user_id, type, prefix)
     VALUES (?, ?, ?, ?, ?, ?)

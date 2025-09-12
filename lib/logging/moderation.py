@@ -1,7 +1,7 @@
 import sqlite3
 from typing import Optional, TYPE_CHECKING
 
-from lib.getter.config import log_path
+from lib import config
 from lib.logging import command
 
 if TYPE_CHECKING:
@@ -33,7 +33,7 @@ def assigning_role(description: str, interaction: "Interaction", role_id: int, r
     """
     log_id = command("mod", description, interaction, "manager")
 
-    log_db = sqlite3.connect(log_path())
+    log_db = sqlite3.connect(config.log_db_path())
     log_db.execute("""
     INSERT INTO assigning_role (role_id, role_id, receiver_id, reason)
     Values (?, ?, ?, ?)

@@ -1,7 +1,5 @@
-import sqlite3
 from typing import Union
 
-from lib.getter.config import database_path
 
 __all__ = [
     "possible_discord_id"

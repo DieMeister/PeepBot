@@ -4,7 +4,8 @@ from datetime import datetime
 from typing import TYPE_CHECKING
 from discord import Embed
 
-from lib.getter import embed_color, discord_dt_string
+from lib import config
+from lib.getter import discord_dt_string
 
 if TYPE_CHECKING:
     from lib import types
@@ -42,7 +43,7 @@ def config_peep() -> Embed:
         "type": "rich",
         "title": "Config Peep",
         "description": "How to configure everything concerning Peeps",
-        "color": embed_color(),
+        "color": config.embed_color(),
         "timestamp": discord_dt_string(datetime(2025, 8, 22, 23, 37, tzinfo=dt.UTC)),
         "footer": footer,
         "fields": [
@@ -83,7 +84,7 @@ def config_assignable_role() -> Embed:
         "type": "rich",
         "title": "Config AssignableRoles",
         "description": "How to configure everything concerning AssignableRoles",
-        "color": embed_color(),
+        "color": config.embed_color(),
         "timestamp": discord_dt_string(datetime(2025, 8, 22, 23, 37, tzinfo=dt.UTC)),
         "footer": footer,
         "fields": [

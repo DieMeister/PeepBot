@@ -1,7 +1,6 @@
 import sqlite3
 from typing import Optional, TYPE_CHECKING
-
-from lib.getter.config import database_path
+from lib import config
 
 if TYPE_CHECKING:
     from lib import types
@@ -23,7 +22,7 @@ def get_user(user_id: int) -> Optional["types.sql.User"]:
     user_id: :class:`int`
         the discord id of the user.
     """
-    data_db = sqlite3.connect(database_path())
+    data_db = sqlite3.connect(config.data_db_path())
     user: Optional["types.sql.User"] = data_db.execute("""
     SELECT
         user_id,
@@ -43,7 +42,7 @@ def get_guild(guild_id: int) -> Optional["types.sql.Guild"]:
     guild_id: :class:`int`
         The discord id of the guild.
     """
-    data_db = sqlite3.connect(database_path())
+    data_db = sqlite3.connect(config.data_db_path())
     guild: Optional["types.sql.Guild"] = data_db.execute("""
         SELECT 
             guild_id,
@@ -69,7 +68,7 @@ def get_member(guild_id: int, user_id: int) -> Optional["types.sql.Member"]:
     user_id: :class:`int`
         The discord id of the user the member represents in this guild.
     """
-    data_db = sqlite3.connect(database_path())
+    data_db = sqlite3.connect(config.data_db_path())
     member: Optional["types.sql.Member"] = data_db.execute("""
         SELECT 
             user_id,
@@ -95,7 +94,7 @@ def get_psps_channel(channel_id: int) -> Optional["types.sql.PspsChannel"]:
     channel_id: :class:`int`
         The discord id of the channel.
     """
-    con = sqlite3.connect(database_path())
+    con = sqlite3.connect(config.data_db_path())
     channel: "types.sql.PspsChannel" = con.execute("""
     SELECT 
         channel_id,

@@ -1,8 +1,8 @@
 import sqlite3
 from typing import  TYPE_CHECKING, Optional
 
+from lib import config
 from lib.logging.base import command
-from lib.getter.config import log_path
 
 if TYPE_CHECKING:
     from discord import Interaction, TextChannel
@@ -35,7 +35,7 @@ def configure_channel(log_module: "LogModule", description: str, interaction: "I
     """
     log_id = command(log_module, description, interaction, "manager")
 
-    connection = sqlite3.connect(log_path())
+    connection = sqlite3.connect(config.log_db_path())
     connection.execute("""
     INSERT INTO configure_channel (log_id, channel_id, channel_name)
     VALUES (?, ?, ?)
@@ -64,7 +64,7 @@ def change_of_assignable_roles(description: str, interaction: "Interaction", rol
     """
     log_id = command("mod", description, interaction, "admin")
 
-    con = sqlite3.connect(log_path())
+    con = sqlite3.connect(config.log_db_path())
     con.execute("""
     INSERT INTO adding_role_to_list (log_id, role_id, reason)
     VALUES (?, ?, ?) 
@@ -88,7 +88,7 @@ def set_log_channel(interaction: "Interaction", channel_id: int) -> int:
         The discord id of the set channel.
     """
     log_id = command("mod", "New LogChannel set", interaction, "admin")
-    con = sqlite3.connect(log_path())
+    con = sqlite3.connect(config.log_db_path())
     con.execute("""
     INSERT INTO log_channel (log_id, channel_id)
     VALUES (?, ?)
@@ -114,7 +114,7 @@ def change_peep_message(interaction: "Interaction", message_type: str, old_messa
     """
     log_id = command("config", "PeepMessage changed", interaction, "manager")
 
-    connection = sqlite3.connect(log_path())
+    connection = sqlite3.connect(config.log_db_path())
     connection.execute("""
     INSERT INTO change_peep_message (log_id, message_type, old_message, new_message)
     VALUES (?, ?, ?, ?)

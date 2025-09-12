@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Optional
 from random import randint, choice
 
 import lib
-from lib import logging, get, embed
+from lib import logging, get, embed, config
 
 if TYPE_CHECKING:
     from discord import Interaction
@@ -49,11 +49,11 @@ class Peep(commands.Cog):
             return
 
         # check if the member tried again within their cooldown
-        if ctx.author.id in lib.get.vip():
+        if ctx.author.id in config.vip():
             if member_last_try + timedelta(minutes=5) > timestamp:
                 logging.psps_denied(ctx, "vip used twice within 5 minutes")
                 return
-        elif ctx.author.id in lib.get.vup():
+        elif ctx.author.id in config.vup():
             if member_last_try + timedelta(minutes=30) > timestamp:
                 logging.psps_denied(ctx, "vup used twice within 30 minutes")
                 return
@@ -67,12 +67,12 @@ class Peep(commands.Cog):
             steal_number = randint(1, 100)
             # steal peep
             if steal_number == 1:
-                mod = choice(lib.get.thieves())
+                mod = choice(config.thieves())
                 name = mod["name"]
                 emote = mod["emote"]
                 user_id = mod["id"]
                 await ctx.reply(f"{emote} your peep got stolen")
-                data_db = sqlite3.connect(get.database_path())
+                data_db = sqlite3.connect(config.data_db_path())
                 stolen_peeps = data_db.execute("""
                 SELECT stolen_peeps
                 FROM users
@@ -103,7 +103,7 @@ class Peep(commands.Cog):
             logging.catch_peep("Member did not get a Peep", ctx, member_peeps, peep_number)
 
         # update database
-        con = sqlite3.connect(lib.get.database_path())
+        con = sqlite3.connect(config.data_db_path())
         con.execute("""
         UPDATE guilds
         SET last_peep = ?
@@ -122,7 +122,7 @@ class Peep(commands.Cog):
 
     @app_commands.command(name="leaderboard", description="shows the 10 Members with the most Peeps")
     async def leaderboard(self, interaction: "Interaction") -> None:
-        connection = sqlite3.connect(lib.get.database_path())
+        connection = sqlite3.connect(config.data_db_path())
         top_10 = connection.execute("""
            SELECT
                user_id,
@@ -158,7 +158,7 @@ class Peep(commands.Cog):
             member = interaction.user
         lib.sql.add_member(member)
 
-        data_db = sqlite3.connect(lib.get.database_path())
+        data_db = sqlite3.connect(config.data_db_path())
         peeps, tries, sent, received = data_db.execute("""
            SELECT
                caught_peeps,
@@ -186,7 +186,7 @@ class Peep(commands.Cog):
             logging.peep_transfer("Member tried to transfer < 1 Peeps", interaction, amount, recipient.id)
             return
         lib.sql.add_member(interaction.user)
-        con = sqlite3.connect(lib.get.database_path())
+        con = sqlite3.connect(config.data_db_path())
         sender_total_peeps, sender_sent_peeps = con.execute("""
         SELECT
             caught_peeps,

@@ -1,12 +1,13 @@
 """A library for all external functions of this discord bot."""
-
-from lib.data import *
-from lib.checks import *
-from lib import getter as get
-from lib import embeds as embed
-from lib import logging
-from lib import sql
-from lib import types
+from .autocomplete import *
+from .data import *
+from .checks import *
+from . import config
+from . import getter as get
+from . import embeds as embed
+from . import logging
+from . import sql
+from . import types
 
 
 __all__ =  [
@@ -19,6 +20,3 @@ __all__ =  [
     "json",
     "file"
 ]
-
-
-get.load_data("./config.json")

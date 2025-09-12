@@ -1,8 +1,8 @@
 import sqlite3
 from typing import TYPE_CHECKING, Optional
 
+from lib import config
 from lib.logging import command
-from lib.getter.config import log_path
 
 if TYPE_CHECKING:
     from discord import Interaction
@@ -41,7 +41,7 @@ def catch_peep(description: str, ctx: "Context", peep_amount: int, random_intege
     """
     log_id = command("peep", description, ctx, "member")
 
-    log_db = sqlite3.connect(log_path())
+    log_db = sqlite3.connect(config.log_db_path())
     log_db.execute("""
     INSERT INTO catch_peep (log_id, peep_amount, random_integer)
     VALUES (?, ?, ?)
@@ -66,7 +66,7 @@ def psps_denied(ctx: "Context", reason: str) -> int:
     """
     log_id = command("peep", "psps denied", ctx, "member")
 
-    log_db = sqlite3.connect(log_path())
+    log_db = sqlite3.connect(config.log_db_path())
     log_db.execute("""
     INSERT INTO psps_denied (log_id, reason)
     VALUES (?, ?)
@@ -93,7 +93,7 @@ def steal_peep(context: "Context", mod: str, emote: str) -> int:
     """
     log_id = command("peep", "Peep got stolen", context, "member")
 
-    log_db = sqlite3.connect(log_path())
+    log_db = sqlite3.connect(config.log_db_path())
     log_db.execute("""
     INSERT INTO steal_peep (log_id, moderator, emote)
     VALUES (?, ?, ?)
@@ -126,7 +126,7 @@ def peep_transfer(description: str, interaction: "Interaction", amount: int, rec
     """
     log_id = command("peep", description, interaction, "member")
 
-    log_db = sqlite3.connect(log_path())
+    log_db = sqlite3.connect(config.log_db_path())
     log_db.execute("""
     INSERT INTO peep_transfer (log_id, peep_amount, recipient_id, sender_peeps, receiver_peeps)
     VALUES (?, ?, ?, ?, ?)
@@ -151,7 +151,7 @@ def rank(interaction: "Interaction", user_id: int) -> int:
     """
     log_id = command("peep", "RankCommand sent", interaction, "member")
 
-    log_db = sqlite3.connect(log_path())
+    log_db = sqlite3.connect(config.log_db_path())
     log_db.execute("""
     INSERT INTO rank_command (log_id, rank_user_id)
     VALUES (?, ?)
@@ -180,7 +180,7 @@ def give_peeps(given_peeps: int, guild_id: int, user_id: int, context: "Context"
     """
     log_id = command("peep", "peeps given to a member", context, "developer")
 
-    log_db = sqlite3.connect(log_path())
+    log_db = sqlite3.connect(config.log_db_path())
     log_db.execute("""
     INSERT INTO give_peeps (
         log_id,
@@ -218,7 +218,7 @@ def remove_peeps(old_total: int, amount_removed: int, guild_id: int, user_id: in
     """
     log_id = command("peep", "peeps removed from member", context, "developer")
 
-    log_db = sqlite3.connect(log_path())
+    log_db = sqlite3.connect(config.log_db_path())
     log_db.execute("""
     INSERT INTO remove_peeps (
         log_id,

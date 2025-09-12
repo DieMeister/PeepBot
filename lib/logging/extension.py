@@ -1,8 +1,8 @@
 import sqlite3
 from typing import Optional, TYPE_CHECKING
 
+from lib import config
 from lib.logging.base import command_possible
-from lib.getter.config import log_path
 
 if TYPE_CHECKING:
     from discord.ext.commands.context import Context
@@ -34,7 +34,7 @@ def extension_success(log_module: "LogModule", description: str, event_trigger: 
     """
     log_id = command_possible(log_module, description, event_trigger, "info", ctx, "developer")
 
-    log_db = sqlite3.connect(log_path())
+    log_db = sqlite3.connect(config.log_db_path())
     log_db.execute("""
     INSERT INTO extension_success (log_id, extension_name)
     VALUES (?, ?)
@@ -69,7 +69,7 @@ def extension_error(description: str, event_trigger: "EventTrigger", extension_n
     """
     log_id = command_possible(log_module, description, event_trigger, log_type, ctx, "developer")
 
-    log_db = sqlite3.connect(log_path())
+    log_db = sqlite3.connect(config.log_db_path())
     log_db.execute("""
     INSERT INTO extension_error (log_id, extension_name, reason)
     VALUES (?, ?, ?)

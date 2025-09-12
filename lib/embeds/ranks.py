@@ -4,8 +4,7 @@ from typing import TYPE_CHECKING
 import datetime as dt
 from datetime import datetime
 
-from lib.getter.config import tries_emote, peeps_emote, gifted_emote, received_emote
-from lib.getter.config import embed_color
+from lib import config
 from lib.getter.date_time import discord_dt_string
 
 if TYPE_CHECKING:
@@ -30,7 +29,7 @@ def rank(member: "Member", tries: str, total: str, gifted: str, received: str) -
     tries: :class:`str`
         The amount the member tried to get a peep.
     total: :class:`str`
-        The peeps a the member has in total.
+        The peeps the member has in total.
     gifted: :class:`str`
         The amount of peeps the member gifted to other members.
     received: :class:`str`
@@ -44,10 +43,10 @@ def rank(member: "Member", tries: str, total: str, gifted: str, received: str) -
     embed: "types.Embed" = {
         "type": "rich",
         "title": "Rank",
-        "description": f"{tries_emote()} {tries}\n{peeps_emote()} {total}\n{gifted_emote()} {gifted}\n{received_emote()} {received}",
+        "description": f"{config.emote('tries')} {tries}\n{config.emote('peeps')} {total}\n{config.emote('gifted')} {gifted}\n{config.emote('received')} {received}",
         "url": None,
         "timestamp": discord_dt_string(datetime.now(dt.UTC)),
-        "color": embed_color(),
+        "color": config.embed_color(),
         "footer": None,
         "image": None,
         "thumbnail": None,
@@ -76,7 +75,7 @@ def leaderboard(guild: "Guild", leaders: list[tuple[int, int, int, int, int]]) -
         member = guild.get_member(user_id)
         field: "types.Field" = {
             "name": member.display_name,
-            "value": f"{tries_emote()} {tries} | {peeps_emote()} {total} | {gifted_emote()} {sent} | {received_emote()} {received}",
+            "value": f"{config.emote('tries')} {tries} | {config.emote('peeps')} {total} | {config.emote('gifted')} {sent} | {config.emote('received')} {received}",
             "inline": False
         }
         fields.append(field)
@@ -86,7 +85,7 @@ def leaderboard(guild: "Guild", leaders: list[tuple[int, int, int, int, int]]) -
         "description": None,
         "url": None,
         "timestamp": discord_dt_string(datetime.now(dt.UTC)),
-        "color": embed_color(),
+        "color": config.embed_color(),
         "footer": None,
         "image": None,
         "thumbnail": None,

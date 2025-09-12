@@ -1,8 +1,8 @@
 import sqlite3
 from typing import TYPE_CHECKING, Optional, Union
 
+from lib import config
 from lib.logging import command_possible, command
-from lib.getter.config import log_path
 
 if TYPE_CHECKING:
     from discord import Interaction
@@ -31,7 +31,7 @@ def sync_commands(event_trigger: "EventTrigger", amount: int, ctx: Optional["Con
         The context of the command.
     """
     log_id = command_possible("bot", "Commands synced", event_trigger, "info", ctx, "developer")
-    log_db = sqlite3.connect(log_path())
+    log_db = sqlite3.connect(config.log_db_path())
     log_db.execute("""
     INSERT INTO commands_synced (log_id, amount)
     VALUES (?, ?)
@@ -61,7 +61,7 @@ def help_embed(help_type: "HelpType", sub_type: Optional["HelpSubType"], context
     """
     log_id = command("bot", "HelpEmbed sent", context, command_type)
 
-    log_db = sqlite3.connect(log_path())
+    log_db = sqlite3.connect(config.log_db_path())
     log_db.execute("""
     INSERT INTO help (log_id, type, sub_type)
     VALUES (?, ?, ?)
@@ -94,7 +94,7 @@ def invalid_input(log_module: "LogModule", description: str, context: Union["Con
     """
     log_id = command(log_module, description, context, command_type, log_type)
 
-    log_db = sqlite3.connect(log_path())
+    log_db = sqlite3.connect(config.log_db_path())
 
     if isinstance(given_input, str):
         log_db.execute("""

@@ -4,8 +4,7 @@ from discord.ext import commands
 
 from typing import TYPE_CHECKING
 
-import lib
-from lib import logging, embed
+from lib import logging, embed, config
 
 if TYPE_CHECKING:
     from discord import Interaction
@@ -20,7 +19,7 @@ class Help(commands.Cog):
 
     @commands.command()
     async def devhelp(self, ctx: "Context") -> None:
-        if ctx.author.id in lib.get.developer():
+        if ctx.author.id in config.developer():
             await ctx.reply(embed=embed.help.dev())
             logging.help_embed("dev", None, ctx, "developer")
         else:

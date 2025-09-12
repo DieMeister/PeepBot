@@ -6,7 +6,8 @@ from datetime import datetime
 
 from typing import TYPE_CHECKING
 
-from lib.getter import embed_color, dt_string
+from lib import config
+from lib.getter import dt_string
 
 if TYPE_CHECKING:
     from lib import types
@@ -123,7 +124,7 @@ def dev() -> "Embed":
         "type": "rich",
         "title": "Developer Help",
         "description": "Explains every DeveloperCommand",
-        "color": embed_color(),
+        "color": config.embed_color(),
         "timestamp": dt_string(datetime(2025, 9, 8, 10, 45, tzinfo=dt.UTC)),
         "footer": footer,
         "fields": [

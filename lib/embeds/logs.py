@@ -4,7 +4,7 @@ from typing import Optional, TYPE_CHECKING
 import datetime as dt
 from datetime import datetime
 
-from lib.getter.config import embed_color
+from lib import config
 from lib.getter.date_time import discord_dt_string
 
 if TYPE_CHECKING:
@@ -39,7 +39,7 @@ def _default_log(log_id: str, action: str, fields: Optional[list["types.Field"]]
         "type": "rich",
         "title": action,
         "description": None,
-        "color": embed_color(),
+        "color": config.embed_color(),
         "timestamp": discord_dt_string(datetime.now(dt.UTC)),
         "footer": footer,
         "fields": fields,

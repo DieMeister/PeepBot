@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 
 import lib
-from lib import logging
+from lib import logging, config
 
 import os
 import sqlite3
@@ -23,20 +23,20 @@ class PeepBot(commands.Bot):
 
 
 if __name__ == "__main__":
-    if not os.path.isfile(lib.get.log_path()):
-        with open(lib.get.log_query()) as f:
+    if not os.path.isfile(config.log_db_path()):
+        with open(config.log_db_query_path()) as f:
             script = f.read()
-        log_db = sqlite3.connect(lib.get.log_path())
+        log_db = sqlite3.connect(config.log_db_path())
         log_db.executescript(script)
         log_db.commit()
         log_db.close()
 
         logging.default_logger("bot", "Logging Database created", "setup", "warn")
 
-    if not os.path.isfile(lib.get.database_path()):
-        with open(lib.get.database_query()) as f:
+    if not os.path.isfile(config.data_db_path()):
+        with open(config.data_db_query_path()) as f:
             script = f.read()
-        data_db = sqlite3.connect(lib.get.database_path())
+        data_db = sqlite3.connect(config.data_db_path())
         data_db.executescript(script)
         data_db.commit()
         data_db.close()
