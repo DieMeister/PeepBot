@@ -2,7 +2,6 @@ import datetime as dt
 from datetime import datetime
 
 from lib import config
-from lib.getter import config as get
 
 __all__ = [
     "dt_object",
