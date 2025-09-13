@@ -1,12 +1,10 @@
 import discord
 from discord.ext import commands
 
-import lib
-from lib import logging, config
-
 import os
 import sqlite3
 
+from lib import logging, config
 from tokens import BOTTOKEN
 
 

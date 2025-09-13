@@ -1,13 +1,13 @@
 """A package to gather all discord embed blueprints."""
-from lib.embeds.logs import *
-from lib.embeds.ranks import *
-from lib.embeds import help
+from . import help
+from .logs import *
+from .ranks import *
 
 
 __all__ = [
+    "help",
     "role_log",
     "channel_log",
     "rank",
-    "leaderboard",
-    "help"
+    "leaderboard"
 ]

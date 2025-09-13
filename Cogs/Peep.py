@@ -7,9 +7,7 @@ from discord.ext import commands
 import sqlite3
 from typing import TYPE_CHECKING, Optional
 from random import randint, choice
-
-import lib
-from lib import logging, get, embed, config, utils
+from lib import logging, embed, config, utils, sql
 
 if TYPE_CHECKING:
     from discord import Interaction
@@ -26,19 +24,19 @@ class Peep(commands.Cog):
         timestamp = dt.now(datetime.UTC)
 
         # get the data of the guild and create a new entry if it doesn't exist
-        lib.sql.add_guild(ctx.guild)
-        guild = lib.sql.get_guild(ctx.guild.id)
+        sql.add_guild(ctx.guild)
+        guild = sql.get_guild(ctx.guild.id)
         guild_last_try = utils.dt_object(guild[4])
 
         # check if the used channel is valid
-        channel = lib.sql.get_psps_channel(ctx.channel.id)
+        channel = sql.get_psps_channel(ctx.channel.id)
         if not channel:
             logging.psps_denied(ctx, "Outside of allowed Channel")
             return
 
         # get the data of the member and create a new entry if it doesn't exist
-        lib.sql.add_member(ctx.author)
-        member = lib.sql.get_member(ctx.guild.id, ctx.author.id)
+        sql.add_member(ctx.author)
+        member = sql.get_member(ctx.guild.id, ctx.author.id)
         member_last_try = utils.dt_object(member[2])
         member_peeps = member[3]
         member_tries = member[4]
@@ -156,7 +154,7 @@ class Peep(commands.Cog):
     async def rank(self, interaction: "Interaction", member: Optional[Member]=None) -> None:
         if member is None:
             member = interaction.user
-        lib.sql.add_member(member)
+        sql.add_member(member)
 
         data_db = sqlite3.connect(config.data_db_path())
         peeps, tries, sent, received = data_db.execute("""
@@ -185,7 +183,7 @@ class Peep(commands.Cog):
             await interaction.response.send_message("You need to transfer at least 1 Peep")
             logging.peep_transfer("Member tried to transfer < 1 Peeps", interaction, amount, recipient.id)
             return
-        lib.sql.add_member(interaction.user)
+        sql.add_member(interaction.user)
         con = sqlite3.connect(config.data_db_path())
         sender_total_peeps, sender_sent_peeps = con.execute("""
         SELECT
@@ -200,7 +198,7 @@ class Peep(commands.Cog):
             await interaction.response.send_message("You don't have that many Peeps to transfer")
             logging.peep_transfer("Member tried to transfer more Peeps than they have", interaction, amount, recipient.id, sender_total_peeps)
             return
-        lib.sql.add_member(recipient)
+        sql.add_member(recipient)
         receiver_total_peeps, receiver_received_peeps = con.execute("""
         SELECT caught_peeps, received_peeps
         FROM members

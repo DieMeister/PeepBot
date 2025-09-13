@@ -1,9 +1,8 @@
-import discord
-from typing import Optional, TYPE_CHECKING
-
 import datetime as dt
 from datetime import datetime
 
+import discord
+from typing import Optional, TYPE_CHECKING
 from lib import config, utils
 
 if TYPE_CHECKING:

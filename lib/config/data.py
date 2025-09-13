@@ -1,5 +1,4 @@
 from typing import TYPE_CHECKING, Optional
-
 from lib.utils import load_json
 
 if TYPE_CHECKING:

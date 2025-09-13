@@ -1,8 +1,8 @@
 import sqlite3
 
-import lib
 from lib import config
 from lib.utils import load_file
+
 
 version = "v0.4.0"
 
@@ -13,12 +13,12 @@ match version:
         log_db.commit()
         log_db.close()
 
-        logging = sqlite3.connect(lib.get.log_path())
+        logging = sqlite3.connect(config.log_db_path())
         logging.executescript(load_file(f"./migration_queries/{version}/logs.sql"))
         logging.commit()
         logging.close()
     case "v0.3.1":
-        log_db = sqlite3.connect(lib.get.log_path())
+        log_db = sqlite3.connect(config.log_db_path())
         data_db = sqlite3.connect(config.data_db_path())
         data_db.execute("""
         UPDATE members

@@ -1,15 +1,13 @@
 import datetime as dt
 from datetime import datetime
 
-from colorama import Fore
-import sqlite3
-from typing import Optional, Union, TYPE_CHECKING
-
 from discord import Interaction
 from discord.ext.commands.context import Context
 
+import sqlite3
+from colorama import Fore
+from typing import Optional, Union, TYPE_CHECKING
 from lib import config
-from lib.getter.config import dt_format
 
 if TYPE_CHECKING:
     from lib.types import LogType, EventTrigger, LogModule, CommandType

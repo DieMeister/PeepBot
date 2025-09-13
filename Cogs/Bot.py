@@ -4,11 +4,9 @@ from discord.ext.commands import ExtensionFailed, ExtensionNotLoaded, ExtensionN
 import datetime as dt
 from datetime import time, date
 
-from typing import TYPE_CHECKING
 import sqlite3
-
-import lib
-from lib import logging, config
+from typing import TYPE_CHECKING
+from lib import logging, config, sql
 
 if TYPE_CHECKING:
     from discord.ext.commands.context import Context
@@ -151,12 +149,12 @@ class Bot(commands.Cog):
                 return
 
             # add peeps to the member
-            lib.sql.add_member(member)
-            member_db = lib.sql.get_member(int(guild_id), int(user_id))
+            sql.add_member(member)
+            member_db = sql.get_member(int(guild_id), int(user_id))
             total_peeps = member_db[3]
             received_peeps = member_db[6]
 
-            lib.sql.get_peeps((total_peeps + amount), (received_peeps + amount), guild_id, user_id)
+            sql.get_peeps((total_peeps + amount), (received_peeps + amount), guild_id, user_id)
 
             await ctx.reply("Peeps given to member")
             logging.give_peeps(amount, guild_id, user_id, ctx)
@@ -202,8 +200,8 @@ class Bot(commands.Cog):
                 logging.invalid_input("peep", "member to give peeps to not in provided guild", ctx, "developer", user_id)
                 return
 
-            lib.sql.add_member(member)
-            member_db = lib.sql.get_member(guild_id, user_id)
+            sql.add_member(member)
+            member_db = sql.get_member(guild_id, user_id)
             total_peeps = member_db[3]
             # check if member has enough peeps to remove the given amount.
             if (total_peeps - amount) < 0:
@@ -213,7 +211,7 @@ class Bot(commands.Cog):
                 new_peeps = total_peeps - amount
                 await ctx.reply("Peeps removed from member.")
             # remove peeps from member
-            lib.sql.remove_peeps(new_peeps, guild_id, user_id)
+            sql.remove_peeps(new_peeps, guild_id, user_id)
             logging.remove_peeps(total_peeps, amount, guild_id, user_id, ctx)
 
 

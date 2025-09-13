@@ -1,7 +1,7 @@
 from discord.ext import commands
 from typing import TYPE_CHECKING
-
 from lib import logging
+
 if TYPE_CHECKING:
     from discord.ext.commands.context import Context
 

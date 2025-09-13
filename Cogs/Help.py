@@ -3,7 +3,6 @@ from discord.app_commands import Group
 from discord.ext import commands
 
 from typing import TYPE_CHECKING
-
 from lib import logging, embed, config
 
 if TYPE_CHECKING:

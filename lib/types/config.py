@@ -2,18 +2,9 @@ from typing import TypedDict, Literal
 
 
 __all__ = [
-    "DatabasePaths",
-    "BackupPaths",
-    "TableCreationPaths",
-    "SqlPaths",
-    "FilePaths",
-    "DatetimeFormats",
     "EmoteName",
     "EmoteMarkdown",
-    "Emotes",
-    "Messages",
     "Thief",
-    "People",
     "ConfigFile"
 ]
 

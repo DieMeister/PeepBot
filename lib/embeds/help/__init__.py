@@ -1,4 +1,13 @@
 """A sub-package that contains every help embed."""
-from lib.embeds.help.config import *
-from lib.embeds.help.usage import *
-from lib.embeds.help.dev import *
+from .config import *
+from .dev import *
+from .usage import *
+
+
+__all__ = [
+    "config_peep",
+    "config_assignable_role",
+    "dev",
+    "use_peep",
+    "use_assignable_roles"
+]
