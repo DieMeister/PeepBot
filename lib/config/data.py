@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING, Optional
 
-from lib.data.json import load_data
+from lib.utils import load_json
 
 if TYPE_CHECKING:
     from lib.types import ConfigFile, EmoteName, EmoteMarkdown
@@ -20,7 +20,7 @@ _data: Optional["ConfigFile"] = None
 def _get_data() -> "ConfigFile":
     global _data
     if _data is None:
-        load_data("./config.json")  # TODO check if file path is correct
+        load_json("./config.json")  # TODO check if file path is correct
     return _data
 
 

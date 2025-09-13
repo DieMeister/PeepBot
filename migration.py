@@ -2,18 +2,19 @@ import sqlite3
 
 import lib
 from lib import config
+from lib.utils import load_file
 
 version = "v0.4.0"
 
 match version:
     case "v0.3.0":
         log_db = sqlite3.connect(config.data_db_path())
-        log_db.executescript(lib.file.load_data(f"./migration_queries/{version}/database.sql"))
+        log_db.executescript(load_file(f"./migration_queries/{version}/database.sql"))
         log_db.commit()
         log_db.close()
 
         logging = sqlite3.connect(lib.get.log_path())
-        logging.executescript(lib.file.load_data(f"./migration_queries/{version}/logs.sql"))
+        logging.executescript(load_file(f"./migration_queries/{version}/logs.sql"))
         logging.commit()
         logging.close()
     case "v0.3.1":
@@ -107,11 +108,11 @@ match version:
         data_db.commit()
 
         # alter members table to reference users table
-        data_db.executescript(lib.file.load_data("./migration_queries/v0.4.0/data_db.sql"))
+        data_db.executescript(load_file("./migration_queries/v0.4.0/data_db.sql"))
         data_db.commit()
 
         # add logging table
         log_db = sqlite3.connect(config.log_db_path())
-        log_db.executescript(lib.file.load_data("./migration_queries/v0.4.0/log_db.sql"))
+        log_db.executescript(load_file("./migration_queries/v0.4.0/log_db.sql"))
         log_db.commit()
         log_db.close()
