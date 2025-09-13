@@ -4,7 +4,7 @@ from discord.ext.commands import Cog
 from typing import TYPE_CHECKING, Optional
 
 import lib
-from lib import logging, embed, config
+from lib import logging, embed, config, utils
 from lib.sql import assignable_role_in_database
 from lib.utils import possible_discord_id
 
@@ -41,7 +41,7 @@ class Moderation(Cog):
         await member.add_roles(role, reason=reason)
 
         log_id = logging.assigning_role("Role given to Member", interaction, role.id, member.id, reason)
-        log_channel = lib.get.log_channel(interaction.guild)
+        log_channel = utils.get_log_channel(interaction.guild)
         if log_channel is not None:
             await log_channel.send(embed=embed.role_log(str(log_id), "Role added to Member", str(role_id), str(interaction.user.id), reason, str(member.id)))
             await interaction.response.send_message("Role added to Member")
@@ -71,7 +71,7 @@ class Moderation(Cog):
             return
         await member.remove_roles(role, reason="execution of /remove_role")
         log_id = logging.assigning_role("Role removed from Member", interaction, role.id, member.id, reason)
-        log_channel = lib.get.log_channel(interaction.guild)
+        log_channel = utils.get_log_channel(interaction.guild)
         if log_channel is not None:
             await log_channel.send(
                 embed=embed.role_log(str(log_id), "Role removed from Member", str(role_id), str(interaction.user.id), reason, str(member.id)))

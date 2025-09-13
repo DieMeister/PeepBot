@@ -7,11 +7,11 @@ if TYPE_CHECKING:
 
 
 __all__ = [
-    "log_channel"
+    "get_log_channel"
 ]
 
 
-def log_channel(guild: "Guild") -> Optional[Union["TextChannel", "StageChannel", "ForumChannel", "VoiceChannel", "CategoryChannel"]]:
+def get_log_channel(guild: "Guild") -> Optional[Union["TextChannel", "StageChannel", "ForumChannel", "VoiceChannel", "CategoryChannel"]]:
     """
     Return the log channel of a guild.
 

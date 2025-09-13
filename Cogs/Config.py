@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Optional
 import sqlite3
 
 import lib
-from lib import logging, embed, config
+from lib import logging, embed, config, utils
 from lib.sql import assignable_role_in_database
 from lib.utils import possible_discord_id
 
@@ -114,7 +114,7 @@ class Config(commands.Cog):
             """, (role.id, interaction.guild_id))
             con.commit()
 
-            log_channel = lib.get.log_channel(interaction.guild)
+            log_channel = utils.get_log_channel(interaction.guild)
             log_id =  logging.change_of_assignable_roles("AssignableRole added to List", interaction, role.id, reason)
             if log_channel is None:
                 await interaction.response.send_message(f"Role added {config.log_channel_missing_msg()}")
@@ -144,7 +144,7 @@ class Config(commands.Cog):
             con.close()
 
             log_id = logging.change_of_assignable_roles("AssignableRole removed from List", interaction, int(role_id), reason)
-            log_channel = lib.get.log_channel(interaction.guild)
+            log_channel = utils.get_log_channel(interaction.guild)
             if log_channel is None:
                 await interaction.response.send_message(f"Role removed {config.log_channel_missing_msg()}")
             else:
