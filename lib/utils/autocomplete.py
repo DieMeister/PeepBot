@@ -14,10 +14,11 @@ if TYPE_CHECKING:
 __all__ = []
 
 
+# TODO use the decorators on the command https://discordpy.readthedocs.io/en/stable/interactions/api.html?highlight=autocomplete#discord.app_commands.autocomplete
 @Config.remove_assignable_role.autocomplete("role_id")
 @Moderation.add_role.autocomplete("role_id")
 @Moderation.remove_role.autocomplete("role_id")
-async def autocomplete(interaction: "Interaction", current: str) -> list[Choice[int]]:
+async def assignable_role(interaction: "Interaction", current: str) -> list[Choice[int]]:
     """Return every assignable role that contains the given input."""
     con = sqlite3.connect(config.data_db_path())
     roles = con.execute("""
