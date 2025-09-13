@@ -1,12 +1,9 @@
-import discord
-
 import datetime as dt
 from datetime import datetime
 
+import discord
 from typing import TYPE_CHECKING
-
-from lib import config
-from lib.getter import dt_string
+from lib import config, utils
 
 if TYPE_CHECKING:
     from discord.types.embed import Embed, EmbedField, EmbedFooter
@@ -123,7 +120,7 @@ def dev() -> discord.Embed:
         "title": "Developer Help",
         "description": "Explains every DeveloperCommand",
         "color": config.embed_color(),
-        "timestamp": dt_string(datetime(2025, 9, 8, 10, 45, tzinfo=dt.UTC)),
+        "timestamp": utils.dt_string(datetime(2025, 9, 8, 10, 45, tzinfo=dt.UTC)),
         "footer": footer,
         "fields": [
             divider_commands,

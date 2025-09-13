@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Optional
 from random import randint, choice
 
 import lib
-from lib import logging, get, embed, config
+from lib import logging, get, embed, config, utils
 
 if TYPE_CHECKING:
     from discord import Interaction
@@ -28,7 +28,7 @@ class Peep(commands.Cog):
         # get the data of the guild and create a new entry if it doesn't exist
         lib.sql.add_guild(ctx.guild)
         guild = lib.sql.get_guild(ctx.guild.id)
-        guild_last_try = get.dt_object(guild[4])
+        guild_last_try = utils.dt_object(guild[4])
 
         # check if the used channel is valid
         channel = lib.sql.get_psps_channel(ctx.channel.id)
@@ -39,7 +39,7 @@ class Peep(commands.Cog):
         # get the data of the member and create a new entry if it doesn't exist
         lib.sql.add_member(ctx.author)
         member = lib.sql.get_member(ctx.guild.id, ctx.author.id)
-        member_last_try = get.dt_object(member[2])
+        member_last_try = utils.dt_object(member[2])
         member_peeps = member[3]
         member_tries = member[4]
 
@@ -108,7 +108,7 @@ class Peep(commands.Cog):
         UPDATE guilds
         SET last_peep = ?
         WHERE guild_id = ?
-        """, (get.dt_string(timestamp), ctx.guild.id))
+        """, (utils.dt_string(timestamp), ctx.guild.id))
         con.execute("""
         UPDATE members
         SET
@@ -116,7 +116,7 @@ class Peep(commands.Cog):
             caught_peeps = ?,
             tries = ?
         WHERE guild_id = ? AND user_id = ?
-        """, (get.dt_string(timestamp), member_peeps, member_tries, ctx.guild.id, ctx.author.id))
+        """, (utils.dt_string(timestamp), member_peeps, member_tries, ctx.guild.id, ctx.author.id))
         con.commit()
         con.close()
 

@@ -4,8 +4,7 @@ from typing import TYPE_CHECKING
 import datetime as dt
 from datetime import datetime
 
-from lib import config
-from lib.getter.date_time import discord_dt_string
+from lib import config, utils
 
 if TYPE_CHECKING:
     from discord import Member, Guild
@@ -43,7 +42,7 @@ def rank(member: "Member", tries: str, total: str, gifted: str, received: str) -
         "type": "rich",
         "title": "Rank",
         "description": f"{config.emote('tries')} {tries}\n{config.emote('peeps')} {total}\n{config.emote('gifted')} {gifted}\n{config.emote('received')} {received}",
-        "timestamp": discord_dt_string(datetime.now(dt.UTC)),
+        "timestamp": utils.discord_dt_string(datetime.now(dt.UTC)),
         "color": config.embed_color(),
         "author": author
     }
@@ -76,7 +75,7 @@ def leaderboard(guild: "Guild", leaders: list[tuple[int, int, int, int, int]]) -
     embed: "Embed" = {
         "title": "Leaderboard",
         "type": "rich",
-        "timestamp": discord_dt_string(datetime.now(dt.UTC)),
+        "timestamp": utils.discord_dt_string(datetime.now(dt.UTC)),
         "color": config.embed_color(),
         "fields": fields
     }

@@ -4,8 +4,7 @@ from datetime import datetime
 from typing import TYPE_CHECKING
 import discord
 
-from lib import config
-from lib.getter import discord_dt_string
+from lib import config, utils
 
 if TYPE_CHECKING:
     from discord.types.embed import Embed, EmbedField, EmbedFooter
@@ -47,7 +46,7 @@ def use_peep() -> discord.Embed:
         "title": "Peep Usage",
         "description": "How to use everything concerning Peeps",
         "color": config.embed_color(),
-        "timestamp": discord_dt_string(datetime(2025, 8, 23, 0, 50, tzinfo=dt.UTC)),
+        "timestamp": utils.discord_dt_string(datetime(2025, 8, 23, 0, 50, tzinfo=dt.UTC)),
         "footer": footer,
         "fields": [
             psps,
@@ -79,7 +78,7 @@ def use_assignable_roles() -> discord.Embed:
         "title": "AssignableRoles Usage",
         "description": "How to use everything concerning AssignableRoles",
         "color": config.embed_color(),
-        "timestamp": discord_dt_string(datetime(2025, 8, 23, 0, 50, tzinfo=dt.UTC)),
+        "timestamp": utils.discord_dt_string(datetime(2025, 8, 23, 0, 50, tzinfo=dt.UTC)),
         "footer": footer,
         "fields": [
             add_role,

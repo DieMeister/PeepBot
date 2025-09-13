@@ -15,6 +15,7 @@ __all__ = []
 
 
 # TODO use the decorators on the command https://discordpy.readthedocs.io/en/stable/interactions/api.html?highlight=autocomplete#discord.app_commands.autocomplete
+# TODO add autocomplete to function name
 @Config.remove_assignable_role.autocomplete("role_id")
 @Moderation.add_role.autocomplete("role_id")
 @Moderation.remove_role.autocomplete("role_id")

@@ -1,9 +1,8 @@
 import sqlite3
 from typing import TYPE_CHECKING
 
-from lib.getter.date_time import dt_string, now
+from lib import logging, config, utils
 from lib.sql.get import get_guild, get_member, get_user
-from lib import logging, config
 
 if TYPE_CHECKING:
     from discord import Guild, Member
@@ -42,7 +41,7 @@ def add_guild(guild: "Guild") -> None:
         con.execute("""
         INSERT INTO guilds (guild_id, last_peep)
         VALUES (?, ?)
-        """, (guild.id, dt_string(now())))
+        """, (guild.id, utils.dt_string(utils.now())))
         con.commit()
         con.close()
         logging.guild_join(guild)
@@ -68,7 +67,7 @@ def add_member(member: "Member"):
             last_peep
         )
         VALUES (?, ?, ?)
-        """, (member.id, member.guild.id, dt_string(now())))
+        """, (member.id, member.guild.id, utils.dt_string(utils.now())))
         con.commit()
         con.close()
         logging.member_join(member)
