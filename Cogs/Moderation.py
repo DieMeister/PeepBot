@@ -3,7 +3,7 @@ from discord.ext.commands import Cog
 
 from typing import TYPE_CHECKING, Optional
 
-from lib import logging, embed, config
+from lib import logging, embeds, config
 from lib.sql import assignable_role_in_database
 from lib.utils import possible_discord_id, get_log_channel
 
@@ -42,7 +42,7 @@ class Moderation(Cog):
         log_id = logging.assigning_role("Role given to Member", interaction, role.id, member.id, reason)
         log_channel = get_log_channel(interaction.guild)
         if log_channel is not None:
-            await log_channel.send(embed=embed.role_log(str(log_id), "Role added to Member", str(role_id), str(interaction.user.id), reason, str(member.id)))
+            await log_channel.send(embed=embeds.role_log(str(log_id), "Role added to Member", str(role_id), str(interaction.user.id), reason, str(member.id)))
             await interaction.response.send_message("Role added to Member")
         else:
             await interaction.response.send_message(f"Role added to Member {config.log_channel_missing_msg()}")
@@ -73,7 +73,7 @@ class Moderation(Cog):
         log_channel = get_log_channel(interaction.guild)
         if log_channel is not None:
             await log_channel.send(
-                embed=embed.role_log(str(log_id), "Role removed from Member", str(role_id), str(interaction.user.id), reason, str(member.id)))
+                embed=embeds.role_log(str(log_id), "Role removed from Member", str(role_id), str(interaction.user.id), reason, str(member.id)))
             await interaction.response.send_message("Role removed from Member")
         else:
             await interaction.response.send_message(f"Role removed from Member {config.log_channel_missing_msg()}")

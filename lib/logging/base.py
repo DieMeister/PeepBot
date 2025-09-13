@@ -19,7 +19,7 @@ __all__ = [
 ]
 
 
-def default_logger(log_module: "LogModule", description: str, event_trigger: "EventTrigger", log_type: LogType= "info") -> int:
+def default_logger(log_module: "LogModule", description: str, event_trigger: "EventTrigger", log_type: "LogType"= "info") -> int:
     """Default logger, is called by every other logger function.
 
     Return the log_id.

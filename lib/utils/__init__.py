@@ -1,5 +1,4 @@
 # TODO add docstring
-from .autocomplete import *
 from .files import *
 from .datetime import *
 from .discord_objects import *

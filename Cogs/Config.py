@@ -4,7 +4,7 @@ from discord.ext import commands
 from typing import TYPE_CHECKING, Optional
 import sqlite3
 
-from lib import logging, embed, config, utils, sql
+from lib import logging, embeds, config, utils, sql
 from lib.sql import assignable_role_in_database
 from lib.utils import possible_discord_id
 
@@ -118,7 +118,7 @@ class Config(commands.Cog):
                 await interaction.response.send_message(f"Role added {config.log_channel_missing_msg()}")
             else:
                 await interaction.response.send_message("Role added")
-                await log_channel.send(embed=embed.role_log(str(log_id), "AssignableRole added to List", str(role.id), str(interaction.user.id), reason))
+                await log_channel.send(embed=embeds.role_log(str(log_id), "AssignableRole added to List", str(role.id), str(interaction.user.id), reason))
 
     @app_commands.command(
         name="remove_assignable_role",
@@ -147,7 +147,7 @@ class Config(commands.Cog):
                 await interaction.response.send_message(f"Role removed {config.log_channel_missing_msg()}")
             else:
                 await interaction.response.send_message("Role removed")
-                await log_channel.send(embed=embed.role_log(str(log_id), "AssignableRole removed from List", role_id, str(interaction.user.id), reason))
+                await log_channel.send(embed=embeds.role_log(str(log_id), "AssignableRole removed from List", role_id, str(interaction.user.id), reason))
         else:
             await interaction.response.send_message("Role was already not added")
             logging.change_of_assignable_roles("Tried to remove not-added AssignableRole from List", interaction, int(role_id), reason)
@@ -167,7 +167,7 @@ class Config(commands.Cog):
         con.close()
         await interaction.response.send_message("Channel set")
         log_id = logging.set_log_channel(interaction, channel.id)
-        await channel.send(embed=embed.channel_log(str(log_id), "LogChannel set", str(channel.id), str(interaction.user.id)))
+        await channel.send(embed=embeds.channel_log(str(log_id), "LogChannel set", str(channel.id), str(interaction.user.id)))
 
 
 async def setup(bot) -> None:

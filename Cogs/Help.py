@@ -3,7 +3,7 @@ from discord.app_commands import Group
 from discord.ext import commands
 
 from typing import TYPE_CHECKING
-from lib import logging, embed, config
+from lib import logging, embeds, config
 
 if TYPE_CHECKING:
     from discord import Interaction
@@ -19,7 +19,7 @@ class Help(commands.Cog):
     @commands.command()
     async def devhelp(self, ctx: "Context") -> None:
         if ctx.author.id in config.developer():
-            await ctx.reply(embed=embed.help.dev())
+            await ctx.reply(embed=embeds.help.dev())
             logging.help_embed("dev", None, ctx, "developer")
         else:
             await ctx.reply("This bot supports application (/) commands, please use `/help`")
@@ -34,10 +34,10 @@ class Help(commands.Cog):
     async def config(self, interaction: "Interaction", problem: app_commands.Choice[str]) -> None:
         match problem.value:
             case "peep":
-                help_embed = embed.help.config_peep()
+                help_embed = embeds.help.config_peep()
                 logging.help_embed("config", "peep", interaction, "member")
             case "assignable_roles":
-                help_embed = embed.help.config_assignable_role()
+                help_embed = embeds.help.config_assignable_role()
                 logging.help_embed("config", "assignable_roles", interaction, "member")
         await interaction.response.send_message(embed=help_embed)
 
@@ -51,10 +51,10 @@ class Help(commands.Cog):
     async def usage(self, interaction: "Interaction", problem: app_commands.Choice[str]) -> None:
         match problem.value:
             case "peep":
-                help_embed =  embed.help.use_peep()
+                help_embed =  embeds.help.use_peep()
                 logging.help_embed("usage", "peep", interaction, "member")
             case "assignable_roles":
-                help_embed = embed.help.use_assignable_roles()
+                help_embed = embeds.help.use_assignable_roles()
                 logging.help_embed("usage", "assignable_roles", interaction, "member")
         await interaction.response.send_message(embed=help_embed)
 

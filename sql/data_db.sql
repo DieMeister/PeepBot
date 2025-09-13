@@ -3,6 +3,7 @@ CREATE TABLE users (
     stolen_peeps INTEGER
 );
 
+-- TODO add emotes to default psps messages
 CREATE TABLE guilds (
     guild_id INTEGER,
     success_message VARCHAR(2000) DEFAULT('You got a peep!'), -- TODO make NOT NULL

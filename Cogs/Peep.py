@@ -7,7 +7,7 @@ from discord.ext import commands
 import sqlite3
 from typing import TYPE_CHECKING, Optional
 from random import randint, choice
-from lib import logging, embed, config, utils, sql
+from lib import logging, embeds, config, utils, sql
 
 if TYPE_CHECKING:
     from discord import Interaction
@@ -144,7 +144,7 @@ class Peep(commands.Cog):
             await interaction.response.send_message("nobody got a peep yet")
             logging.command("peep", "Leaderboard sent", interaction, "member")
         else:
-            await interaction.response.send_message(embed=embed.leaderboard(interaction.guild, top_10))
+            await interaction.response.send_message(embed=embeds.leaderboard(interaction.guild, top_10))
             logging.command("bot", "Leaderboard sent", interaction, "member")
 
     @app_commands.describe(
@@ -170,7 +170,7 @@ class Peep(commands.Cog):
            AND
                user_id = ?
            """, (interaction.guild_id, member.id)).fetchone()
-        await interaction.response.send_message(embed=embed.rank(member, str(tries), str(peeps), str(sent), str(received)))
+        await interaction.response.send_message(embed=embeds.rank(member, str(tries), str(peeps), str(sent), str(received)))
         logging.rank(interaction, member.id)
 
     @app_commands.describe(

@@ -1,6 +1,6 @@
 """A library for all external functions of this discord bot."""
 from . import config
-from . import embeds as embed
+from . import embeds
 from . import logging
 from . import sql
 from . import types
@@ -9,7 +9,7 @@ from . import utils
 
 __all__ =  [
     "config",
-    "embed",
+    "embeds",
     "logging",
     "sql",
     "types",

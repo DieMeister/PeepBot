@@ -19,7 +19,7 @@ _data: Optional["ConfigFile"] = None
 def _get_data() -> "ConfigFile":
     global _data
     if _data is None:
-        load_json("./config.json")  # TODO check if file path is correct
+        _data = load_json("./config.json")
     return _data
 
 
