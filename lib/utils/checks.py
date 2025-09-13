@@ -1,4 +1,3 @@
-# TODO move to lib.utils
 from typing import Union
 
 
