@@ -1,3 +1,4 @@
+# TODO move to lib.utils
 from typing import Union
 
 
@@ -19,6 +20,6 @@ def possible_discord_id(discord_id: Union[str, int]) -> bool:
     except ValueError:
         pass
     else:
-        if discord_id > 10000000000000000:  # 10^16
+        if discord_id > 10_000_000_000_000_000:  # 10^16
             return True
     return False

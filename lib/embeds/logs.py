@@ -1,4 +1,4 @@
-from discord import Embed
+import discord
 from typing import Optional, TYPE_CHECKING
 
 import datetime as dt
@@ -8,7 +8,7 @@ from lib import config
 from lib.getter.date_time import discord_dt_string
 
 if TYPE_CHECKING:
-    from lib import types
+    from discord.types.embed import Embed, EmbedField, EmbedFooter
 
 
 __all__ = [
@@ -17,7 +17,7 @@ __all__ = [
 ]
 
 
-def _default_log(log_id: str, action: str, fields: Optional[list["types.Field"]]) -> Embed:
+def _default_log(log_id: str, action: str, fields: Optional[list["EmbedField"]]) -> discord.Embed:
     """
     A blueprint for discord embed logs.
 
@@ -31,27 +31,21 @@ def _default_log(log_id: str, action: str, fields: Optional[list["types.Field"]]
         The fields to add to the embed.
         Can be a maximum of 25 fields.
     """
-    footer: "types.Footer" = {
-            "text": f"LogId: {log_id}",
-            "icon_url": None
+    footer: "EmbedFooter" = {
+            "text": f"LogId: {log_id}"
         }
-    embed: "types.Embed" = {
+    embed: "Embed" = {
         "type": "rich",
         "title": action,
-        "description": None,
         "color": config.embed_color(),
         "timestamp": discord_dt_string(datetime.now(dt.UTC)),
         "footer": footer,
-        "fields": fields,
-        "url": None,
-        "image": None,
-        "thumbnail": None,
-        "author": None
+        "fields": Optional[fields]
     }
-    return Embed.from_dict(embed)
+    return discord.Embed.from_dict(embed)
 
 
-def role_log(log_id: str, action: str, role_id: str, moderator_id: str, reason: Optional[str], receiver_id: Optional[str]=None) -> Embed:
+def role_log(log_id: str, action: str, role_id: str, moderator_id: str, reason: Optional[str], receiver_id: Optional[str]=None) -> discord.Embed:
     """
     Return a discord embed that acts as log for actions about AssignableRoles.
 
@@ -70,7 +64,7 @@ def role_log(log_id: str, action: str, role_id: str, moderator_id: str, reason: 
     receiver_id: Optional[:class:`str`]=None
         The discord id of the receiver if a receiver exists.
     """
-    fields: list["types.Field"] = [
+    fields: list["EmbedField"] = [
         {
             "name": "Role",
             "value": f"<@&{role_id}>",
@@ -97,8 +91,8 @@ def role_log(log_id: str, action: str, role_id: str, moderator_id: str, reason: 
     return _default_log(log_id, action, fields)
 
 
-def channel_log(log_id: str, action: str, channel_id: str, moderator_id: str) -> Embed:
-    fields: list["types.Field"] = [
+def channel_log(log_id: str, action: str, channel_id: str, moderator_id: str) -> discord.Embed:
+    fields: list["EmbedField"] = [
         {
             "name": "Channel",
             "value": f"<#{channel_id}>",
