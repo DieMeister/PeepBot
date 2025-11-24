@@ -46,8 +46,12 @@ def leaderboard(guild: "Guild", leaders: list[tuple[int, int, int, int, int]]) -
     for leader in leaders:
         user_id, total, tries, sent, received = leader
         member = guild.get_member(user_id)
+        if member is None:
+            name = f"<@{user_id}>"
+        else:
+            name = member.display_name
         field: "types.Field" = {
-            "name": member.display_name,
+            "name": name,
             "value": f"{tries_emote()} {tries} | {peeps_emote()} {total} | {gifted_emote()} {sent} | {received_emote()} {received}",
             "inline": False
         }
