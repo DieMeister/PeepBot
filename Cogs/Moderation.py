@@ -23,7 +23,6 @@ class Moderation(Cog):
         reason="this will show up in the AuditLog"
     )
     @app_commands.default_permissions(manage_roles=True)
-    # TODO add time restricted option
     async def add_role(self, interaction: "Interaction", role_id: str, member: Member, reason: Optional[str]) -> None:
         if not possible_discord_id(role_id):
             await interaction.response.send_message("Invalid Input")

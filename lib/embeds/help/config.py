@@ -17,6 +17,7 @@ __all__ = [
 
 
 def config_peep() -> Embed:
+    """Return a discord embed that contains information about how to configure the peep part of the bot."""
     add_psps_channel: "types.Field" = {
         "name": "/add_psps_channel <channel>",
         "value": "Adds a channel where `!psps` can be executed\n`channel`: The channel that is being added",
@@ -32,6 +33,10 @@ def config_peep() -> Embed:
         "value": "Changes the message that is sent after `!psps` is executed\n`message_type`: The message which's content is being changed\n`message`: The new content of the message",
         "inline": True
     }
+    footer: "types.Footer" = {
+            "text": "Help",
+            "icon_url": None
+        }
 
     embed: "types.Embed" = {
         "type": "rich",
@@ -39,9 +44,7 @@ def config_peep() -> Embed:
         "description": "How to configure everything concerning Peeps",
         "color": embed_color(),
         "timestamp": discord_dt_string(datetime(2025, 8, 22, 23, 37, tzinfo=dt.UTC)),
-        "footer": {
-            "text": "Help"
-        },
+        "footer": footer,
         "fields": [
             add_psps_channel,
             remove_psps_channel,
@@ -56,6 +59,7 @@ def config_peep() -> Embed:
 
 
 def config_assignable_role() -> Embed:
+    """Return a discord embed that contains information about how to configure the assignable role part of the bot."""
     add_assignable_role: "types.Field" = {
         "name": "/add_assignable_role <role> [reason]",
         "value": "Adds a role to the list of roles that can be assigned using `/add_role`\n`role`: the role that is being added\n`reason`: Optional - The reason why the role is being added",
@@ -71,15 +75,17 @@ def config_assignable_role() -> Embed:
         "value": "Sets the provided channel as the channel where the bot sends logs\n`channel`: The channel logs are being sent to",
         "inline": True
     }
+    footer: "types.Footer" = {
+            "text": "Help",
+            "icon_url": None
+        }
     embed: "types.Embed" = {
         "type": "rich",
         "title": "Config AssignableRoles",
         "description": "How to configure everything concerning AssignableRoles",
         "color": embed_color(),
         "timestamp": discord_dt_string(datetime(2025, 8, 22, 23, 37, tzinfo=dt.UTC)),
-        "footer": {
-            "text": "Help"
-        },
+        "footer": footer,
         "fields": [
             add_assignable_role,
             remove_assignable_role,

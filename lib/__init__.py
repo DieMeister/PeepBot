@@ -1,3 +1,5 @@
+"""A library for all external functions of this discord bot."""
+
 from lib.data import *
 from lib.checks import *
 from lib import getter as get
@@ -20,4 +22,4 @@ __all__ =  [
 ]
 
 
-get.config.data = json.load_data("./config.json")
+get.load_data("./config.json")

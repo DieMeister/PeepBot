@@ -12,7 +12,8 @@ CREATE TABLE commands (
     guild_id INTEGER NOT NULL,
     channel_id INTEGER NOT NULL,
     user_id INTEGER NOT NULL,
-    type VARCHAR(9) NOT NULL
+    type VARCHAR(9) NOT NULL,
+    prefix VARCHAR(4)
 );
 
 CREATE TABLE extension_success (
@@ -44,6 +45,11 @@ CREATE TABLE member_join (
     guild_id INTEGER NOT NULL,
     user_id INTEGER NOT NULL,
     user_name TEXT NOT NULL
+);
+
+CREATE TABLE user_join (
+    log_id INTEGER PRIMARY KEY REFERENCES logs(log_id),
+    user_id INTEGER NOT NULL
 );
 
 CREATE TABLE configure_channel (
@@ -95,9 +101,14 @@ CREATE TABLE assigning_role (
     reason TEXT
 );
 
-CREATE TABLE invalid_input (
+CREATE TABLE invalid_str_input (
     log_id INTEGER PRIMARY KEY REFERENCES logs(log_id),
     input TEXT NOT NULL
+);
+
+CREATE TABLE invalid_int_input (
+    log_id INTEGER PRIMARY KEY REFERENCES logs(log_id),
+    input INTEGER NOT NULL
 );
 
 CREATE TABLE log_channel (
@@ -112,3 +123,23 @@ CREATE TABLE peep_transfer(
     sender_peeps INTEGER,
     receiver_peeps INTEGER
 );
+
+CREATE TABLE rank_command(
+    log_id INTEGER PRIMARY KEY REFERENCES logs(log_id),
+    rank_user_id INTEGER
+);
+
+CREATE TABLE give_peeps (
+    log_id INTEGER PRIMARY KEY REFERENCES logs(log_id),
+    amount INTEGER NOT NULL,
+    member_guild_id INTEGER NOT NULL,
+    member_user_id INTEGER NOT NULL
+);
+
+CREATE TABLE remove_peeps (
+    log_id INTEGER PRIMARY KEY REFERENCES logs(log_id),
+    old_total INTEGER NOT NULL,
+    amount_removed INTEGER NOT NULL,
+    member_guild_id INTEGER NOT NULL,
+    member_user_id INTEGER NOT NULL
+)

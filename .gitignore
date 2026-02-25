@@ -9,6 +9,8 @@
 
 archive/
 .venv/
+Documentation/.obsidian
+Documentation/.trash
 
 intents.txt
 tokens.py
